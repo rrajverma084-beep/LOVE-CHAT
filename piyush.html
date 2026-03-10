@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Private Chat</title>
+
+<style>
+
+body{
+font-family: Arial;
+background:#e5ddd5;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+width:350px;
+background:white;
+border-radius:10px;
+box-shadow:0 0 10px gray;
+overflow:hidden;
+}
+
+.header{
+background:#075E54;
+color:white;
+padding:10px;
+text-align:center;
+font-size:18px;
+}
+
+.chatbox{
+height:300px;
+padding:10px;
+overflow-y:auto;
+background:#efeae2;
+}
+
+.message{
+background:#dcf8c6;
+padding:8px;
+margin:5px;
+border-radius:5px;
+width:fit-content;
+}
+
+.inputArea{
+display:flex;
+border-top:1px solid #ccc;
+}
+
+.inputArea input{
+flex:1;
+padding:10px;
+border:none;
+outline:none;
+}
+
+.inputArea button{
+background:#25D366;
+border:none;
+padding:10px;
+color:white;
+cursor:pointer;
+}
+
+.login{
+text-align:center;
+padding:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">Private Chat</div>
+
+<div class="login" id="login">
+<input type="password" id="password" placeholder="Enter Password">
+<button onclick="login()">Enter</button>
+</div>
+
+<div id="chat" style="display:none;">
+
+<div class="chatbox" id="chatbox"></div>
+
+<div class="inputArea">
+<input type="text" id="message" placeholder="Type message">
+<button onclick="send()">Send</button>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function login(){
+var pass=document.getElementById("password").value;
+
+if(pass=="1234"){
+document.getElementById("login").style.display="none";
+document.getElementById("chat").style.display="block";
+}
+else{
+alert("Wrong Password");
+}
+}
+
+function send(){
+
+var msg=document.getElementById("message").value;
+
+if(msg!=""){
+
+var box=document.getElementById("chatbox");
+
+var newMsg=document.createElement("div");
+newMsg.className="message";
+newMsg.innerText=msg;
+
+box.appendChild(newMsg);
+
+document.getElementById("message").value="";
+
+box.scrollTop=box.scrollHeight;
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
