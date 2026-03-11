@@ -15,7 +15,6 @@
 </style>
 </head>
 <body>
-
 <div class="container">
     <div class="header">Private Chat</div>
     <div class="login" id="login">
@@ -32,7 +31,6 @@
 </div>
 
 <script type="module">
-    // Firebase Setup
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -49,34 +47,26 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Login Function
     window.login = function() {
         var pass = document.getElementById("password").value;
         if(pass == "1234") {
             document.getElementById("login").style.display = "none";
             document.getElementById("chat").style.display = "block";
-        } else {
-            alert("Wrong Password");
-        }
+        } else { alert("Wrong Password"); }
     }
 
-    // Send Message Function
     document.getElementById("sendBtn").onclick = function() {
         var msgInput = document.getElementById("message");
         var msgText = msgInput.value;
         if(msgText != "") {
-            push(ref(db, "chat"), {
-                text: msgText,
-                time: Date.now()
-            });
+            push(ref(db, "chat"), { text: msgText, time: Date.now() });
             msgInput.value = "";
         }
     }
 
-    // Listen for Messages (Real-time update)
     onValue(ref(db, "chat"), (snapshot) => {
         var box = document.getElementById("chatbox");
-        box.innerHTML = ""; // Purana clear karo taaki double na dikhe
+        box.innerHTML = "";
         snapshot.forEach((childSnapshot) => {
             var data = childSnapshot.val();
             var newMsg = document.createElement("div");
@@ -84,9 +74,8 @@
             newMsg.innerText = data.text;
             box.appendChild(newMsg);
         });
-        box.scrollTop = box.scrollHeight; // Auto scroll to bottom
+        box.scrollTop = box.scrollHeight;
     });
 </script>
-
 </body>
 </html>
