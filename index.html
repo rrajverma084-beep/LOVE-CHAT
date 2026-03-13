@@ -5,9 +5,10 @@
 <title>Private Chat</title>
 
 <style>
+
 body{
-font-family: Arial;
-background:#e5ddd5;
+font-family:Arial;
+background:#0b141a;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -16,61 +17,86 @@ margin:0;
 }
 
 .container{
-width:350px;
-background:white;
+width:380px;
+height:550px;
+background:#efeae2;
 border-radius:10px;
-box-shadow:0 0 10px gray;
+display:flex;
+flex-direction:column;
 overflow:hidden;
 }
 
 .header{
 background:#075E54;
 color:white;
-padding:10px;
+padding:12px;
 text-align:center;
 font-size:18px;
 }
 
 .chatbox{
-height:320px;
-padding:10px;
+flex:1;
 overflow-y:auto;
-background:#efeae2;
+padding:10px;
 display:flex;
 flex-direction:column;
 }
 
-.message{
-background:#dcf8c6;
+.msg{
+max-width:70%;
 padding:8px;
 margin:5px;
-border-radius:6px;
-width:fit-content;
-max-width:75%;
+border-radius:8px;
+font-size:14px;
+}
+
+.me{
+background:#dcf8c6;
+align-self:flex-end;
+}
+
+.other{
+background:white;
+align-self:flex-start;
+}
+
+.name{
+font-size:12px;
+font-weight:bold;
 }
 
 .time{
 font-size:10px;
 color:gray;
-margin-top:3px;
+text-align:right;
+}
+
+.delete{
+font-size:10px;
+color:red;
+cursor:pointer;
 }
 
 .inputArea{
 display:flex;
-border-top:1px solid #ccc;
+padding:8px;
+background:#f0f0f0;
 }
 
 .inputArea input{
 flex:1;
 padding:10px;
 border:none;
+border-radius:20px;
 outline:none;
 }
 
 .inputArea button{
 background:#25D366;
 border:none;
-padding:10px;
+padding:10px 15px;
+margin-left:5px;
+border-radius:20px;
 color:white;
 cursor:pointer;
 }
@@ -79,6 +105,12 @@ cursor:pointer;
 text-align:center;
 padding:20px;
 }
+
+.login input{
+padding:8px;
+margin:5px;
+}
+
 </style>
 
 </head>
@@ -89,17 +121,22 @@ padding:20px;
 
 <div class="header">Private Chat</div>
 
-<div class="login" id="login">
-<input type="password" id="password" placeholder="Enter Password">
-<button onclick="login()">Enter</button>
+<div id="login" class="login">
+
+<input id="name" placeholder="Your Name"><br>
+
+<input id="password" type="password" placeholder="Password"><br>
+
+<button onclick="login()">Enter Chat</button>
+
 </div>
 
-<div id="chat" style="display:none;">
+<div id="chat" style="display:none;flex-direction:column;height:100%;">
 
-<div class="chatbox" id="chatbox"></div>
+<div id="chatbox" class="chatbox"></div>
 
 <div class="inputArea">
-<input type="text" id="message" placeholder="Type message">
+<input id="message" placeholder="Type message">
 <button onclick="sendMessage()">Send</button>
 </div>
 
@@ -110,39 +147,35 @@ padding:20px;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-
+import { getDatabase, ref, push, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-
-authDomain: "love--chat-872da.firebaseapp.com",
-
-databaseURL: "https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-projectId: "love--chat-872da",
-
-storageBucket: "love--chat-872da.appspot.com",
-
-messagingSenderId: "669278823844",
-
-appId: "1:669278823844:web:b165f5000a3e82164c0d31"
+apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
+authDomain:"love--chat-872da.firebaseapp.com",
+databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"love--chat-872da",
+storageBucket:"love--chat-872da.appspot.com",
+messagingSenderId:"669278823844",
+appId:"1:669278823844:web:b165f5000a3e82164c0d31"
 
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
 
+let myName="User";
 
-window.login = function(){
+window.login=function(){
 
-let pass = document.getElementById("password").value;
+let pass=document.getElementById("password").value;
 
-if(pass === "1234"){
+if(pass==="1234"){
+
+myName=document.getElementById("name").value || "User";
 
 document.getElementById("login").style.display="none";
-document.getElementById("chat").style.display="block";
+document.getElementById("chat").style.display="flex";
 
 }else{
 
@@ -152,60 +185,64 @@ alert("Wrong Password");
 
 }
 
+window.sendMessage=function(){
 
-window.sendMessage = function(){
+let input=document.getElementById("message");
+let text=input.value.trim();
 
-let input = document.getElementById("message");
-let msg = input.value.trim();
-
-if(msg === "") return;
+if(text==="") return;
 
 push(ref(db,"chat"),{
 
-text: msg,
-time: new Date().toLocaleTimeString()
+name:myName,
+text:text,
+time:new Date().toLocaleTimeString()
 
-}).then(()=>{
-console.log("Message saved");
-}).catch((error)=>{
-console.error("Error:", error);
 });
 
 input.value="";
 
 }
 
-
 document.getElementById("message").addEventListener("keypress",function(e){
 
-if(e.key === "Enter"){
-
-sendMessage();
-
-}
+if(e.key==="Enter") sendMessage();
 
 });
 
+const chatbox=document.getElementById("chatbox");
 
-const chatbox = document.getElementById("chatbox");
+onChildAdded(ref(db,"chat"),(snapshot)=>{
 
-onChildAdded(ref(db,"chat"), function(snapshot){
+let data=snapshot.val();
+let key=snapshot.key;
 
-const data = snapshot.val();
+let div=document.createElement("div");
 
-let msgDiv = document.createElement("div");
-msgDiv.className="message";
+let sender=data.name || "User";
 
-msgDiv.innerHTML = `
+div.className="msg "+(sender===myName?"me":"other");
+
+div.innerHTML=`
+
+<div class="name">${sender}</div>
 <div>${data.text}</div>
 <div class="time">${data.time}</div>
+<div class="delete" onclick="deleteMsg('${key}')">delete</div>
+
 `;
 
-chatbox.appendChild(msgDiv);
+chatbox.appendChild(div);
 
-chatbox.scrollTop = chatbox.scrollHeight;
+chatbox.scrollTop=chatbox.scrollHeight;
 
 });
+
+window.deleteMsg=function(id){
+
+remove(ref(db,"chat/"+id));
+
+}
 
 </script>
 
