@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,7 +32,7 @@ font-size:18px;
 }
 
 .chatbox{
-height:300px;
+height:320px;
 padding:10px;
 overflow-y:auto;
 background:#efeae2;
@@ -43,8 +44,15 @@ flex-direction:column;
 background:#dcf8c6;
 padding:8px;
 margin:5px;
-border-radius:5px;
+border-radius:6px;
 width:fit-content;
+max-width:75%;
+}
+
+.time{
+font-size:10px;
+color:gray;
+margin-top:3px;
 }
 
 .inputArea{
@@ -113,7 +121,7 @@ apiKey: "AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 
 authDomain: "love--chat-872da.firebaseapp.com",
 
-databaseURL: "https://love--chat-872da-default-rtdb.firebaseio.com",
+databaseURL: "https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 
 projectId: "love--chat-872da",
 
@@ -125,20 +133,17 @@ appId: "1:669278823844:web:b165f5000a3e82164c0d31"
 
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
 
 window.login = function(){
 
-var pass = document.getElementById("password").value;
+let pass = document.getElementById("password").value;
 
-if(pass == "1234"){
+if(pass === "1234"){
 
 document.getElementById("login").style.display="none";
-
 document.getElementById("chat").style.display="block";
 
 }else{
@@ -152,23 +157,34 @@ alert("Wrong Password");
 
 window.sendMessage = function(){
 
-var msg = document.getElementById("message").value;
+let input = document.getElementById("message");
+let msg = input.value;
 
-if(msg != ""){
+if(msg !== ""){
 
 push(ref(db,"chat"),{
 
 text: msg,
-
-time: Date.now()
+time: new Date().toLocaleTimeString()
 
 });
 
-document.getElementById("message").value="";
+input.value="";
 
 }
 
 }
+
+
+document.getElementById("message").addEventListener("keypress",function(e){
+
+if(e.key === "Enter"){
+
+sendMessage();
+
+}
+
+});
 
 
 const chatbox = document.getElementById("chatbox");
@@ -177,13 +193,15 @@ onChildAdded(ref(db,"chat"), function(snapshot){
 
 const data = snapshot.val();
 
-const msg = document.createElement("div");
+let msgDiv = document.createElement("div");
+msgDiv.className="message";
 
-msg.className = "message";
+msgDiv.innerHTML = `
+<div>${data.text}</div>
+<div class="time">${data.time}</div>
+`;
 
-msg.innerText = data.text;
-
-chatbox.appendChild(msg);
+chatbox.appendChild(msgDiv);
 
 chatbox.scrollTop = chatbox.scrollHeight;
 
@@ -193,3 +211,4 @@ chatbox.scrollTop = chatbox.scrollHeight;
 
 </body>
 </html>
+```
