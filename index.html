@@ -45,10 +45,9 @@ flex-direction:column;
 .msg{
 max-width:70%;
 padding:8px;
-margin:4px;
+margin:5px;
 border-radius:8px;
 font-size:14px;
-position:relative;
 }
 
 .me{
@@ -61,10 +60,14 @@ background:white;
 align-self:flex-start;
 }
 
+.name{
+font-weight:bold;
+font-size:12px;
+}
+
 .time{
 font-size:10px;
 color:gray;
-margin-top:3px;
 text-align:right;
 }
 
@@ -72,15 +75,13 @@ text-align:right;
 font-size:10px;
 color:red;
 cursor:pointer;
-position:absolute;
-top:2px;
-right:5px;
+float:right;
 }
 
 .inputArea{
 display:flex;
-background:#f0f0f0;
 padding:6px;
+background:#f0f0f0;
 }
 
 .inputArea input{
@@ -99,7 +100,6 @@ padding:10px 15px;
 border-radius:50%;
 cursor:pointer;
 color:white;
-font-weight:bold;
 }
 
 .login{
@@ -125,14 +125,13 @@ margin:5px;
 <div class="login" id="login">
 
 <input id="name" placeholder="Your Name"><br>
-
 <input type="password" id="password" placeholder="Password"><br>
 
 <button onclick="login()">Enter Chat</button>
 
 </div>
 
-<div id="chat" style="display:none;flex:1;flex-direction:column;">
+<div id="chat" style="display:none;flex-direction:column;height:100%;">
 
 <div class="chatbox" id="chatbox"></div>
 
@@ -152,28 +151,28 @@ import { getDatabase, ref, push, onChildAdded, remove } from "https://www.gstati
 
 const firebaseConfig = {
 
-apiKey: "AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-authDomain: "love--chat-872da.firebaseapp.com",
-databaseURL: "https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId: "love--chat-872da",
-storageBucket: "love--chat-872da.appspot.com",
-messagingSenderId: "669278823844",
-appId: "1:669278823844:web:b165f5000a3e82164c0d31"
+apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
+authDomain:"love--chat-872da.firebaseapp.com",
+databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"love--chat-872da",
+storageBucket:"love--chat-872da.appspot.com",
+messagingSenderId:"669278823844",
+appId:"1:669278823844:web:b165f5000a3e82164c0d31"
 
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let myName="";
+let myName = "";
 
-window.login=function(){
+window.login = function(){
 
-let pass=document.getElementById("password").value;
+let pass = document.getElementById("password").value;
 
-if(pass==="1234"){
+if(pass === "1234"){
 
-myName=document.getElementById("name").value || "User";
+myName = document.getElementById("name").value || "User";
 
 document.getElementById("login").style.display="none";
 document.getElementById("chat").style.display="flex";
@@ -186,18 +185,18 @@ alert("Wrong Password");
 
 }
 
-window.sendMessage=function(){
+window.sendMessage = function(){
 
-let input=document.getElementById("message");
-let text=input.value.trim();
+let input = document.getElementById("message");
+let text = input.value.trim();
 
-if(text==="") return;
+if(text === "") return;
 
 push(ref(db,"chat"),{
 
-name:myName,
-text:text,
-time:new Date().toLocaleTimeString()
+name: myName,
+text: text,
+time: new Date().toLocaleTimeString()
 
 });
 
@@ -207,40 +206,37 @@ input.value="";
 
 document.getElementById("message").addEventListener("keypress",function(e){
 
-if(e.key==="Enter") sendMessage();
+if(e.key==="Enter"){
+sendMessage();
+}
 
 });
 
-const chatbox=document.getElementById("chatbox");
+const chatbox = document.getElementById("chatbox");
 
-onChildAdded(ref(db,"chat"),function(snapshot){
+onChildAdded(ref(db,"chat"), (snapshot)=>{
 
-const data=snapshot.val();
-const key=snapshot.key;
+let data = snapshot.val();
+let key = snapshot.key;
 
-let msg=document.createElement("div");
+let div = document.createElement("div");
 
-msg.className="msg "+(data.name===myName?"me":"other");
+div.className="msg "+(data.name===myName?"me":"other");
 
-msg.innerHTML=`
-
-<div class="delete" onclick="deleteMsg('${key}')">✖</div>
-
-<b>${data.name}</b><br>
-
-${data.text}
-
+div.innerHTML=`
+<div class="name">${data.name || "User"}</div>
+<div>${data.text}</div>
 <div class="time">${data.time}</div>
-
+<div class="delete" onclick="deleteMsg('${key}')">delete</div>
 `;
 
-chatbox.appendChild(msg);
+chatbox.appendChild(div);
 
-chatbox.scrollTop=chatbox.scrollHeight;
+chatbox.scrollTop = chatbox.scrollHeight;
 
 });
 
-window.deleteMsg=function(id){
+window.deleteMsg = function(id){
 
 remove(ref(db,"chat/"+id));
 
