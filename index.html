@@ -1,41 +1,62 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
 <title>Private Chat</title>
 
 <style>
+
 body{
 font-family: Arial;
-background:#e5ddd5;
+
+/* LOVE BACKGROUND */
+background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fad0c4,#ffdde1);
+
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
 margin:0;
+position:relative;
+overflow:hidden;
+}
+
+/* LADDUU NAME BACKGROUND */
+body::before{
+content:"LADDUU";
+position:absolute;
+font-size:150px;
+color:rgba(255,255,255,0.25);
+top:50%;
+left:50%;
+transform:translate(-50%,-50%) rotate(-20deg);
+font-weight:bold;
+letter-spacing:20px;
+pointer-events:none;
 }
 
 .container{
 width:350px;
 background:white;
 border-radius:10px;
-box-shadow:0 0 10px gray;
+box-shadow:0 0 15px rgba(0,0,0,0.3);
 overflow:hidden;
+z-index:1;
 }
 
 .header{
-background:#075E54;
+background:#ff4d6d;
 color:white;
 padding:10px;
 text-align:center;
 font-size:18px;
+font-weight:bold;
 }
 
 .chatbox{
 height:320px;
 padding:10px;
 overflow-y:auto;
-background:#efeae2;
+background:#fff0f3;
 display:flex;
 flex-direction:column;
 }
@@ -68,7 +89,7 @@ outline:none;
 }
 
 .inputArea button{
-background:#25D366;
+background:#ff4d6d;
 border:none;
 padding:10px;
 color:white;
@@ -79,6 +100,19 @@ cursor:pointer;
 text-align:center;
 padding:20px;
 }
+
+.login input{
+padding:8px;
+}
+
+.login button{
+padding:8px 12px;
+background:#ff4d6d;
+border:none;
+color:white;
+cursor:pointer;
+}
+
 </style>
 
 </head>
@@ -87,7 +121,7 @@ padding:20px;
 
 <div class="container">
 
-<div class="header">Private Chat</div>
+<div class="header">❤️ Private Love Chat ❤️</div>
 
 <div class="login" id="login">
 <input type="password" id="password" placeholder="Enter Password">
@@ -112,28 +146,20 @@ padding:20px;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
 import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-
 const firebaseConfig = {
 
 apiKey: "AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-
 authDomain: "love--chat-872da.firebaseapp.com",
-
 databaseURL: "https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId: "love--chat-872da",
-
 storageBucket: "love--chat-872da.appspot.com",
-
 messagingSenderId: "669278823844",
-
 appId: "1:669278823844:web:b165f5000a3e82164c0d31"
 
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
 
 window.login = function(){
 
@@ -152,7 +178,6 @@ alert("Wrong Password");
 
 }
 
-
 window.sendMessage = function(){
 
 let input = document.getElementById("message");
@@ -165,16 +190,11 @@ push(ref(db,"chat"),{
 text: msg,
 time: new Date().toLocaleTimeString()
 
-}).then(()=>{
-console.log("Message saved");
-}).catch((error)=>{
-console.error("Error:", error);
 });
 
 input.value="";
 
 }
-
 
 document.getElementById("message").addEventListener("keypress",function(e){
 
@@ -185,7 +205,6 @@ sendMessage();
 }
 
 });
-
 
 const chatbox = document.getElementById("chatbox");
 
@@ -211,4 +230,3 @@ chatbox.scrollTop = chatbox.scrollHeight;
 
 </body>
 </html>
-```
