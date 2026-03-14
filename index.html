@@ -55,6 +55,7 @@ font-size:12px;
 .inputArea{
 display:flex;
 border-top:1px solid #ccc;
+position:relative;
 }
 
 .inputArea input{
@@ -71,6 +72,38 @@ padding:10px;
 cursor:pointer;
 }
 
+/* Emoji Button */
+#emojiBtn{
+background:#fff;
+border:1px solid #ccc;
+border-radius:5px;
+cursor:pointer;
+font-size:20px;
+margin-right:5px;
+}
+
+/* Emoji Picker Panel */
+#emojiPicker{
+display:none;
+position:absolute;
+bottom:50px;
+left:5px;
+background:#fff;
+border:1px solid #ccc;
+border-radius:8px;
+padding:5px;
+max-width:200px;
+flex-wrap:wrap;
+display:flex;
+z-index:10;
+}
+
+#emojiPicker span{
+cursor:pointer;
+font-size:22px;
+margin:2px;
+}
+
 .callArea{
 text-align:center;
 padding:10px;
@@ -81,21 +114,6 @@ width:48%;
 background:black;
 border-radius:8px;
 margin:2px;
-}
-
-/* Emoji Buttons Style */
-.emojiArea span{
-cursor:pointer;
-font-size:22px;
-margin:2px;
-}
-
-.emojiArea{
-padding:5px;
-text-align:left;
-background:#fff0f3;
-border-top:1px solid #ccc;
-border-bottom:1px solid #ccc;
 }
 
 </style>
@@ -109,8 +127,14 @@ border-bottom:1px solid #ccc;
 
 <div class="chatbox" id="chatbox"></div>
 
-<!-- Emoji Buttons -->
-<div class="emojiArea">
+<!-- Input area with emoji button -->
+<div class="inputArea">
+<button id="emojiBtn">😊</button>
+<input type="text" id="message" placeholder="Type message">
+<button onclick="sendMessage()">Send</button>
+
+<!-- Emoji Picker Panel -->
+<div id="emojiPicker">
 <span>😍</span>
 <span>😂</span>
 <span>😢</span>
@@ -120,11 +144,8 @@ border-bottom:1px solid #ccc;
 <span>🤔</span>
 <span>🥰</span>
 <span>😜</span>
+<span>💖</span>
 </div>
-
-<div class="inputArea">
-<input type="text" id="message" placeholder="Type message">
-<button onclick="sendMessage()">Send</button>
 </div>
 
 <div class="callArea">
@@ -263,13 +284,22 @@ document.getElementById("remoteVideo").srcObject = remoteStream;
 
 });
 
-/* EMOJI CLICK TO INPUT */
+/* EMOJI BUTTON + PICKER */
 
-document.querySelectorAll('.emojiArea span').forEach(function(emoji){
-    emoji.addEventListener('click', function(e){
-        let input = document.getElementById('message');
-        input.value += e.target.innerText;
-        input.focus();
+const emojiBtn = document.getElementById('emojiBtn');
+const emojiPicker = document.getElementById('emojiPicker');
+const messageInput = document.getElementById('message');
+
+emojiBtn.addEventListener('click', function(){
+    emojiPicker.style.display = emojiPicker.style.display === "flex" ? "none" : "flex";
+});
+
+// Emoji Select
+emojiPicker.querySelectorAll('span').forEach(function(emoji){
+    emoji.addEventListener('click', function(){
+        messageInput.value += emoji.innerText;
+        messageInput.focus();
+        emojiPicker.style.display = 'none';
     });
 });
 
