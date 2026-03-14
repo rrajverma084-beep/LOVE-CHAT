@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +8,7 @@
 
 body{
 font-family: Arial;
-background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fad0c4,#ffdde1);
+background: linear-gradient(135deg,#ff9a9e,#fad0c4,#ffdde1);
 display:flex;
 justify-content:center;
 align-items:center;
@@ -31,7 +32,7 @@ text-align:center;
 }
 
 .chatbox{
-height:200px;
+height:220px;
 overflow:auto;
 padding:10px;
 background:#fff0f3;
@@ -61,11 +62,12 @@ background:#ff4d6d;
 border:none;
 color:white;
 padding:10px;
+cursor:pointer;
 }
 
 .callArea{
 text-align:center;
-padding:8px;
+padding:10px;
 }
 
 video{
@@ -114,12 +116,14 @@ margin:2px;
 
 </div>
 
+<!-- PeerJS -->
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
-<script type="module">
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+<script>
 
 const firebaseConfig = {
 
@@ -130,21 +134,21 @@ projectId: "love--chat-872da"
 
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 let localStream;
 
-/* ---------------- CHAT SYSTEM ---------------- */
+/* CHAT */
 
-window.sendMessage = function(){
+function sendMessage(){
 
 let input=document.getElementById("message");
 let msg=input.value.trim();
 
 if(msg==="") return;
 
-push(ref(db,"chat"),{
+db.ref("chat").push({
 text:msg,
 time:new Date().toLocaleTimeString()
 });
@@ -155,9 +159,9 @@ input.value="";
 
 const chatbox=document.getElementById("chatbox");
 
-onChildAdded(ref(db,"chat"),function(snapshot){
+db.ref("chat").on("child_added",function(snapshot){
 
-const data=snapshot.val();
+let data=snapshot.val();
 
 let div=document.createElement("div");
 div.className="message";
@@ -170,17 +174,17 @@ chatbox.scrollTop=chatbox.scrollHeight;
 
 });
 
-/* ---------------- CALL SYSTEM ---------------- */
+/* VIDEO CALL */
 
 const peer = new Peer();
 
-peer.on("open", function(id){
+peer.on("open",function(id){
 
 document.getElementById("myId").innerText=id;
 
 });
 
-window.startCamera = async function(){
+async function startCamera(){
 
 localStream = await navigator.mediaDevices.getUserMedia({
 video:true,
@@ -191,13 +195,13 @@ document.getElementById("localVideo").srcObject = localStream;
 
 }
 
-window.callUser = function(){
+function callUser(){
 
 let id=document.getElementById("callId").value;
 
 const call = peer.call(id, localStream);
 
-call.on("stream", function(remoteStream){
+call.on("stream",function(remoteStream){
 
 document.getElementById("remoteVideo").srcObject = remoteStream;
 
@@ -205,11 +209,11 @@ document.getElementById("remoteVideo").srcObject = remoteStream;
 
 }
 
-peer.on("call", function(call){
+peer.on("call",function(call){
 
 call.answer(localStream);
 
-call.on("stream", function(remoteStream){
+call.on("stream",function(remoteStream){
 
 document.getElementById("remoteVideo").srcObject = remoteStream;
 
@@ -221,3 +225,4 @@ document.getElementById("remoteVideo").srcObject = remoteStream;
 
 </body>
 </html>
+```
