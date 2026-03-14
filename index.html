@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -84,6 +83,21 @@ border-radius:8px;
 margin:2px;
 }
 
+/* Emoji Buttons Style */
+.emojiArea span{
+cursor:pointer;
+font-size:22px;
+margin:2px;
+}
+
+.emojiArea{
+padding:5px;
+text-align:left;
+background:#fff0f3;
+border-top:1px solid #ccc;
+border-bottom:1px solid #ccc;
+}
+
 </style>
 </head>
 
@@ -94,6 +108,19 @@ margin:2px;
 <div class="header">❤️ Private Love Chat</div>
 
 <div class="chatbox" id="chatbox"></div>
+
+<!-- Emoji Buttons -->
+<div class="emojiArea">
+<span>😍</span>
+<span>😂</span>
+<span>😢</span>
+<span>😎</span>
+<span>❤️</span>
+<span>👍</span>
+<span>🤔</span>
+<span>🥰</span>
+<span>😜</span>
+</div>
 
 <div class="inputArea">
 <input type="text" id="message" placeholder="Type message">
@@ -236,8 +263,17 @@ document.getElementById("remoteVideo").srcObject = remoteStream;
 
 });
 
+/* EMOJI CLICK TO INPUT */
+
+document.querySelectorAll('.emojiArea span').forEach(function(emoji){
+    emoji.addEventListener('click', function(e){
+        let input = document.getElementById('message');
+        input.value += e.target.innerText;
+        input.focus();
+    });
+});
+
 </script>
 
 </body>
 </html>
-```
