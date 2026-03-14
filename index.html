@@ -1,46 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Private Chat</title>
+<title>Private Love Chat</title>
 
 <style>
 
 body{
 font-family: Arial;
-
-/* LOVE BACKGROUND */
 background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fad0c4,#ffdde1);
-
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
 margin:0;
-position:relative;
-overflow:hidden;
-}
-
-/* LADDUU NAME BACKGROUND */
-body::before{
-content:"LADDUU";
-position:absolute;
-font-size:150px;
-color:rgba(255,255,255,0.25);
-top:50%;
-left:50%;
-transform:translate(-50%,-50%) rotate(-20deg);
-font-weight:bold;
-letter-spacing:20px;
-pointer-events:none;
 }
 
 .container{
-width:350px;
+width:360px;
 background:white;
 border-radius:10px;
-box-shadow:0 0 15px rgba(0,0,0,0.3);
 overflow:hidden;
-z-index:1;
+box-shadow:0 0 10px gray;
 }
 
 .header{
@@ -48,17 +28,13 @@ background:#ff4d6d;
 color:white;
 padding:10px;
 text-align:center;
-font-size:18px;
-font-weight:bold;
 }
 
 .chatbox{
-height:320px;
+height:250px;
+overflow:auto;
 padding:10px;
-overflow-y:auto;
 background:#fff0f3;
-display:flex;
-flex-direction:column;
 }
 
 .message{
@@ -67,13 +43,6 @@ padding:8px;
 margin:5px;
 border-radius:6px;
 width:fit-content;
-max-width:75%;
-}
-
-.time{
-font-size:10px;
-color:gray;
-margin-top:3px;
 }
 
 .inputArea{
@@ -85,50 +54,37 @@ border-top:1px solid #ccc;
 flex:1;
 padding:10px;
 border:none;
-outline:none;
 }
 
 .inputArea button{
 background:#ff4d6d;
 border:none;
+color:white;
 padding:10px;
-color:white;
-cursor:pointer;
 }
 
-.login{
+video{
+width:48%;
+margin:1%;
+background:black;
+border-radius:8px;
+}
+
+.callButtons{
 text-align:center;
-padding:20px;
-}
-
-.login input{
-padding:8px;
-}
-
-.login button{
-padding:8px 12px;
-background:#ff4d6d;
-border:none;
-color:white;
-cursor:pointer;
+padding:5px;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<div class="header">❤️ Private Love Chat ❤️</div>
-
-<div class="login" id="login">
-<input type="password" id="password" placeholder="Enter Password">
-<button onclick="login()">Enter</button>
+<div class="header">
+❤️ Private Love Chat
 </div>
-
-<div id="chat" style="display:none;">
 
 <div class="chatbox" id="chatbox"></div>
 
@@ -137,6 +93,14 @@ cursor:pointer;
 <button onclick="sendMessage()">Send</button>
 </div>
 
+<div class="callButtons">
+<button onclick="startCamera()">Start Camera</button>
+<button onclick="startCall()">📞 Call</button>
+</div>
+
+<div style="text-align:center">
+<video id="localVideo" autoplay muted></video>
+<video id="remoteVideo" autoplay></video>
 </div>
 
 </div>
@@ -151,78 +115,82 @@ const firebaseConfig = {
 apiKey: "AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain: "love--chat-872da.firebaseapp.com",
 databaseURL: "https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId: "love--chat-872da",
-storageBucket: "love--chat-872da.appspot.com",
-messagingSenderId: "669278823844",
-appId: "1:669278823844:web:b165f5000a3e82164c0d31"
+projectId: "love--chat-872da"
 
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-window.login = function(){
+let localStream;
+let pc;
 
-let pass = document.getElementById("password").value;
+window.startCamera = async function(){
 
-if(pass === "1234"){
+localStream = await navigator.mediaDevices.getUserMedia({
+video:true,
+audio:true
+});
 
-document.getElementById("login").style.display="none";
-document.getElementById("chat").style.display="block";
-
-}else{
-
-alert("Wrong Password");
+document.getElementById("localVideo").srcObject = localStream;
 
 }
+
+window.startCall = async function(){
+
+pc = new RTCPeerConnection({
+iceServers:[
+{urls:"stun:stun.l.google.com:19302"}
+]
+});
+
+localStream.getTracks().forEach(track=>{
+pc.addTrack(track,localStream);
+});
+
+pc.ontrack = function(event){
+document.getElementById("remoteVideo").srcObject = event.streams[0];
+}
+
+const offer = await pc.createOffer();
+await pc.setLocalDescription(offer);
+
+push(ref(db,"calls"),{
+offer: JSON.stringify(offer)
+});
 
 }
 
 window.sendMessage = function(){
 
-let input = document.getElementById("message");
-let msg = input.value.trim();
+let input=document.getElementById("message");
+let msg=input.value.trim();
 
-if(msg === "") return;
+if(msg==="") return;
 
 push(ref(db,"chat"),{
-
-text: msg,
-time: new Date().toLocaleTimeString()
-
+text:msg,
+time:new Date().toLocaleTimeString()
 });
 
 input.value="";
 
 }
 
-document.getElementById("message").addEventListener("keypress",function(e){
+const chatbox=document.getElementById("chatbox");
 
-if(e.key === "Enter"){
+onChildAdded(ref(db,"chat"),function(snapshot){
 
-sendMessage();
+const data=snapshot.val();
 
-}
+let div=document.createElement("div");
+div.className="message";
 
-});
+div.innerHTML=data.text;
 
-const chatbox = document.getElementById("chatbox");
+chatbox.appendChild(div);
 
-onChildAdded(ref(db,"chat"), function(snapshot){
-
-const data = snapshot.val();
-
-let msgDiv = document.createElement("div");
-msgDiv.className="message";
-
-msgDiv.innerHTML = `
-<div>${data.text}</div>
-<div class="time">${data.time}</div>
-`;
-
-chatbox.appendChild(msgDiv);
-
-chatbox.scrollTop = chatbox.scrollHeight;
+chatbox.scrollTop=chatbox.scrollHeight;
 
 });
 
