@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,6 +44,14 @@ padding:8px;
 margin:5px;
 border-radius:6px;
 width:fit-content;
+position:relative;
+}
+
+.deleteBtn{
+font-size:10px;
+color:red;
+cursor:pointer;
+margin-left:10px;
 }
 
 .inputArea{
@@ -84,9 +92,7 @@ margin:2px;
 
 <div class="container">
 
-<div class="header">
-❤️ Private Love Chat
-</div>
+<div class="header">❤️ Private Love Chat</div>
 
 <div class="chatbox" id="chatbox"></div>
 
@@ -116,10 +122,8 @@ margin:2px;
 
 </div>
 
-<!-- PeerJS -->
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
@@ -139,7 +143,7 @@ const db = firebase.database();
 
 let localStream;
 
-/* CHAT */
+/* CHAT SYSTEM */
 
 function sendMessage(){
 
@@ -162,11 +166,16 @@ const chatbox=document.getElementById("chatbox");
 db.ref("chat").on("child_added",function(snapshot){
 
 let data=snapshot.val();
+let key=snapshot.key;
 
 let div=document.createElement("div");
 div.className="message";
+div.id="msg-"+key;
 
-div.innerHTML=data.text;
+div.innerHTML = `
+${data.text}
+<span class="deleteBtn" onclick="deleteMessage('${key}')">❌</span>
+`;
 
 chatbox.appendChild(div);
 
@@ -174,14 +183,26 @@ chatbox.scrollTop=chatbox.scrollHeight;
 
 });
 
+/* DELETE MESSAGE */
+
+function deleteMessage(id){
+
+db.ref("chat/"+id).remove();
+
+let msg=document.getElementById("msg-"+id);
+
+if(msg){
+msg.remove();
+}
+
+}
+
 /* VIDEO CALL */
 
 const peer = new Peer();
 
 peer.on("open",function(id){
-
 document.getElementById("myId").innerText=id;
-
 });
 
 async function startCamera(){
@@ -202,9 +223,7 @@ let id=document.getElementById("callId").value;
 const call = peer.call(id, localStream);
 
 call.on("stream",function(remoteStream){
-
 document.getElementById("remoteVideo").srcObject = remoteStream;
-
 });
 
 }
@@ -214,9 +233,7 @@ peer.on("call",function(call){
 call.answer(localStream);
 
 call.on("stream",function(remoteStream){
-
 document.getElementById("remoteVideo").srcObject = remoteStream;
-
 });
 
 });
