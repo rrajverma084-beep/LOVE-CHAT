@@ -92,7 +92,9 @@ background:#fff;
 border:1px solid #ccc;
 border-radius:8px;
 padding:5px;
-max-width:200px;
+width:220px;
+max-height:150px;
+overflow-y:scroll;
 flex-wrap:wrap;
 display:flex;
 z-index:10;
@@ -121,6 +123,17 @@ margin:2px;
 
 <body>
 
+<script>
+// 🔒 Password Protection
+let userPassword = prompt("Enter password to access chat:");
+
+if(userPassword !== "2020"){
+    alert("Wrong password! Access denied.");
+    document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied 🚫</h2>";
+    throw new Error("Access Denied");
+}
+</script>
+
 <div class="container">
 
 <div class="header">❤️ Private Love Chat</div>
@@ -145,6 +158,37 @@ margin:2px;
 <span>🥰</span>
 <span>😜</span>
 <span>💖</span>
+<span>🔥</span>
+<span>💯</span>
+<span>🥳</span>
+<span>🤩</span>
+<span>🎉</span>
+<span>🤗</span>
+<span>🤪</span>
+<span>🤤</span>
+<span>😇</span>
+<span>😏</span>
+<span>😌</span>
+<span>🥺</span>
+<span>😱</span>
+<span>😡</span>
+<span>😭</span>
+<span>🤭</span>
+<span>🤫</span>
+<span>🫶</span>
+<span>😴</span>
+<span>🫠</span>
+<span>🤯</span>
+<span>😵‍💫</span>
+<span>🫣</span>
+<span>😬</span>
+<span>🙃</span>
+<span>😅</span>
+<span>🫡</span>
+<span>🫢</span>
+<span>👀</span>
+<span>🥵</span>
+<span>🥶</span>
 </div>
 </div>
 
@@ -191,101 +235,53 @@ const db = firebase.database();
 let localStream;
 
 /* MESSAGE SEND */
-
 function sendMessage(){
-
 let input=document.getElementById("message");
 let msg=input.value.trim();
-
 if(msg==="") return;
-
-db.ref("chat").push({
-text:msg
-});
-
+db.ref("chat").push({ text:msg });
 input.value="";
-
 }
 
 /* MESSAGE SHOW */
-
 const chatbox=document.getElementById("chatbox");
-
 db.ref("chat").on("child_added",function(snapshot){
-
 let data=snapshot.val();
 let key=snapshot.key;
-
 let div=document.createElement("div");
 div.className="message";
 div.id="msg-"+key;
-
 div.innerHTML = data.text + 
 "<span class='deleteBtn' onclick=\"deleteMessage('" + key + "')\">❌</span>";
-
 chatbox.appendChild(div);
-
 chatbox.scrollTop=chatbox.scrollHeight;
-
 });
 
 /* DELETE MESSAGE */
-
 function deleteMessage(id){
-
 db.ref("chat/"+id).remove();
-
 let msg=document.getElementById("msg-"+id);
-
-if(msg){
-msg.remove();
-}
-
+if(msg){ msg.remove(); }
 }
 
 /* VIDEO CALL */
-
 const peer = new Peer();
-
-peer.on("open",function(id){
-document.getElementById("myId").innerText=id;
-});
-
+peer.on("open",function(id){ document.getElementById("myId").innerText=id; });
 async function startCamera(){
-
-localStream = await navigator.mediaDevices.getUserMedia({
-video:true,
-audio:true
-});
-
+localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
 document.getElementById("localVideo").srcObject = localStream;
-
 }
-
 function callUser(){
-
 let id=document.getElementById("callId").value;
-
 const call = peer.call(id, localStream);
-
-call.on("stream",function(remoteStream){
-document.getElementById("remoteVideo").srcObject = remoteStream;
-});
-
+call.on("stream",function(remoteStream){ document.getElementById("remoteVideo").srcObject = remoteStream; });
 }
-
 peer.on("call",function(call){
-
 call.answer(localStream);
-
-call.on("stream",function(remoteStream){
-document.getElementById("remoteVideo").srcObject = remoteStream;
-});
-
+call.on("stream",function(remoteStream){ document.getElementById("remoteVideo").srcObject = remoteStream; });
 });
 
 /* EMOJI BUTTON + PICKER */
-
 const emojiBtn = document.getElementById('emojiBtn');
 const emojiPicker = document.getElementById('emojiPicker');
 const messageInput = document.getElementById('message');
