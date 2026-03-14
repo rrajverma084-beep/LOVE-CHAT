@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,14 +44,13 @@ padding:8px;
 margin:5px;
 border-radius:6px;
 width:fit-content;
-position:relative;
 }
 
 .deleteBtn{
-font-size:10px;
-color:red;
+margin-left:8px;
 cursor:pointer;
-margin-left:10px;
+color:red;
+font-size:12px;
 }
 
 .inputArea{
@@ -143,7 +142,7 @@ const db = firebase.database();
 
 let localStream;
 
-/* CHAT SYSTEM */
+/* MESSAGE SEND */
 
 function sendMessage(){
 
@@ -153,13 +152,14 @@ let msg=input.value.trim();
 if(msg==="") return;
 
 db.ref("chat").push({
-text:msg,
-time:new Date().toLocaleTimeString()
+text:msg
 });
 
 input.value="";
 
 }
+
+/* MESSAGE SHOW */
 
 const chatbox=document.getElementById("chatbox");
 
@@ -172,10 +172,8 @@ let div=document.createElement("div");
 div.className="message";
 div.id="msg-"+key;
 
-div.innerHTML = `
-${data.text}
-<span class="deleteBtn" onclick="deleteMessage('${key}')">❌</span>
-`;
+div.innerHTML = data.text + 
+"<span class='deleteBtn' onclick=\"deleteMessage('" + key + "')\">❌</span>";
 
 chatbox.appendChild(div);
 
