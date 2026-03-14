@@ -2,137 +2,143 @@
 <html>
 <head>
 <title>Private Love Chat</title>
-
 <style>
-
 body{
-font-family: Arial;
-background: linear-gradient(135deg,#ff9a9e,#fad0c4,#ffdde1);
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
+  font-family: Arial;
+  background: linear-gradient(135deg,#ff9a9e,#fad0c4,#ffdde1);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  margin:0;
 }
 
 .container{
-width:360px;
-background:white;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 0 10px gray;
+  width:360px;
+  background:white;
+  border-radius:10px;
+  overflow:hidden;
+  box-shadow:0 0 10px gray;
 }
 
 .header{
-background:#ff4d6d;
-color:white;
-padding:10px;
-text-align:center;
+  background:#ff4d6d;
+  color:white;
+  padding:10px;
+  text-align:center;
 }
 
 .chatbox{
-height:220px;
-overflow:auto;
-padding:10px;
-background:#fff0f3;
+  height:220px;
+  overflow:auto;
+  padding:10px;
+  background:#fff0f3;
 }
 
 .message{
-background:#dcf8c6;
-padding:8px;
-margin:5px;
-border-radius:6px;
-width:fit-content;
+  background:#dcf8c6;
+  padding:8px;
+  margin:5px;
+  border-radius:6px;
+  width:fit-content;
 }
 
 .deleteBtn{
-margin-left:8px;
-cursor:pointer;
-color:red;
-font-size:12px;
+  margin-left:8px;
+  cursor:pointer;
+  color:red;
+  font-size:12px;
 }
 
 .inputArea{
-display:flex;
-border-top:1px solid #ccc;
-position:relative;
+  display:flex;
+  border-top:1px solid #ccc;
+  position:relative;
 }
 
 .inputArea input{
-flex:1;
-padding:10px;
-border:none;
+  flex:1;
+  padding:10px;
+  border:none;
 }
 
 .inputArea button{
-background:#ff4d6d;
-border:none;
-color:white;
-padding:10px;
-cursor:pointer;
+  background:#ff4d6d;
+  border:none;
+  color:white;
+  padding:10px;
+  cursor:pointer;
 }
 
 /* Emoji Button */
 #emojiBtn{
-background:#fff;
-border:1px solid #ccc;
-border-radius:5px;
-cursor:pointer;
-font-size:20px;
-margin-right:5px;
+  background:#fff;
+  border:1px solid #ccc;
+  border-radius:5px;
+  cursor:pointer;
+  font-size:20px;
+  margin-right:5px;
 }
 
 /* Emoji Picker Panel */
 #emojiPicker{
-display:none;
-position:absolute;
-bottom:50px;
-left:5px;
-background:#fff;
-border:1px solid #ccc;
-border-radius:8px;
-padding:5px;
-width:220px;
-max-height:150px;
-overflow-y:scroll;
-flex-wrap:wrap;
-display:flex;
-z-index:10;
+  display:none;
+  position:absolute;
+  bottom:50px;
+  left:5px;
+  background:#fff;
+  border:1px solid #ccc;
+  border-radius:8px;
+  padding:5px;
+  width:220px;
+  max-height:150px;
+  overflow-y:scroll;
+  flex-wrap:wrap;
+  display:flex;
+  z-index:10;
 }
 
 #emojiPicker span{
-cursor:pointer;
-font-size:22px;
-margin:2px;
+  cursor:pointer;
+  font-size:22px;
+  margin:2px;
 }
 
 .callArea{
-text-align:center;
-padding:10px;
+  text-align:center;
+  padding:10px;
 }
 
 video{
-width:48%;
-background:black;
-border-radius:8px;
-margin:2px;
+  width:48%;
+  background:black;
+  border-radius:8px;
+  margin:2px;
+}
+
+/* Initially hide chat container */
+#chatContainer{
+  display:none;
 }
 
 </style>
 </head>
-
 <body>
 
 <script>
-// 🔒 Password Protection
-let userPassword = prompt("Enter password to access chat:");
-
-if(userPassword !== "2020"){
-    alert("Wrong password! Access denied.");
-    document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;
-    
+// 🔒 Password protection
+let password = "";
+while(password !== "2020"){
+    password = prompt("Enter password to access chat:");
+    if(password === null){ // user pressed Cancel
+        document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Cancelled 🚫</h2>";
+        throw new Error("Access Cancelled");
+    }
 }
 </script>
+
+<!-- ALL CHAT CONTENT WRAPPED HERE -->
+<div id="chatContainer">
 
 <div class="container">
 
@@ -140,54 +146,20 @@ if(userPassword !== "2020"){
 
 <div class="chatbox" id="chatbox"></div>
 
-<!-- Input area with emoji button -->
 <div class="inputArea">
 <button id="emojiBtn">😊</button>
 <input type="text" id="message" placeholder="Type message">
 <button onclick="sendMessage()">Send</button>
 
-<!-- Emoji Picker Panel -->
 <div id="emojiPicker">
-<span>😍</span>
-<span>😂</span>
-<span>😢</span>
-<span>😎</span>
-<span>❤️</span>
-<span>👍</span>
-<span>🤔</span>
-<span>🥰</span>
-<span>😜</span>
-<span>💖</span>
-<span>🔥</span>
-<span>💯</span>
-<span>🥳</span>
-<span>🤩</span>
-<span>🎉</span>
-<span>🤗</span>
-<span>🤪</span>
-<span>🤤</span>
-<span>😇</span>
-<span>😏</span>
-<span>😌</span>
-<span>🥺</span>
-<span>😱</span>
-<span>😡</span>
-<span>😭</span>
-<span>🤭</span>
-<span>🤫</span>
-<span>🫶</span>
-<span>😴</span>
-<span>🫠</span>
-<span>🤯</span>
-<span>😵‍💫</span>
-<span>🫣</span>
-<span>😬</span>
-<span>🙃</span>
-<span>😅</span>
-<span>🫡</span>
-<span>🫢</span>
-<span>👀</span>
-<span>🥵</span>
+<span>😍</span><span>😂</span><span>😢</span><span>😎</span><span>❤️</span>
+<span>👍</span><span>🤔</span><span>🥰</span><span>😜</span><span>💖</span>
+<span>🔥</span><span>💯</span><span>🥳</span><span>🤩</span><span>🎉</span>
+<span>🤗</span><span>🤪</span><span>🤤</span><span>😇</span><span>😏</span>
+<span>😌</span><span>🥺</span><span>😱</span><span>😡</span><span>😭</span>
+<span>🤭</span><span>🤫</span><span>🫶</span><span>😴</span><span>🫠</span>
+<span>🤯</span><span>😵‍💫</span><span>🫣</span><span>😬</span><span>🙃</span>
+<span>😅</span><span>🫡</span><span>🫢</span><span>👀</span><span>🥵</span>
 <span>🥶</span>
 </div>
 </div>
@@ -213,20 +185,22 @@ if(userPassword !== "2020"){
 
 </div>
 
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+</div>
 
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
+// Show chat only after correct password
+document.getElementById("chatContainer").style.display = "block";
 
+// Firebase config
 const firebaseConfig = {
-
 apiKey: "AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain: "love--chat-872da.firebaseapp.com",
 databaseURL: "https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId: "love--chat-872da"
-
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -251,8 +225,7 @@ let key=snapshot.key;
 let div=document.createElement("div");
 div.className="message";
 div.id="msg-"+key;
-div.innerHTML = data.text + 
-"<span class='deleteBtn' onclick=\"deleteMessage('" + key + "')\">❌</span>";
+div.innerHTML = data.text + "<span class='deleteBtn' onclick=\"deleteMessage('" + key + "')\">❌</span>";
 chatbox.appendChild(div);
 chatbox.scrollTop=chatbox.scrollHeight;
 });
@@ -298,7 +271,6 @@ emojiPicker.querySelectorAll('span').forEach(function(emoji){
         emojiPicker.style.display = 'none';
     });
 });
-
 </script>
 
 </body>
