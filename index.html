@@ -3,28 +3,14 @@
 <head>
 <title>🍭 LADUU PIYUU CHAT 💖</title>
 
-<script>
-let pass = prompt("Enter Password");
-if(pass !== "2020"){
-document.write("<h1 style='text-align:center;margin-top:100px;'>❌ Wrong Password</h1>");
-throw new Error("Wrong Password");
-}
-</script>
-
 <style>
-/* Reset */
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
+/* Initially hide body */
 body{
-font-family:Arial, sans-serif;
-height:100vh;
-display:flex;
-flex-direction:column;
-background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  display:none; /* hide until correct password */
+  font-family: Arial, sans-serif;
+  height:100vh;
+  flex-direction:column;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 }
 
 /* Header */
@@ -185,6 +171,20 @@ animation:float 3s linear;
 video{width:100%;margin:4px 0;}
 }
 </style>
+
+<script>
+// Password check
+let pass = prompt("Enter Password");
+if(pass === "2020"){
+  document.addEventListener("DOMContentLoaded", function(){
+    document.body.style.display = "flex"; // show only if correct
+  });
+} else {
+  alert("❌ Wrong Password! You cannot access this page.");
+  throw new Error("Wrong Password"); // stop page loading
+}
+</script>
+
 </head>
 
 <body>
