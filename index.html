@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -15,8 +15,6 @@ display:flex;
 flex-direction:column;
 }
 
-/* HEADER */
-
 .header{
 background:#ff4d6d;
 color:white;
@@ -27,7 +25,18 @@ align-items:center;
 font-size:18px;
 }
 
-/* CHAT */
+.videoArea{
+display:flex;
+justify-content:center;
+gap:10px;
+background:black;
+padding:5px;
+}
+
+.videoArea video{
+width:150px;
+border-radius:10px;
+}
 
 .chatbox{
 flex:1;
@@ -59,12 +68,11 @@ margin-top:3px;
 text-align:right;
 }
 
-/* INPUT */
-
 .inputArea{
 display:flex;
 padding:6px;
 background:#f0f0f0;
+align-items:center;
 }
 
 .inputArea input{
@@ -84,7 +92,24 @@ border-radius:20px;
 cursor:pointer;
 }
 
-/* CALL POPUP */
+#emojiPicker{
+position:absolute;
+bottom:60px;
+left:10px;
+background:white;
+border:1px solid #ccc;
+border-radius:8px;
+padding:5px;
+width:200px;
+display:none;
+flex-wrap:wrap;
+}
+
+#emojiPicker span{
+font-size:22px;
+cursor:pointer;
+margin:3px;
+}
 
 #incomingCall{
 display:none;
@@ -95,39 +120,8 @@ transform:translate(-50%,-50%);
 background:white;
 padding:20px;
 border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,0.3);
 text-align:center;
-z-index:1000;
-}
-
-/* VIDEO POPUP */
-
-#videoPopup{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-display:none;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-z-index:999;
-}
-
-#videoPopup video{
-width:45%;
-margin:10px;
-border-radius:10px;
-}
-
-#closeCall{
-background:red;
-color:white;
-padding:10px 20px;
-border:none;
-border-radius:8px;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
 }
 
 </style>
@@ -136,17 +130,15 @@ border-radius:8px;
 <body>
 
 <script>
-
 let password="";
 while(password!=="2020"){
-password=prompt("Enter Password to Open LADUU PIYUU CHAT");
+password=prompt("Enter Password");
 
 if(password===null){
 document.body.innerHTML="<h2 style='text-align:center;margin-top:50px;'>Access Cancelled</h2>";
 throw new Error("cancel");
 }
 }
-
 </script>
 
 <div class="header">
@@ -154,186 +146,19 @@ throw new Error("cancel");
 <button onclick="startCall()">📞</button>
 </div>
 
+<div class="videoArea">
+<video id="localVideo" autoplay muted></video>
+<video id="remoteVideo" autoplay></video>
+
+<button onclick="endCall()" style="background:red;color:white;border:none;padding:8px;border-radius:6px;">
+End Call
+</button>
+</div>
+
 <div class="chatbox" id="chatbox"></div>
 
 <div class="inputArea">
+<button id="emojiBtn">😊</button>
 <input id="message" placeholder="Type message">
-<button onclick="sendMessage()">Send</button>
-</div>
-
-<div id="incomingCall">
-<h3>📞 Incoming Call</h3>
-<button onclick="acceptCall()">Accept</button>
-<button onclick="rejectCall()">Reject</button>
-</div>
-
-<div id="videoPopup">
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
-<button id="closeCall" onclick="endCall()">🔴 End Call</button>
-</div>
-
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
-
-<script>
-
-const firebaseConfig={
-apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-authDomain:"love--chat-872da.firebaseapp.com",
-databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"love--chat-872da"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db=firebase.database();
-
-let userId=localStorage.getItem("chatUserId");
-
-if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
-localStorage.setItem("chatUserId",userId);
-}
-
-/* SEND MESSAGE */
-
-function sendMessage(){
-
-let input=document.getElementById("message");
-let msg=input.value.trim();
-
-if(msg==="")return;
-
-let time=new Date().toLocaleTimeString();
-
-db.ref("chat").push({
-text:msg,
-time:time,
-sender:userId
-});
-
-input.value="";
-}
-
-/* SHOW MESSAGE */
-
-const chatbox=document.getElementById("chatbox");
-
-db.ref("chat").on("child_added",function(snapshot){
-
-let data=snapshot.val();
-
-let div=document.createElement("div");
-
-if(data.sender===userId){
-div.className="message myMessage";
-}else{
-div.className="message otherMessage";
-}
-
-div.innerHTML=data.text+"<span class='time'>"+data.time+"</span>";
-
-chatbox.appendChild(div);
-
-chatbox.scrollTop=chatbox.scrollHeight;
-
-});
-
-/* VIDEO CALL */
-
-let localStream;
-
-const peer=new Peer();
-
-async function startCamera(){
-
-localStream=await navigator.mediaDevices.getUserMedia({
-video:true,
-audio:true
-});
-
-document.getElementById("localVideo").srcObject=localStream;
-
-document.getElementById("videoPopup").style.display="flex";
-
-}
-
-peer.on("call",function(call){
-
-startCamera();
-
-call.answer(localStream);
-
-call.on("stream",function(remoteStream){
-
-document.getElementById("remoteVideo").srcObject=remoteStream;
-
-});
-
-});
-
-/* CALL BUTTON */
-
-function startCall(){
-
-startCamera();
-
-db.ref("call").set({
-caller:userId
-});
-
-}
-
-db.ref("call").on("value",function(snapshot){
-
-let data=snapshot.val();
-
-if(!data)return;
-
-if(data.caller!==userId){
-
-document.getElementById("incomingCall").style.display="block";
-
-}
-
-});
-
-/* ACCEPT */
-
-function acceptCall(){
-
-document.getElementById("incomingCall").style.display="none";
-
-startCamera();
-
-}
-
-/* REJECT */
-
-function rejectCall(){
-
-document.getElementById("incomingCall").style.display="none";
-
-db.ref("call").remove();
-
-}
-
-/* END CALL */
-
-function endCall(){
-
-document.getElementById("videoPopup").style.display="none";
-
-document.getElementById("remoteVideo").srcObject=null;
-
-db.ref("call").remove();
-
-}
-
-</script>
-
-</body>
-</html>
+<button onclick="sendMessage()">S
 ```
