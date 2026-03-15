@@ -1,11 +1,10 @@
-```html
+
 <!DOCTYPE html>
 <html>
 <head>
 <title>🍭 LADUU PIYUU CHAT 💖</title>
 
 <style>
-
 body{
 font-family:Arial;
 background:#e5ddd5;
@@ -31,6 +30,7 @@ justify-content:center;
 gap:10px;
 background:black;
 padding:5px;
+align-items:center;
 }
 
 .videoArea video{
@@ -123,7 +123,6 @@ border-radius:10px;
 text-align:center;
 box-shadow:0 0 10px rgba(0,0,0,0.3);
 }
-
 </style>
 </head>
 
@@ -133,32 +132,6 @@ box-shadow:0 0 10px rgba(0,0,0,0.3);
 let password="";
 while(password!=="2020"){
 password=prompt("Enter Password");
-
 if(password===null){
-document.body.innerHTML="<h2 style='text-align:center;margin-top:50px;'>Access Cancelled</h2>";
-throw new Error("cancel");
-}
-}
-</script>
-
-<div class="header">
-🍭 LADUU PIYUU CHAT 💖
-<button onclick="startCall()">📞</button>
-</div>
-
-<div class="videoArea">
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
-
-<button onclick="endCall()" style="background:red;color:white;border:none;padding:8px;border-radius:6px;">
-End Call
-</button>
-</div>
-
-<div class="chatbox" id="chatbox"></div>
-
-<div class="inputArea">
-<button id="emojiBtn">😊</button>
-<input id="message" placeholder="Type message">
-<button onclick="sendMessage()">S
+document.body.innerHTML=
 ```
