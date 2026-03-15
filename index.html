@@ -8,7 +8,7 @@
 
 body{
 font-family:Arial;
-background:#e5ddd5;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
 margin:0;
 height:100vh;
 display:flex;
@@ -19,24 +19,8 @@ flex-direction:column;
 background:#ff4d6d;
 color:white;
 padding:12px;
-display:flex;
-justify-content:space-between;
-align-items:center;
 font-size:18px;
-}
-
-.videoArea{
-display:flex;
-justify-content:center;
-gap:10px;
-background:black;
-padding:5px;
-align-items:center;
-}
-
-.videoArea video{
-width:150px;
-border-radius:10px;
+text-align:center;
 }
 
 .chatbox{
@@ -46,15 +30,16 @@ padding:10px;
 }
 
 .message{
-padding:8px 12px;
-margin:6px;
-border-radius:15px;
+padding:10px 14px;
+margin:8px;
+border-radius:20px;
 max-width:70%;
-word-wrap:break-word;
+animation:pop .25s ease;
+position:relative;
 }
 
 .myMessage{
-background:#ffd6e0;
+background:#ffccd5;
 margin-left:auto;
 }
 
@@ -65,51 +50,70 @@ background:white;
 .time{
 font-size:10px;
 display:block;
-margin-top:3px;
+margin-top:4px;
 text-align:right;
+opacity:.7;
+}
+
+.reactions span{
+cursor:pointer;
+margin-right:6px;
 }
 
 .inputArea{
 display:flex;
-padding:6px;
-background:#f0f0f0;
-align-items:center;
+padding:8px;
+background:white;
 }
 
 .inputArea input{
 flex:1;
 padding:10px;
-border:none;
 border-radius:20px;
+border:1px solid #ccc;
 }
 
 .inputArea button{
-background:#ff4d6d;
-border:none;
-color:white;
-padding:10px;
 margin-left:5px;
+padding:10px;
+border:none;
+background:#ff4d6d;
+color:white;
 border-radius:20px;
 cursor:pointer;
 }
 
-#emojiPicker{
-position:absolute;
-bottom:60px;
-left:10px;
-background:white;
-border:1px solid #ccc;
-border-radius:8px;
-padding:5px;
-width:200px;
-display:none;
-flex-wrap:wrap;
+/* CALL AREA */
+
+.callArea{
+background:#fff;
+padding:10px;
+text-align:center;
 }
 
-#emojiPicker span{
-font-size:22px;
-cursor:pointer;
-margin:3px;
+video{
+width:45%;
+margin:5px;
+border-radius:10px;
+}
+
+@keyframes pop{
+from{transform:scale(.7);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+/* FLOATING HEART */
+
+.heart{
+position:fixed;
+bottom:0;
+font-size:25px;
+animation:float 3s linear;
+}
+
+@keyframes float{
+0%{transform:translateY(0);opacity:1;}
+100%{transform:translateY(-500px);opacity:0;}
 }
 
 </style>
@@ -117,40 +121,35 @@ margin:3px;
 
 <body>
 
-<script>
-let password=prompt("Enter Password");
-
-if(password!=="2020"){
-alert("Wrong Password");
-location.reload();
-}
-</script>
-
-<div class="header">
-🍭 LADUU PIYUU CHAT 💖
-</div>
-
-<div class="videoArea">
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
-</div>
+<div class="header">🍭 LADUU PIYUU CHAT 💖</div>
 
 <div class="chatbox" id="chatbox"></div>
 
 <div class="inputArea">
-
-<button id="emojiBtn">😊</button>
-
 <input id="message" placeholder="Type message">
-
 <button onclick="sendMessage()">Send</button>
+</div>
 
-<div id="emojiPicker">
-<span>😍</span><span>😂</span><span>😢</span><span>😎</span><span>❤️</span>
-<span>👍</span><span>🥰</span><span>😜</span><span>🔥</span><span>🎉</span>
+<div class="callArea">
+
+<p>Your Call ID:</p>
+<div id="myId">Connecting...</div>
+
+<input id="callId" placeholder="Enter partner ID">
+
+<br><br>
+
+<button onclick="startCamera()">Start Camera</button>
+<button onclick="callUser()">📞 Call</button>
+
+<div>
+<video id="localVideo" autoplay muted></video>
+<video id="remoteVideo" autoplay></video>
 </div>
 
 </div>
+
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
@@ -168,12 +167,16 @@ firebase.initializeApp(firebaseConfig);
 
 const db=firebase.database();
 
+/* USER ID */
+
 let userId=localStorage.getItem("chatUserId");
 
 if(!userId){
 userId="user_"+Math.random().toString(36).substr(2,9);
 localStorage.setItem("chatUserId",userId);
 }
+
+/* SEND MESSAGE */
 
 function sendMessage(){
 
@@ -193,6 +196,8 @@ sender:userId
 input.value="";
 }
 
+/* SHOW MESSAGE */
+
 const chatbox=document.getElementById("chatbox");
 
 db.ref("chat").on("child_added",function(snapshot){
@@ -207,7 +212,14 @@ div.className="message myMessage";
 div.className="message otherMessage";
 }
 
-div.innerHTML=data.text+"<span class='time'>"+data.time+"</span>";
+div.innerHTML=
+data.text+
+"<span class='time'>"+data.time+"</span>"+
+"<div class='reactions'>"+
+"<span onclick='react(\"❤️\")'>❤️</span>"+
+"<span onclick='react(\"😂\")'>😂</span>"+
+"<span onclick='react(\"👍\")'>👍</span>"+
+"</div>";
 
 chatbox.appendChild(div);
 
@@ -215,28 +227,72 @@ chatbox.scrollTop=chatbox.scrollHeight;
 
 });
 
-/* EMOJI */
+/* REACTION */
 
-const emojiBtn=document.getElementById("emojiBtn");
-const emojiPicker=document.getElementById("emojiPicker");
-const messageInput=document.getElementById("message");
+function react(emoji){
 
-emojiBtn.onclick=function(){
+if(emoji==="❤️"){
 
-emojiPicker.style.display=
-emojiPicker.style.display==="flex"?"none":"flex";
+let heart=document.createElement("div");
 
-};
+heart.className="heart";
 
-emojiPicker.querySelectorAll("span").forEach(function(emoji){
+heart.innerHTML="❤️";
 
-emoji.onclick=function(){
+heart.style.left=Math.random()*100+"%";
 
-messageInput.value+=emoji.innerText;
+document.body.appendChild(heart);
 
-emojiPicker.style.display="none";
+setTimeout(()=>heart.remove(),3000);
 
-};
+}
+
+}
+
+/* VIDEO CALL */
+
+let localStream;
+
+const peer=new Peer();
+
+peer.on("open",function(id){
+document.getElementById("myId").innerText=id;
+});
+
+async function startCamera(){
+
+localStream=await navigator.mediaDevices.getUserMedia({
+video:true,
+audio:true
+});
+
+document.getElementById("localVideo").srcObject=localStream;
+
+}
+
+function callUser(){
+
+let id=document.getElementById("callId").value;
+
+const call=peer.call(id,localStream);
+
+call.on("stream",function(remoteStream){
+
+document.getElementById("remoteVideo").srcObject=remoteStream;
+
+});
+
+}
+
+peer.on("call",function(call){
+
+call.answer(localStream);
+
+call.on("stream",function(remoteStream){
+
+document.getElementById("remoteVideo").srcObject=remoteStream;
+
+});
 
 });
 
