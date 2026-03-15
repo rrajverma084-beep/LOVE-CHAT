@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,7 +6,6 @@
 
 <script>
 let pass = prompt("Enter Password");
-
 if(pass !== "2020"){
 document.write("<h1 style='text-align:center;margin-top:100px;'>❌ Wrong Password</h1>");
 throw new Error("Wrong Password");
@@ -209,5 +208,202 @@ localStorage.setItem("chatUserId",userId);
 }
 
 function toggleEmoji(){
-let box=document.
+let box=document.getElementById("emojiPicker");
+box.style.display=box.style.display==="none"?"block":"none";
+}
+
+function addEmoji(e){
+document.getElementById("message").value+=e;
+}
+
+function sendMessage(){
+
+let msg=document.getElementById("message").value.trim();
+
+if(msg==="")return;
+
+db.ref("chat").push({
+text:msg,
+sender:userId,
+time:new Date().toLocaleTimeString()
+});
+
+document.getElementById("message").value="";
+}
+
+document.getElementById("fileInput").addEventListener("change",function(){
+
+let file=this.files[0];
+if(!file)return;
+
+let reader=new FileReader();
+
+reader.onload=function(){
+
+db.ref("chat").push({
+file:reader.result,
+type:file.type,
+sender:userId,
+time:new Date().toLocaleTimeString()
+});
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
+const chatbox=document.getElementById("chatbox");
+
+db.ref("chat").on("child_added",function(snapshot){
+
+let data=snapshot.val();
+
+let div=document.createElement("div");
+div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
+div.setAttribute("data-id",snapshot.key);
+
+let content="";
+
+if(data.text) content=data.text;
+
+if(data.file){
+
+if(data.type.startsWith("image")){
+content="<img src='"+data.file+"'>";
+}
+
+if(data.type.startsWith("video")){
+content="<video src='"+data.file+"' controls></video>";
+}
+
+}
+
+let del="";
+
+if(data.sender===userId){
+del="<button class='deleteBtn' onclick='deleteMsg(\""+snapshot.key+"\")'>🗑</button>";
+}
+
+div.innerHTML=
+del+
+content+
+"<span class='time'>"+data.time+"</span>"+
+"<div><span onclick='react(\"❤️\")'>❤️</span></div>";
+
+chatbox.appendChild(div);
+
+chatbox.scrollTop=chatbox.scrollHeight;
+
+});
+
+function deleteMsg(id){
+db.ref("chat/"+id).remove();
+}
+
+db.ref("chat").on("child_removed",function(snapshot){
+
+let msg=document.querySelector('[data-id="'+snapshot.key+'"]');
+
+if(msg){
+msg.remove();
+}
+
+});
+
+function react(e){
+
+if(e==="❤️"){
+
+let heart=document.createElement("div");
+
+heart.className="heart";
+heart.innerHTML="❤️";
+heart.style.left=Math.random()*100+"%";
+
+document.body.appendChild(heart);
+
+setTimeout(()=>heart.remove(),3000);
+
+}
+
+}
+
+let localStream;
+
+const peer=new Peer();
+
+peer.on("open",id=>{
+document.getElementById("myId").innerText=id;
+});
+
+function audioCall(){
+
+let id=document.getElementById("callId").value;
+
+navigator.mediaDevices.getUserMedia({
+audio:true,
+video:false
+}).then(stream=>{
+
+localStream=stream;
+
+const call=peer.call(id,stream);
+
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
+});
+
+});
+
+}
+
+function videoCall(){
+
+let id=document.getElementById("callId").value;
+
+navigator.mediaDevices.getUserMedia({
+video:true,
+audio:true
+}).then(stream=>{
+
+localStream=stream;
+
+document.getElementById("localVideo").srcObject=stream;
+
+const call=peer.call(id,stream);
+
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
+});
+
+});
+
+}
+
+peer.on("call",call=>{
+
+navigator.mediaDevices.getUserMedia({
+video:true,
+audio:true
+}).then(stream=>{
+
+localStream=stream;
+
+document.getElementById("localVideo").srcObject=stream;
+
+call.answer(stream);
+
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
+});
+
+});
+
+});
+
+</script>
+
+</body>
+</html>
 ```
