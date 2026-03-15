@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,20 +63,14 @@ font-size:14px;
 float:right;
 }
 
-.reactions span{
-cursor:pointer;
-margin-right:6px;
-}
-
 .inputArea{
 display:flex;
 padding:8px;
 background:white;
-align-items:center;
 gap:5px;
 }
 
-.inputArea input[type="text"]{
+.inputArea input{
 flex:1;
 padding:10px;
 border-radius:20px;
@@ -94,8 +88,8 @@ cursor:pointer;
 
 #emojiPicker{
 display:none;
-padding:5px;
 background:white;
+padding:5px;
 }
 
 #emojiPicker span{
@@ -112,7 +106,12 @@ text-align:center;
 
 video{
 width:45%;
+border-radius:10px;
 margin:5px;
+}
+
+img{
+max-width:150px;
 border-radius:10px;
 }
 
@@ -131,11 +130,6 @@ animation:float 3s linear;
 @keyframes float{
 0%{transform:translateY(0);opacity:1;}
 100%{transform:translateY(-500px);opacity:0;}
-}
-
-img,video{
-max-width:150px;
-border-radius:10px;
 }
 
 </style>
@@ -158,7 +152,7 @@ border-radius:10px;
 
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
-<input id="message" type="text" placeholder="Type message">
+<input id="message" placeholder="Type message">
 <input type="file" id="fileInput" accept="image/*,video/*">
 <button onclick="sendMessage()">Send</button>
 </div>
@@ -172,9 +166,8 @@ border-radius:10px;
 
 <br><br>
 
-<button onclick="startCamera()">Start Camera</button>
 <button onclick="audioCall()">📞 Audio Call</button>
-<button onclick="callUser()">🎥 Video Call</button>
+<button onclick="videoCall()">🎥 Video Call</button>
 
 <div>
 <video id="localVideo" autoplay muted></video>
@@ -184,7 +177,6 @@ border-radius:10px;
 </div>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
@@ -222,25 +214,23 @@ document.getElementById("message").value+=e;
 
 function sendMessage(){
 
-let input=document.getElementById("message");
-let msg=input.value.trim();
+let msg=document.getElementById("message").value.trim();
 
 if(msg==="")return;
 
 db.ref("chat").push({
 text:msg,
-time:new Date().toLocaleTimeString(),
-sender:userId
+sender:userId,
+time:new Date().toLocaleTimeString()
 });
 
-input.value="";
+document.getElementById("message").value="";
+
 }
 
 /* FILE SEND */
 
-const fileInput=document.getElementById("fileInput");
-
-fileInput.addEventListener("change",function(){
+document.getElementById("fileInput").addEventListener("change",function(){
 
 let file=this.files[0];
 if(!file)return;
@@ -290,39 +280,36 @@ content="<video src='"+data.file+"' controls></video>";
 
 }
 
-let deleteBtn="";
+let del="";
 
 if(data.sender===userId){
-deleteBtn="<button class='deleteBtn' onclick='deleteMsg(\""+snapshot.key+"\")'>🗑</button>";
+del="<button class='deleteBtn' onclick='deleteMsg(\""+snapshot.key+"\")'>🗑</button>";
 }
 
 div.innerHTML=
-deleteBtn+
+del+
 content+
 "<span class='time'>"+data.time+"</span>"+
-"<div class='reactions'>"+
-"<span onclick='react(\"❤️\")'>❤️</span>"+
-"<span onclick='react(\"😂\")'>😂</span>"+
-"<span onclick='react(\"👍\")'>👍</span>"+
-"</div>";
+"<div><span onclick='react(\"❤️\")'>❤️</span></div>";
 
 chatbox.appendChild(div);
+
 chatbox.scrollTop=chatbox.scrollHeight;
 
 });
 
-/* DELETE MESSAGE */
+/* DELETE */
 
 function deleteMsg(id){
 db.ref("chat/"+id).remove();
 location.reload();
 }
 
-/* REACTION */
+/* HEART */
 
-function react(emoji){
+function react(e){
 
-if(emoji==="❤️"){
+if(e==="❤️"){
 
 let heart=document.createElement("div");
 
@@ -341,64 +328,79 @@ setTimeout(()=>heart.remove(),3000);
 /* CALL SYSTEM */
 
 let localStream;
+
 const peer=new Peer();
 
-peer.on("open",function(id){
+peer.on("open",id=>{
 document.getElementById("myId").innerText=id;
 });
 
-async function startCamera(){
-
-localStream=await navigator.mediaDevices.getUserMedia({
-video:true,
-audio:true
-});
-
-document.getElementById("localVideo").srcObject=localStream;
-
-}
+/* AUDIO CALL */
 
 function audioCall(){
 
 let id=document.getElementById("callId").value;
 
-navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+navigator.mediaDevices.getUserMedia({
+audio:true,
+video:false
+}).then(stream=>{
 
 localStream=stream;
 
 const call=peer.call(id,stream);
 
-call.on("stream",function(remoteStream){
-
-document.getElementById("remoteVideo").srcObject=remoteStream;
-
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
 });
 
 });
 
 }
 
-function callUser(){
+/* VIDEO CALL */
+
+function videoCall(){
 
 let id=document.getElementById("callId").value;
 
-const call=peer.call(id,localStream);
+navigator.mediaDevices.getUserMedia({
+video:true,
+audio:true
+}).then(stream=>{
 
-call.on("stream",function(remoteStream){
+localStream=stream;
 
-document.getElementById("remoteVideo").srcObject=remoteStream;
+document.getElementById("localVideo").srcObject=stream;
+
+const call=peer.call(id,stream);
+
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
+});
 
 });
 
 }
 
-peer.on("call",function(call){
+/* RECEIVE CALL */
 
-call.answer(localStream);
+peer.on("call",call=>{
 
-call.on("stream",function(remoteStream){
+navigator.mediaDevices.getUserMedia({
+video:true,
+audio:true
+}).then(stream=>{
 
-document.getElementById("remoteVideo").srcObject=remoteStream;
+localStream=stream;
+
+document.getElementById("localVideo").srcObject=stream;
+
+call.answer(stream);
+
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
+});
 
 });
 
