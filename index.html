@@ -1,278 +1,398 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 <title>Private Love Chat</title>
+
 <style>
-/* BODY FULL SCREEN */
-body {
-  font-family: Arial;
-  background: linear-gradient(135deg,#ff9a9e,#fad0c4,#ffdde1);
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+
+body{
+font-family: Arial;
+background:#e5ddd5;
+margin:0;
+height:100vh;
+display:flex;
+flex-direction:column;
 }
 
-/* FULL SCREEN CONTAINER */
-.container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+.container{
+flex:1;
+display:flex;
+flex-direction:column;
+height:100vh;
 }
 
-/* HEADER AT TOP */
-.header {
-  background: #ff4d6d;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-size: 20px;
-  flex-shrink: 0;
+/* HEADER */
+
+.header{
+background:#075e54;
+color:white;
+padding:12px;
+display:flex;
+align-items:center;
+gap:10px;
+font-size:18px;
 }
 
-/* CHATBOX TAKES AVAILABLE SPACE */
-.chatbox {
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px;
-  background: #fff0f3;
+.header img{
+width:35px;
+height:35px;
+border-radius:50%;
+}
+
+/* CHATBOX */
+
+.chatbox{
+flex:1;
+overflow-y:auto;
+padding:10px;
+background:#ece5dd;
+scroll-behavior:smooth;
 }
 
 /* MESSAGE STYLE */
-.message {
-  background: #dcf8c6;
-  padding: 8px;
-  margin: 5px;
-  border-radius: 6px;
-  width: fit-content;
+
+.message{
+padding:8px 12px;
+margin:6px;
+border-radius:15px;
+max-width:70%;
+word-wrap:break-word;
+position:relative;
+animation:pop .2s ease;
 }
 
-/* DELETE BUTTON */
-.deleteBtn {
-  margin-left:8px;
-  cursor:pointer;
-  color:red;
-  font-size:12px;
+.myMessage{
+background:#dcf8c6;
+margin-left:auto;
 }
 
-/* INPUT AREA FIXED AT BOTTOM */
-.inputArea {
-  display: flex;
-  border-top:1px solid #ccc;
-  padding: 5px;
-  flex-shrink: 0;
-  position: relative;
+.otherMessage{
+background:white;
+border:1px solid #ddd;
 }
 
-.inputArea input {
-  flex:1;
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:5px;
+/* TIME */
+
+.time{
+font-size:10px;
+color:#555;
+display:block;
+margin-top:3px;
+text-align:right;
 }
 
-.inputArea button {
-  background:#ff4d6d;
-  border:none;
-  color:white;
-  padding:10px 15px;
-  margin-left:5px;
-  cursor:pointer;
-  border-radius:5px;
+/* DELETE */
+
+.deleteBtn{
+font-size:11px;
+margin-left:5px;
+cursor:pointer;
+color:red;
 }
 
-/* EMOJI PICKER */
-#emojiPicker {
-  position: absolute;
-  bottom:50px;
-  left:5px;
-  background:#fff;
-  border:1px solid #ccc;
-  border-radius:8px;
-  padding:5px;
-  width:220px;
-  max-height:150px;
-  overflow-y:scroll;
-  display: flex;
-  flex-wrap: wrap;
-  z-index: 10;
-  display: none;
+/* INPUT */
+
+.inputArea{
+display:flex;
+border-top:1px solid #ccc;
+padding:6px;
+background:#f0f0f0;
+align-items:center;
 }
 
-#emojiPicker span {
-  cursor:pointer;
-  font-size:22px;
-  margin:2px;
+.inputArea input{
+flex:1;
+padding:10px 15px;
+border:none;
+border-radius:20px;
+outline:none;
 }
 
-/* CALL AREA */
-.callArea {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
-  flex-shrink: 0;
+.inputArea button{
+background:#25d366;
+border:none;
+color:white;
+padding:10px;
+margin-left:5px;
+cursor:pointer;
+border-radius:50%;
+width:40px;
+height:40px;
 }
 
-/* VIDEO STYLING */
-video {
-  width: 48%;
-  margin: 2px;
-  border-radius: 8px;
+/* EMOJI */
+
+#emojiPicker{
+position:absolute;
+bottom:60px;
+left:10px;
+background:white;
+border:1px solid #ccc;
+border-radius:8px;
+padding:5px;
+width:220px;
+max-height:150px;
+overflow-y:scroll;
+display:none;
+flex-wrap:wrap;
 }
 
-/* HIDE CHAT CONTAINER INITIALLY */
-#chatContainer {
-  display:none;
+#emojiPicker span{
+cursor:pointer;
+font-size:22px;
+margin:3px;
 }
+
+/* VIDEO */
+
+.callArea{
+padding:8px;
+text-align:center;
+}
+
+video{
+width:48%;
+margin:2px;
+border-radius:8px;
+}
+
+/* ANIMATION */
+
+@keyframes pop{
+from{transform:scale(.8);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+#chatContainer{
+display:none;
+}
+
 </style>
 </head>
+
 <body>
 
 <script>
-// 🔒 PASSWORD PROTECTION
-let password = "";
-while(password !== "2020"){
-    password = prompt("Enter password to access chat:");
-    if(password === null){ 
-        document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Cancelled 🚫</h2>";
-        throw new Error("Access Cancelled");
-    }
+
+let password="";
+while(password!=="2020"){
+password=prompt("Enter password to access chat:");
+if(password===null){
+document.body.innerHTML="<h2 style='text-align:center;margin-top:50px;'>Access Cancelled</h2>";
+throw new Error("cancel");
 }
+}
+
 </script>
 
 <div id="chatContainer">
-  <div class="container">
-    <div class="header">❤️ Private Love Chat</div>
 
-    <div class="chatbox" id="chatbox"></div>
+<div class="container">
 
-    <div class="inputArea">
-      <button id="emojiBtn">😊</button>
-      <input type="text" id="message" placeholder="Type message">
-      <button onclick="sendMessage()">Send</button>
-
-      <div id="emojiPicker">
-        <span>😍</span><span>😂</span><span>😢</span><span>😎</span><span>❤️</span>
-        <span>👍</span><span>🤔</span><span>🥰</span><span>😜</span><span>💖</span>
-        <span>🔥</span><span>💯</span><span>🥳</span><span>🤩</span><span>🎉</span>
-        <span>🤗</span><span>🤪</span><span>🤤</span><span>😇</span><span>😏</span>
-        <span>😌</span><span>🥺</span><span>😱</span><span>😡</span><span>😭</span>
-        <span>🤭</span><span>🤫</span><span>🫶</span><span>😴</span><span>🫠</span>
-        <span>🤯</span><span>😵‍💫</span><span>🫣</span><span>😬</span><span>🙃</span>
-        <span>😅</span><span>🫡</span><span>🫢</span><span>👀</span><span>🥵</span>
-        <span>🥶</span>
-      </div>
-    </div>
-
-    <div class="callArea">
-      <p>Your Call ID:</p>
-      <div id="myId">Connecting...</div>
-      <input id="callId" placeholder="Enter partner ID">
-      <br><br>
-      <button onclick="startCamera()">Start Camera</button>
-      <button onclick="callUser()">📞 Call</button>
-
-      <div style="display:flex; width:100%; justify-content:center; flex-wrap:wrap; margin-top:10px;">
-        <video id="localVideo" autoplay muted></video>
-        <video id="remoteVideo" autoplay></video>
-      </div>
-    </div>
-  </div>
+<div class="header">
+<img src="https://i.imgur.com/1X6gQ5F.png">
+<span>Private Love Chat</span>
 </div>
 
-<!-- PEERJS & FIREBASE -->
+<div class="chatbox" id="chatbox"></div>
+
+<div class="inputArea">
+
+<button id="emojiBtn">😊</button>
+
+<input type="text" id="message" placeholder="Type message">
+
+<button onclick="sendMessage()">➤</button>
+
+<div id="emojiPicker">
+
+<span>😍</span><span>😂</span><span>😢</span><span>😎</span><span>❤️</span>
+<span>👍</span><span>🤔</span><span>🥰</span><span>😜</span><span>💖</span>
+<span>🔥</span><span>💯</span><span>🥳</span><span>🤩</span><span>🎉</span>
+
+</div>
+
+</div>
+
+<div class="callArea">
+
+<p>Your Call ID:</p>
+<div id="myId">Connecting...</div>
+
+<input id="callId" placeholder="Enter partner ID">
+
+<br><br>
+
+<button onclick="startCamera()">Start Camera</button>
+<button onclick="callUser()">📞 Call</button>
+
+<div style="display:flex;width:100%;justify-content:center;flex-wrap:wrap;margin-top:10px;">
+
+<video id="localVideo" autoplay muted></video>
+<video id="remoteVideo" autoplay></video>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// SHOW CHAT AFTER PASSWORD
-document.getElementById("chatContainer").style.display = "block";
 
-// FIREBASE CONFIG
-const firebaseConfig = {
-  apiKey: "AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-  authDomain: "love--chat-872da.firebaseapp.com",
-  databaseURL: "https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "love--chat-872da"
+document.getElementById("chatContainer").style.display="block";
+
+const firebaseConfig={
+apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
+authDomain:"love--chat-872da.firebaseapp.com",
+databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"love--chat-872da"
 };
+
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+
+const db=firebase.database();
 
 let localStream;
 
-// SEND MESSAGE
-function sendMessage(){
-  let input=document.getElementById("message");
-  let msg=input.value.trim();
-  if(msg==="") return;
-  db.ref("chat").push({ text:msg });
-  input.value="";
-}
+/* SEND MESSAGE */
 
-// SHOW MESSAGES
-const chatbox=document.getElementById("chatbox");
-db.ref("chat").on("child_added",function(snapshot){
-  let data=snapshot.val();
-  let key=snapshot.key;
-  let div=document.createElement("div");
-  div.className="message";
-  div.id="msg-"+key;
-  div.innerHTML = data.text + "<span class='deleteBtn' onclick=\"deleteMessage('" + key + "')\">❌</span>";
-  chatbox.appendChild(div);
-  chatbox.scrollTop=chatbox.scrollHeight;
+function sendMessage(){
+
+let input=document.getElementById("message");
+let msg=input.value.trim();
+
+if(msg==="")return;
+
+let time=new Date().toLocaleTimeString();
+
+db.ref("chat").push({
+text:msg,
+time:time
 });
 
-// DELETE MESSAGE
-function deleteMessage(id){
-  db.ref("chat/"+id).remove();
-  let msg=document.getElementById("msg-"+id);
-  if(msg){ msg.remove(); }
+input.value="";
+
 }
 
-// VIDEO CALL
-const peer = new Peer();
-peer.on("open",function(id){ document.getElementById("myId").innerText=id; });
+/* SHOW MESSAGE */
+
+const chatbox=document.getElementById("chatbox");
+
+db.ref("chat").on("child_added",function(snapshot){
+
+let data=snapshot.val();
+let key=snapshot.key;
+
+let div=document.createElement("div");
+
+div.className="message myMessage";
+
+div.id="msg-"+key;
+
+div.innerHTML=
+data.text+
+"<span class='time'>"+data.time+"</span>"+
+"<span class='deleteBtn' onclick=\"deleteMessage('"+key+"')\">❌</span>";
+
+chatbox.appendChild(div);
+
+chatbox.scrollTop=chatbox.scrollHeight;
+
+});
+
+/* DELETE */
+
+function deleteMessage(id){
+
+db.ref("chat/"+id).remove();
+
+let msg=document.getElementById("msg-"+id);
+
+if(msg)msg.remove();
+
+}
+
+/* VIDEO CALL */
+
+const peer=new Peer();
+
+peer.on("open",function(id){
+
+document.getElementById("myId").innerText=id;
+
+});
 
 async function startCamera(){
-  localStream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-  document.getElementById("localVideo").srcObject = localStream;
+
+localStream=await navigator.mediaDevices.getUserMedia({
+video:true,
+audio:true
+});
+
+document.getElementById("localVideo").srcObject=localStream;
+
 }
 
 function callUser(){
-  let id=document.getElementById("callId").value;
-  const call = peer.call(id, localStream);
-  call.on("stream",function(remoteStream){ 
-    document.getElementById("remoteVideo").srcObject = remoteStream; 
-  });
+
+let id=document.getElementById("callId").value;
+
+const call=peer.call(id,localStream);
+
+call.on("stream",function(remoteStream){
+
+document.getElementById("remoteVideo").srcObject=remoteStream;
+
+});
+
 }
 
 peer.on("call",function(call){
-  call.answer(localStream);
-  call.on("stream",function(remoteStream){ 
-    document.getElementById("remoteVideo").srcObject = remoteStream; 
-  });
+
+call.answer(localStream);
+
+call.on("stream",function(remoteStream){
+
+document.getElementById("remoteVideo").srcObject=remoteStream;
+
 });
 
-// EMOJI BUTTON & PICKER
-const emojiBtn = document.getElementById('emojiBtn');
-const emojiPicker = document.getElementById('emojiPicker');
-const messageInput = document.getElementById('message');
-
-emojiBtn.addEventListener('click', function(){
-    emojiPicker.style.display = emojiPicker.style.display === "flex" ? "none" : "flex";
 });
 
-emojiPicker.querySelectorAll('span').forEach(function(emoji){
-    emoji.addEventListener('click', function(){
-        messageInput.value += emoji.innerText;
-        messageInput.focus();
-        emojiPicker.style.display = 'none';
-    });
+/* EMOJI */
+
+const emojiBtn=document.getElementById("emojiBtn");
+const emojiPicker=document.getElementById("emojiPicker");
+const messageInput=document.getElementById("message");
+
+emojiBtn.onclick=function(){
+
+emojiPicker.style.display=
+emojiPicker.style.display==="flex"?"none":"flex";
+
+};
+
+emojiPicker.querySelectorAll("span").forEach(function(emoji){
+
+emoji.onclick=function(){
+
+messageInput.value+=emoji.innerText;
+
+emojiPicker.style.display="none";
+
+};
+
 });
+
 </script>
 
 </body>
 </html>
+```
