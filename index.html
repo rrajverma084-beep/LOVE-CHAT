@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -64,9 +64,11 @@ margin-right:6px;
 display:flex;
 padding:8px;
 background:white;
+align-items:center;
+gap:5px;
 }
 
-.inputArea input{
+.inputArea input[type="text"]{
 flex:1;
 padding:10px;
 border-radius:20px;
@@ -74,13 +76,24 @@ border:1px solid #ccc;
 }
 
 .inputArea button{
-margin-left:5px;
 padding:10px;
 border:none;
 background:#ff4d6d;
 color:white;
 border-radius:20px;
 cursor:pointer;
+}
+
+#emojiPicker{
+display:none;
+padding:5px;
+background:white;
+}
+
+#emojiPicker span{
+font-size:22px;
+cursor:pointer;
+margin:4px;
 }
 
 /* CALL AREA */
@@ -116,6 +129,11 @@ animation:float 3s linear;
 100%{transform:translateY(-500px);opacity:0;}
 }
 
+img,video{
+max-width:150px;
+border-radius:10px;
+}
+
 </style>
 </head>
 
@@ -125,9 +143,25 @@ animation:float 3s linear;
 
 <div class="chatbox" id="chatbox"></div>
 
+<div id="emojiPicker">
+<span onclick="addEmoji('😀')">😀</span>
+<span onclick="addEmoji('😂')">😂</span>
+<span onclick="addEmoji('😍')">😍</span>
+<span onclick="addEmoji('😎')">😎</span>
+<span onclick="addEmoji('❤️')">❤️</span>
+<span onclick="addEmoji('👍')">👍</span>
+</div>
+
 <div class="inputArea">
-<input id="message" placeholder="Type message">
+
+<button onclick="toggleEmoji()">😊</button>
+
+<input id="message" type="text" placeholder="Type message">
+
+<input type="file" id="fileInput" accept="image/*,video/*">
+
 <button onclick="sendMessage()">Send</button>
+
 </div>
 
 <div class="callArea">
@@ -176,6 +210,22 @@ userId="user_"+Math.random().toString(36).substr(2,9);
 localStorage.setItem("chatUserId",userId);
 }
 
+/* EMOJI */
+
+function toggleEmoji(){
+
+let box=document.getElementById("emojiPicker");
+
+box.style.display=box.style.display==="none"?"block":"none";
+
+}
+
+function addEmoji(e){
+
+document.getElementById("message").value+=e;
+
+}
+
 /* SEND MESSAGE */
 
 function sendMessage(){
@@ -196,6 +246,35 @@ sender:userId
 input.value="";
 }
 
+/* FILE SEND */
+
+const fileInput=document.getElementById("fileInput");
+
+fileInput.addEventListener("change",function(){
+
+let file=this.files[0];
+
+if(!file)return;
+
+let reader=new FileReader();
+
+reader.onload=function(){
+
+db.ref("chat").push({
+
+file:reader.result,
+type:file.type,
+sender:userId,
+time:new Date().toLocaleTimeString()
+
+});
+
+};
+
+reader.readAsDataURL(file);
+
+});
+
 /* SHOW MESSAGE */
 
 const chatbox=document.getElementById("chatbox");
@@ -206,14 +285,25 @@ let data=snapshot.val();
 
 let div=document.createElement("div");
 
-if(data.sender===userId){
-div.className="message myMessage";
-}else{
-div.className="message otherMessage";
+div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
+
+if(data.text){
+div.innerHTML=data.text;
 }
 
-div.innerHTML=
-data.text+
+if(data.file){
+
+if(data.type.startsWith("image")){
+div.innerHTML="<img src='"+data.file+"'>";
+}
+
+if(data.type.startsWith("video")){
+div.innerHTML="<video src='"+data.file+"' controls></video>";
+}
+
+}
+
+div.innerHTML+=
 "<span class='time'>"+data.time+"</span>"+
 "<div class='reactions'>"+
 "<span onclick='react(\"❤️\")'>❤️</span>"+
