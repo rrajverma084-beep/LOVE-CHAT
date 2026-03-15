@@ -1,10 +1,11 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
 <title>🍭 LADUU PIYUU CHAT 💖</title>
 
 <style>
+
 body{
 font-family:Arial;
 background:#e5ddd5;
@@ -88,5 +89,159 @@ border:none;
 color:white;
 padding:10px;
 margin-left:5px;
-border-rad
+border-radius:20px;
+cursor:pointer;
+}
+
+#emojiPicker{
+position:absolute;
+bottom:60px;
+left:10px;
+background:white;
+border:1px solid #ccc;
+border-radius:8px;
+padding:5px;
+width:200px;
+display:none;
+flex-wrap:wrap;
+}
+
+#emojiPicker span{
+font-size:22px;
+cursor:pointer;
+margin:3px;
+}
+
+</style>
+</head>
+
+<body>
+
+<script>
+let password=prompt("Enter Password");
+
+if(password!=="2020"){
+alert("Wrong Password");
+location.reload();
+}
+</script>
+
+<div class="header">
+🍭 LADUU PIYUU CHAT 💖
+</div>
+
+<div class="videoArea">
+<video id="localVideo" autoplay muted></video>
+<video id="remoteVideo" autoplay></video>
+</div>
+
+<div class="chatbox" id="chatbox"></div>
+
+<div class="inputArea">
+
+<button id="emojiBtn">😊</button>
+
+<input id="message" placeholder="Type message">
+
+<button onclick="sendMessage()">Send</button>
+
+<div id="emojiPicker">
+<span>😍</span><span>😂</span><span>😢</span><span>😎</span><span>❤️</span>
+<span>👍</span><span>🥰</span><span>😜</span><span>🔥</span><span>🎉</span>
+</div>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+
+<script>
+
+const firebaseConfig={
+apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
+authDomain:"love--chat-872da.firebaseapp.com",
+databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"love--chat-872da"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const db=firebase.database();
+
+let userId=localStorage.getItem("chatUserId");
+
+if(!userId){
+userId="user_"+Math.random().toString(36).substr(2,9);
+localStorage.setItem("chatUserId",userId);
+}
+
+function sendMessage(){
+
+let input=document.getElementById("message");
+let msg=input.value.trim();
+
+if(msg==="")return;
+
+let time=new Date().toLocaleTimeString();
+
+db.ref("chat").push({
+text:msg,
+time:time,
+sender:userId
+});
+
+input.value="";
+}
+
+const chatbox=document.getElementById("chatbox");
+
+db.ref("chat").on("child_added",function(snapshot){
+
+let data=snapshot.val();
+
+let div=document.createElement("div");
+
+if(data.sender===userId){
+div.className="message myMessage";
+}else{
+div.className="message otherMessage";
+}
+
+div.innerHTML=data.text+"<span class='time'>"+data.time+"</span>";
+
+chatbox.appendChild(div);
+
+chatbox.scrollTop=chatbox.scrollHeight;
+
+});
+
+/* EMOJI */
+
+const emojiBtn=document.getElementById("emojiBtn");
+const emojiPicker=document.getElementById("emojiPicker");
+const messageInput=document.getElementById("message");
+
+emojiBtn.onclick=function(){
+
+emojiPicker.style.display=
+emojiPicker.style.display==="flex"?"none":"flex";
+
+};
+
+emojiPicker.querySelectorAll("span").forEach(function(emoji){
+
+emoji.onclick=function(){
+
+messageInput.value+=emoji.innerText;
+
+emojiPicker.style.display="none";
+
+};
+
+});
+
+</script>
+
+</body>
+</html>
 ```
