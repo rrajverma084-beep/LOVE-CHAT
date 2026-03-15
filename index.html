@@ -1,4 +1,4 @@
-
+```html
 <!DOCTYPE html>
 <html>
 <head>
@@ -70,9 +70,8 @@ margin-left:auto;
 .otherMessage{
 background:white;
 border:1px solid #ddd;
+margin-right:auto;
 }
-
-/* TIME */
 
 .time{
 font-size:10px;
@@ -81,8 +80,6 @@ display:block;
 margin-top:3px;
 text-align:right;
 }
-
-/* DELETE */
 
 .deleteBtn{
 font-size:11px;
@@ -157,8 +154,6 @@ margin:2px;
 border-radius:8px;
 }
 
-/* ANIMATION */
-
 @keyframes pop{
 from{transform:scale(.8);opacity:0;}
 to{transform:scale(1);opacity:1;}
@@ -209,7 +204,6 @@ throw new Error("cancel");
 
 <span>😍</span><span>😂</span><span>😢</span><span>😎</span><span>❤️</span>
 <span>👍</span><span>🤔</span><span>🥰</span><span>😜</span><span>💖</span>
-<span>🔥</span><span>💯</span><span>🥳</span><span>🤩</span><span>🎉</span>
 
 </div>
 
@@ -256,8 +250,16 @@ projectId:"love--chat-872da"
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const db=firebase.database();
+
+/* USER ID */
+
+let userId = localStorage.getItem("chatUserId");
+
+if(!userId){
+userId="user_"+Math.random().toString(36).substr(2,9);
+localStorage.setItem("chatUserId",userId);
+}
 
 let localStream;
 
@@ -274,7 +276,8 @@ let time=new Date().toLocaleTimeString();
 
 db.ref("chat").push({
 text:msg,
-time:time
+time:time,
+sender:userId
 });
 
 input.value="";
@@ -292,7 +295,11 @@ let key=snapshot.key;
 
 let div=document.createElement("div");
 
+if(data.sender===userId){
 div.className="message myMessage";
+}else{
+div.className="message otherMessage";
+}
 
 div.id="msg-"+key;
 
@@ -324,9 +331,7 @@ if(msg)msg.remove();
 const peer=new Peer();
 
 peer.on("open",function(id){
-
 document.getElementById("myId").innerText=id;
-
 });
 
 async function startCamera(){
@@ -347,9 +352,7 @@ let id=document.getElementById("callId").value;
 const call=peer.call(id,localStream);
 
 call.on("stream",function(remoteStream){
-
 document.getElementById("remoteVideo").srcObject=remoteStream;
-
 });
 
 }
@@ -359,9 +362,7 @@ peer.on("call",function(call){
 call.answer(localStream);
 
 call.on("stream",function(remoteStream){
-
 document.getElementById("remoteVideo").srcObject=remoteStream;
-
 });
 
 });
@@ -373,20 +374,15 @@ const emojiPicker=document.getElementById("emojiPicker");
 const messageInput=document.getElementById("message");
 
 emojiBtn.onclick=function(){
-
 emojiPicker.style.display=
 emojiPicker.style.display==="flex"?"none":"flex";
-
 };
 
 emojiPicker.querySelectorAll("span").forEach(function(emoji){
 
 emoji.onclick=function(){
-
 messageInput.value+=emoji.innerText;
-
 emojiPicker.style.display="none";
-
 };
 
 });
