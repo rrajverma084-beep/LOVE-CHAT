@@ -55,6 +55,14 @@ text-align:right;
 opacity:.7;
 }
 
+.deleteBtn{
+background:none;
+border:none;
+cursor:pointer;
+font-size:14px;
+float:right;
+}
+
 .reactions span{
 cursor:pointer;
 margin-right:6px;
@@ -96,8 +104,6 @@ cursor:pointer;
 margin:4px;
 }
 
-/* CALL AREA */
-
 .callArea{
 background:#fff;
 padding:10px;
@@ -114,8 +120,6 @@ border-radius:10px;
 from{transform:scale(.7);opacity:0;}
 to{transform:scale(1);opacity:1;}
 }
-
-/* FLOATING HEART */
 
 .heart{
 position:fixed;
@@ -153,15 +157,10 @@ border-radius:10px;
 </div>
 
 <div class="inputArea">
-
 <button onclick="toggleEmoji()">😊</button>
-
 <input id="message" type="text" placeholder="Type message">
-
 <input type="file" id="fileInput" accept="image/*,video/*">
-
 <button onclick="sendMessage()">Send</button>
-
 </div>
 
 <div class="callArea">
@@ -174,7 +173,8 @@ border-radius:10px;
 <br><br>
 
 <button onclick="startCamera()">Start Camera</button>
-<button onclick="callUser()">📞 Call</button>
+<button onclick="audioCall()">📞 Audio Call</button>
+<button onclick="callUser()">🎥 Video Call</button>
 
 <div>
 <video id="localVideo" autoplay muted></video>
@@ -198,10 +198,7 @@ projectId:"love--chat-872da"
 };
 
 firebase.initializeApp(firebaseConfig);
-
 const db=firebase.database();
-
-/* USER ID */
 
 let userId=localStorage.getItem("chatUserId");
 
@@ -213,17 +210,12 @@ localStorage.setItem("chatUserId",userId);
 /* EMOJI */
 
 function toggleEmoji(){
-
 let box=document.getElementById("emojiPicker");
-
 box.style.display=box.style.display==="none"?"block":"none";
-
 }
 
 function addEmoji(e){
-
 document.getElementById("message").value+=e;
-
 }
 
 /* SEND MESSAGE */
@@ -235,11 +227,9 @@ let msg=input.value.trim();
 
 if(msg==="")return;
 
-let time=new Date().toLocaleTimeString();
-
 db.ref("chat").push({
 text:msg,
-time:time,
+time:new Date().toLocaleTimeString(),
 sender:userId
 });
 
@@ -253,7 +243,6 @@ const fileInput=document.getElementById("fileInput");
 fileInput.addEventListener("change",function(){
 
 let file=this.files[0];
-
 if(!file)return;
 
 let reader=new FileReader();
@@ -261,12 +250,10 @@ let reader=new FileReader();
 reader.onload=function(){
 
 db.ref("chat").push({
-
 file:reader.result,
 type:file.type,
 sender:userId,
 time:new Date().toLocaleTimeString()
-
 });
 
 };
@@ -287,23 +274,31 @@ let div=document.createElement("div");
 
 div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
 
-if(data.text){
-div.innerHTML=data.text;
-}
+let content="";
+
+if(data.text) content=data.text;
 
 if(data.file){
 
 if(data.type.startsWith("image")){
-div.innerHTML="<img src='"+data.file+"'>";
+content="<img src='"+data.file+"'>";
 }
 
 if(data.type.startsWith("video")){
-div.innerHTML="<video src='"+data.file+"' controls></video>";
+content="<video src='"+data.file+"' controls></video>";
 }
 
 }
 
-div.innerHTML+=
+let deleteBtn="";
+
+if(data.sender===userId){
+deleteBtn="<button class='deleteBtn' onclick='deleteMsg(\""+snapshot.key+"\")'>🗑</button>";
+}
+
+div.innerHTML=
+deleteBtn+
+content+
 "<span class='time'>"+data.time+"</span>"+
 "<div class='reactions'>"+
 "<span onclick='react(\"❤️\")'>❤️</span>"+
@@ -312,10 +307,16 @@ div.innerHTML+=
 "</div>";
 
 chatbox.appendChild(div);
-
 chatbox.scrollTop=chatbox.scrollHeight;
 
 });
+
+/* DELETE MESSAGE */
+
+function deleteMsg(id){
+db.ref("chat/"+id).remove();
+location.reload();
+}
 
 /* REACTION */
 
@@ -326,9 +327,7 @@ if(emoji==="❤️"){
 let heart=document.createElement("div");
 
 heart.className="heart";
-
 heart.innerHTML="❤️";
-
 heart.style.left=Math.random()*100+"%";
 
 document.body.appendChild(heart);
@@ -339,10 +338,9 @@ setTimeout(()=>heart.remove(),3000);
 
 }
 
-/* VIDEO CALL */
+/* CALL SYSTEM */
 
 let localStream;
-
 const peer=new Peer();
 
 peer.on("open",function(id){
@@ -357,6 +355,26 @@ audio:true
 });
 
 document.getElementById("localVideo").srcObject=localStream;
+
+}
+
+function audioCall(){
+
+let id=document.getElementById("callId").value;
+
+navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+
+localStream=stream;
+
+const call=peer.call(id,stream);
+
+call.on("stream",function(remoteStream){
+
+document.getElementById("remoteVideo").srcObject=remoteStream;
+
+});
+
+});
 
 }
 
