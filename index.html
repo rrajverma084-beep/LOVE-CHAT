@@ -10,165 +10,167 @@ body{
   font-family: Arial, sans-serif;
   height:100vh;
   flex-direction:column;
-  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  background: linear-gradient(rgba(255,255,255,0.3), rgba(255,255,255,0.3)),
+              url('d0e096d7-41f8-4307-b5d5-c82f2a51d5bd.png') no-repeat center center;
+  background-size: cover;
 }
 
 /* Header */
 .header{
-background:#ff4d6d;
-color:white;
-padding:12px;
-font-size:18px;
-text-align:center;
-position:sticky;
-top:0;
-z-index:100;
+  background:#ff4d6d;
+  color:white;
+  padding:12px;
+  font-size:18px;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:100;
 }
 
 /* Chat Area */
 .chatbox{
-flex:1;
-overflow-y:auto;
-padding:10px;
-display:flex;
-flex-direction:column;
-scroll-behavior:smooth;
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  scroll-behavior:smooth;
 }
 
 /* Messages */
 .message{
-padding:12px 16px;
-margin:6px;
-border-radius:20px;
-max-width:80%;
-animation:pop .25s ease;
-position:relative;
-word-wrap:break-word;
-font-size:16px;
-line-height:1.4;
+  padding:12px 16px;
+  margin:6px;
+  border-radius:20px;
+  max-width:80%;
+  animation:pop .25s ease;
+  position:relative;
+  word-wrap:break-word;
+  font-size:16px;
+  line-height:1.4;
 }
 
 .myMessage{
-background:#ffccd5;
-margin-left:auto;
+  background:#ffccd5;
+  margin-left:auto;
 }
 
 .otherMessage{
-background:white;
+  background:white;
 }
 
 .time{
-font-size:12px;
-display:block;
-margin-top:4px;
-text-align:right;
-opacity:.7;
+  font-size:12px;
+  display:block;
+  margin-top:4px;
+  text-align:right;
+  opacity:.7;
 }
 
 .deleteBtn{
-background:none;
-border:none;
-cursor:pointer;
-font-size:14px;
-float:right;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:14px;
+  float:right;
 }
 
 /* Input Area */
 .inputArea{
-display:flex;
-padding:8px;
-background:white;
-gap:5px;
-position:sticky;
-bottom:0;
-z-index:100;
-align-items:center;
-border-top:1px solid #ccc;
+  display:flex;
+  padding:8px;
+  background:white;
+  gap:5px;
+  position:sticky;
+  bottom:0;
+  z-index:100;
+  align-items:center;
+  border-top:1px solid #ccc;
 }
 
 .inputArea input[type="text"]{
-flex:1;
-padding:12px 16px;
-border-radius:25px;
-border:1px solid #ccc;
-font-size:16px;
+  flex:1;
+  padding:12px 16px;
+  border-radius:25px;
+  border:1px solid #ccc;
+  font-size:16px;
 }
 
 .inputArea button{
-padding:12px 16px;
-border:none;
-background:#ff4d6d;
-color:white;
-border-radius:25px;
-cursor:pointer;
-flex-shrink:0;
-font-size:16px;
+  padding:12px 16px;
+  border:none;
+  background:#ff4d6d;
+  color:white;
+  border-radius:25px;
+  cursor:pointer;
+  flex-shrink:0;
+  font-size:16px;
 }
 
 /* Emoji picker */
 #emojiPicker{
-display:none;
-background:white;
-padding:5px;
-flex-wrap:wrap;
-position:sticky;
-bottom:60px;
-z-index:90;
+  display:none;
+  background:white;
+  padding:5px;
+  flex-wrap:wrap;
+  position:sticky;
+  bottom:60px;
+  z-index:90;
 }
 
 #emojiPicker span{
-font-size:24px;
-cursor:pointer;
-margin:4px;
+  font-size:24px;
+  cursor:pointer;
+  margin:4px;
 }
 
 /* Call area */
 .callArea{
-background:#fff;
-padding:10px;
-text-align:center;
-flex-shrink:0;
-border-top:1px solid #ccc;
+  background:#fff;
+  padding:10px;
+  text-align:center;
+  flex-shrink:0;
+  border-top:1px solid #ccc;
 }
 
 video{
-width:48%;
-max-width:300px;
-border-radius:10px;
-margin:5px 1%;
+  width:48%;
+  max-width:300px;
+  border-radius:10px;
+  margin:5px 1%;
 }
 
 img{
-max-width:100%;
-border-radius:10px;
-height:auto;
+  max-width:100%;
+  border-radius:10px;
+  height:auto;
 }
 
 /* Animations */
 @keyframes pop{
-from{transform:scale(.7);opacity:0;}
-to{transform:scale(1);opacity:1;}
+  from{transform:scale(.7);opacity:0;}
+  to{transform:scale(1);opacity:1;}
 }
 
 .heart{
-position:fixed;
-bottom:0;
-font-size:25px;
-animation:float 3s linear;
+  position:fixed;
+  bottom:0;
+  font-size:25px;
+  animation:float 3s linear;
 }
 
 @keyframes float{
-0%{transform:translateY(0);opacity:1;}
-100%{transform:translateY(-500px);opacity:0;}
+  0%{transform:translateY(0);opacity:1;}
+  100%{transform:translateY(-500px);opacity:0;}
 }
 
 /* Mobile adjustments */
 @media(max-width:480px){
-.header{font-size:16px;padding:10px;}
-.message{max-width:90%;font-size:16px;padding:10px 14px;}
-.inputArea input[type="text"]{font-size:16px;padding:10px 14px;}
-.inputArea button{font-size:16px;padding:10px 14px;}
-video{width:100%;margin:4px 0;}
+  .header{font-size:16px;padding:10px;}
+  .message{max-width:90%;font-size:16px;padding:10px 14px;}
+  .inputArea input[type="text"]{font-size:16px;padding:10px 14px;}
+  .inputArea button{font-size:16px;padding:10px 14px;}
+  video{width:100%;margin:4px 0;}
 }
 </style>
 
@@ -194,32 +196,32 @@ if(pass === "2020"){
 <div class="chatbox" id="chatbox"></div>
 
 <div id="emojiPicker">
-<span onclick="addEmoji('😀')">😀</span>
-<span onclick="addEmoji('😂')">😂</span>
-<span onclick="addEmoji('😍')">😍</span>
-<span onclick="addEmoji('😎')">😎</span>
-<span onclick="addEmoji('❤️')">❤️</span>
-<span onclick="addEmoji('👍')">👍</span>
+  <span onclick="addEmoji('😀')">😀</span>
+  <span onclick="addEmoji('😂')">😂</span>
+  <span onclick="addEmoji('😍')">😍</span>
+  <span onclick="addEmoji('😎')">😎</span>
+  <span onclick="addEmoji('❤️')">❤️</span>
+  <span onclick="addEmoji('👍')">👍</span>
 </div>
 
 <div class="inputArea">
-<button onclick="toggleEmoji()">😊</button>
-<input id="message" type="text" placeholder="Type message">
-<input type="file" id="fileInput" accept="image/*,video/*">
-<button onclick="sendMessage()">Send</button>
+  <button onclick="toggleEmoji()">😊</button>
+  <input id="message" type="text" placeholder="Type message">
+  <input type="file" id="fileInput" accept="image/*,video/*">
+  <button onclick="sendMessage()">Send</button>
 </div>
 
 <div class="callArea">
-<p>Your Call ID:</p>
-<div id="myId">Connecting...</div>
-<input id="callId" placeholder="Enter partner ID">
-<br><br>
-<button onclick="audioCall()">📞 Audio Call</button>
-<button onclick="videoCall()">🎥 Video Call</button>
-<div>
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
-</div>
+  <p>Your Call ID:</p>
+  <div id="myId">Connecting...</div>
+  <input id="callId" placeholder="Enter partner ID">
+  <br><br>
+  <button onclick="audioCall()">📞 Audio Call</button>
+  <button onclick="videoCall()">🎥 Video Call</button>
+  <div>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+  </div>
 </div>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
@@ -240,8 +242,8 @@ const db=firebase.database();
 // User ID
 let userId=localStorage.getItem("chatUserId");
 if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
-localStorage.setItem("chatUserId",userId);
+  userId="user_"+Math.random().toString(36).substr(2,9);
+  localStorage.setItem("chatUserId",userId);
 }
 
 // Emoji
@@ -250,62 +252,62 @@ function addEmoji(e){document.getElementById("message").value+=e;}
 
 // Send Message
 function sendMessage(){
-let msg=document.getElementById("message").value.trim();
-if(msg==="")return;
-db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()});
-document.getElementById("message").value="";
+  let msg=document.getElementById("message").value.trim();
+  if(msg==="")return;
+  db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()});
+  document.getElementById("message").value="";
 }
 
 // File Upload
 document.getElementById("fileInput").addEventListener("change",function(){
-let file=this.files[0];
-if(!file)return;
-let reader=new FileReader();
-reader.onload=function(){
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Date().toLocaleTimeString()});
-};
-reader.readAsDataURL(file);
+  let file=this.files[0];
+  if(!file)return;
+  let reader=new FileReader();
+  reader.onload=function(){
+    db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Date().toLocaleTimeString()});
+  };
+  reader.readAsDataURL(file);
 });
 
 // Display Messages
 const chatbox=document.getElementById("chatbox");
 db.ref("chat").on("child_added",function(snapshot){
-let data=snapshot.val();
-let div=document.createElement("div");
-div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
-div.setAttribute("data-id",snapshot.key);
-let content="";
-if(data.text) content=data.text;
-if(data.file){
-if(data.type.startsWith("image")) content="<img src='"+data.file+"'>";
-if(data.type.startsWith("video")) content="<video src='"+data.file+"' controls></video>";
-}
-let del="";
-if(data.sender===userId){
-del="<button class='deleteBtn' onclick='deleteMsg(\""+snapshot.key+"\")'>🗑</button>";
-}
-div.innerHTML=del+content+"<span class='time'>"+data.time+"</span><div><span onclick='react(\"❤️\")'>❤️</span></div>";
-chatbox.appendChild(div);
-chatbox.scrollTop=chatbox.scrollHeight;
+  let data=snapshot.val();
+  let div=document.createElement("div");
+  div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
+  div.setAttribute("data-id",snapshot.key);
+  let content="";
+  if(data.text) content=data.text;
+  if(data.file){
+    if(data.type.startsWith("image")) content="<img src='"+data.file+"'>";
+    if(data.type.startsWith("video")) content="<video src='"+data.file+"' controls></video>";
+  }
+  let del="";
+  if(data.sender===userId){
+    del="<button class='deleteBtn' onclick='deleteMsg(\""+snapshot.key+"\")'>🗑</button>";
+  }
+  div.innerHTML=del+content+"<span class='time'>"+data.time+"</span><div><span onclick='react(\"❤️\")'>❤️</span></div>";
+  chatbox.appendChild(div);
+  chatbox.scrollTop=chatbox.scrollHeight;
 });
 
 // Delete Message
 function deleteMsg(id){db.ref("chat/"+id).remove();}
 db.ref("chat").on("child_removed",function(snapshot){
-let msg=document.querySelector('[data-id="'+snapshot.key+'"]');
-if(msg){msg.remove();}
+  let msg=document.querySelector('[data-id="'+snapshot.key+'"]');
+  if(msg){msg.remove();}
 });
 
 // React
 function react(e){
-if(e==="❤️"){
-let heart=document.createElement("div");
-heart.className="heart";
-heart.innerHTML="❤️";
-heart.style.left=Math.random()*100+"%";
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),3000);
-}
+  if(e==="❤️"){
+    let heart=document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"%";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),3000);
+  }
 }
 
 // PeerJS Calls
@@ -314,31 +316,31 @@ const peer=new Peer();
 peer.on("open",id=>{document.getElementById("myId").innerText=id;});
 
 function audioCall(){
-let id=document.getElementById("callId").value;
-navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(stream=>{
-localStream=stream;
-const call=peer.call(id,stream);
-call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
-});
+  let id=document.getElementById("callId").value;
+  navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(stream=>{
+    localStream=stream;
+    const call=peer.call(id,stream);
+    call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
+  });
 }
 
 function videoCall(){
-let id=document.getElementById("callId").value;
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localStream=stream;
-document.getElementById("localVideo").srcObject=stream;
-const call=peer.call(id,stream);
-call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
-});
+  let id=document.getElementById("callId").value;
+  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+    localStream=stream;
+    document.getElementById("localVideo").srcObject=stream;
+    const call=peer.call(id,stream);
+    call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
+  });
 }
 
 peer.on("call",call=>{
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localStream=stream;
-document.getElementById("localVideo").srcObject=stream;
-call.answer(stream);
-call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
-});
+  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+    localStream=stream;
+    document.getElementById("localVideo").srcObject=stream;
+    call.answer(stream);
+    call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
+  });
 });
 </script>
 
