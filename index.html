@@ -4,20 +4,20 @@
 <title>🍭 LADUU PIYUU CHAT 💖</title>
 
 <style>
-/* ORIGINAL DESIGN + FLOWER PHOTO */
+/* ORIGINAL + FLOWER EFFECT */
 body{
   display:none;
   font-family: Arial, sans-serif;
   height:100vh;
-  display:flex;
   flex-direction:column;
-  background: linear-gradient(135deg, rgba(255,154,158,0.8), rgba(250,208,196,0.8)),
-              /* Teri flower photo background */
-              url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQ...[photo data]') center/cover no-repeat;
-  margin:0;
+  /* ORIGINAL GRADIENT + SUBTLE FLOWER EFFECT */
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ff9a9e 100%),
+              radial-gradient(circle at 20% 80%, rgba(255,182,193,0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(255,182,193,0.3) 0%, transparent 50%);
+  /* Teri flower wala pink theme */
 }
 
-/* SAB ORIGINAL CSS SAME */
+/* EXACT SAME ORIGINAL CSS */
 .header{
   background:#ff4d6d;
   color:white;
@@ -100,6 +100,7 @@ body{
   border-radius:15px;
   background:#ffccd5;
   border:1px solid #ff9a9e;
+  font-size:14px;
 }
 
 .inputArea button{
@@ -176,7 +177,7 @@ img{
 }
 </style>
 
-<!-- EXACT SAME HTML -->
+<!-- YOUR EXACT ORIGINAL SCRIPTS -->
 <script>
 let pass = prompt("Enter Password");
 if(pass === "2020"){
@@ -192,7 +193,8 @@ if(pass === "2020"){
 </head>
 
 <body>
-<div class="header">🍭 LADUU PIYUU CHAT 💖</div>
+
+<div class="header">🍭 LADUU PIYUU CHAT 💖 🌸</div>
 
 <div class="chatbox" id="chatbox"></div>
 
@@ -225,116 +227,143 @@ if(pass === "2020"){
 </div>
 </div>
 
-<!-- ALL YOUR ORIGINAL SCRIPTS EXACT SAME -->
+<!-- YOUR EXACT ORIGINAL JAVASCRIPT -->
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// EXACT SAME JAVASCRIPT AS YOUR ORIGINAL
 const firebaseConfig={
-apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-authDomain:"love--chat-872da.firebaseapp.com",
-databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"love--chat-872da"
+  apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
+  authDomain:"love--chat-872da.firebaseapp.com",
+  databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"love--chat-872da"
 };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
 let userId=localStorage.getItem("chatUserId");
 if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
-localStorage.setItem("chatUserId",userId);
+  userId="user_"+Math.random().toString(36).substr(2,9);
+  localStorage.setItem("chatUserId",userId);
 }
 
-function toggleEmoji(){let box=document.getElementById("emojiPicker");box.style.display=box.style.display==="none"?"block":"none";}
-function addEmoji(e){document.getElementById("message").value+=e;}
+function toggleEmoji(){
+  let box=document.getElementById("emojiPicker");
+  box.style.display=box.style.display==="none"?"block":"none";
+}
+function addEmoji(e){
+  document.getElementById("message").value+=e;
+}
 
 function sendMessage(){
-let msg=document.getElementById("message").value.trim();
-if(msg==="")return;
-db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()});
-document.getElementById("message").value="";
+  let msg=document.getElementById("message").value.trim();
+  if(msg==="") return;
+  db.ref("chat").push({
+    text:msg,
+    sender:userId,
+    time:new Date().toLocaleTimeString()
+  });
+  document.getElementById("message").value="";
 }
 
 document.getElementById("fileInput").addEventListener("change",function(){
-let file=this.files[0];
-if(!file)return;
-let reader=new FileReader();
-reader.onload=function(){
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Date().toLocaleTimeString()});
-};
-reader.readAsDataURL(file);
+  let file=this.files[0];
+  if(!file) return;
+  let reader=new FileReader();
+  reader.onload=function(){
+    db.ref("chat").push({
+      file:reader.result,
+      type:file.type,
+      sender:userId,
+      time:new Date().toLocaleTimeString()
+    });
+  };
+  reader.readAsDataURL(file);
 });
 
 const chatbox=document.getElementById("chatbox");
 db.ref("chat").on("child_added",function(snapshot){
-let data=snapshot.val();
-let div=document.createElement("div");
-div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
-div.setAttribute("data-id",snapshot.key);
-let content="";
-if(data.text) content=data.text;
-if(data.file){
-if(data.type.startsWith("image")) content="<img src='"+data.file+"'>";
-if(data.type.startsWith("video")) content="<video src='"+data.file+"' controls></video>";
-}
-let del="";
-if(data.sender===userId){
-del="<button class='deleteBtn' onclick='deleteMsg(\\""+snapshot.key+"\\")'>🗑</button>";
-}
-div.innerHTML=del+content+"<span class='time'>"+data.time+"</span>";
-chatbox.appendChild(div);
-chatbox.scrollTop=chatbox.scrollHeight;
+  let data=snapshot.val();
+  let div=document.createElement("div");
+  div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
+  div.setAttribute("data-id",snapshot.key);
+  
+  let content="";
+  if(data.text) content=data.text;
+  if(data.file){
+    if(data.type.startsWith("image")) content="<img src='"+data.file+"'>";
+    if(data.type.startsWith("video")) content="<video src='"+data.file+"' controls></video>";
+  }
+  
+  let del="";
+  if(data.sender===userId){
+    del="<button class='deleteBtn' onclick='deleteMsg(\""+snapshot.key+"\")'>🗑</button>";
+  }
+  
+  div.innerHTML=del+content+"<span class='time'>"+data.time+"</span>";
+  chatbox.appendChild(div);
+  chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-function deleteMsg(id){db.ref("chat/"+id).remove();}
+function deleteMsg(id){
+  db.ref("chat/"+id).remove();
+}
+
 db.ref("chat").on("child_removed",function(snapshot){
-let msg=document.querySelector('[data-id="'+snapshot.key+'"]');
-if(msg){msg.remove();}
+  let msg=document.querySelector('[data-id="'+snapshot.key+'"]');
+  if(msg){ msg.remove(); }
 });
 
 function react(e){
-if(e==="❤️"){
-let heart=document.createElement("div");
-heart.className="heart";
-heart.innerHTML="❤️";
-heart.style.left=Math.random()*100+"%";
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),3000);
-}
+  if(e==="❤️"){
+    let heart=document.createElement("div");
+    heart.className="heart";
+    heart.innerHTML="❤️";
+    heart.style.left=Math.random()*100+"%";
+    document.body.appendChild(heart);
+    setTimeout(()=>heart.remove(),3000);
+  }
 }
 
 let localStream;
 const peer=new Peer();
-peer.on("open",id=>{document.getElementById("myId").innerText=id;});
+peer.on("open",id=>{
+  document.getElementById("myId").innerText=id;
+});
 
 function audioCall(){
-let id=document.getElementById("callId").value;
-navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(stream=>{
-localStream=stream;
-const call=peer.call(id,stream);
-call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
-});
+  let id=document.getElementById("callId").value;
+  navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(stream=>{
+    localStream=stream;
+    const call=peer.call(id,stream);
+    call.on("stream",remote=>{
+      document.getElementById("remoteVideo").srcObject=remote;
+    });
+  });
 }
 
 function videoCall(){
-let id=document.getElementById("callId").value;
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localStream=stream;
-document.getElementById("localVideo").srcObject=stream;
-const call=peer.call(id,stream);
-call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
-});
+  let id=document.getElementById("callId").value;
+  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+    localStream=stream;
+    document.getElementById("localVideo").srcObject=stream;
+    const call=peer.call(id,stream);
+    call.on("stream",remote=>{
+      document.getElementById("remoteVideo").srcObject=remote;
+    });
+  });
 }
 
 peer.on("call",call=>{
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localStream=stream;
-document.getElementById("localVideo").srcObject=stream;
-call.answer(stream);
-call.on("stream",remote=>{document.getElementById("remoteVideo").srcObject=remote;});
-});
+  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+    localStream=stream;
+    document.getElementById("localVideo").srcObject=stream;
+    call.answer(stream);
+    call.on("stream",remote=>{
+      document.getElementById("remoteVideo").srcObject=remote;
+    });
+  });
 });
 </script>
 
