@@ -170,12 +170,6 @@ animation:float 3s linear;
 0%{transform:translateY(0);opacity:1;}
 100%{transform:translateY(-500px);opacity:0;}
 }
-
-@media(max-width:480px){
-.header{font-size:16px;padding:10px;}
-.message{max-width:90%;font-size:15px;padding:10px;}
-video{width:100%;margin:4px 0;}
-}
 </style>
 
 <script>
@@ -224,37 +218,35 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// ✅ FIXED EMOJI DATA
-const emojiData = {
-"😃 Smileys":["😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇","🙂","🙃","😉","😍","😘","😎","🤗","🫂"],
-"❤️ Love":["❤️","💖","💕","💘","💝","💞"],
-"👍 Gestures":["👍","👎","👏","🙏","👌"],
-"😂 Funny":["😂","🤣","😜","😝","🤡","💀","👻"],
-"🐶 Animals":["🐶","🐱","🐭","🐰"],
-"🍔 Food":["🍔","🍕","🍟","🍩"],
-"⚽ Games":["⚽","🏀","🎮"],
-"🚗 Travel":["🚗","✈️","🚀"]
+// ✅ EMOJI
+const emojiData={
+"😃":["😀","😃","😄","😁","😂","🤣","😊","😍","😘","😎","🤗","🫂"],
+"❤️":["❤️","💖","💕","💘","💝"],
+"👍":["👍","👎","👏","🙏","👌"],
+"🐶":["🐶","🐱","🐭","🐰"],
+"🍔":["🍔","🍕","🍟","🍩"],
+"⚽":["⚽","🏀","🎮"],
+"🚗":["🚗","✈️","🚀"]
 };
 
 const picker=document.getElementById("emojiPicker");
 
 for(let cat in emojiData){
-let title=document.createElement("div");
-title.className="categoryTitle";
-title.innerText=cat;
-picker.appendChild(title);
+let t=document.createElement("div");
+t.className="categoryTitle";
+t.innerText=cat;
+picker.appendChild(t);
 
 emojiData[cat].forEach(e=>{
-let span=document.createElement("span");
-span.innerText=e;
-span.onclick=()=>{document.getElementById("message").value+=e;}
-picker.appendChild(span);
+let s=document.createElement("span");
+s.innerText=e;
+s.onclick=()=>message.value+=e;
+picker.appendChild(s);
 });
 }
 
 function toggleEmoji(){
-let box=document.getElementById("emojiPicker");
-box.style.display=box.style.display==="none"?"block":"none";
+picker.style.display=picker.style.display==="none"?"block":"none";
 }
 
 // FIREBASE
@@ -274,80 +266,75 @@ localStorage.setItem("chatUserId",userId);
 }
 
 function sendMessage(){
-let msg=document.getElementById("message").value.trim();
+let msg=message.value.trim();
 if(msg==="")return;
 db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()});
-document.getElementById("message").value="";
+message.value="";
 }
 
-document.getElementById("fileInput").addEventListener("change",function(){
+fileInput.onchange=function(){
 let file=this.files[0];
-if(!file)return;
 let reader=new FileReader();
-reader.onload=function(){
+reader.onload=()=>{
 db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Date().toLocaleTimeString()});
 };
 reader.readAsDataURL(file);
-});
+};
 
-const chatbox=document.getElementById("chatbox");
-
-db.ref("chat").on("child_added",function(snapshot){
-let data=snapshot.val();
+db.ref("chat").on("child_added",snap=>{
+let d=snap.val();
 let div=document.createElement("div");
-div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
+div.className=d.sender===userId?"message myMessage":"message otherMessage";
+div.setAttribute("data-id",snap.key);
 
 let content="";
-if(data.text) content=data.text;
-if(data.file){
-if(data.type.startsWith("image")) content="<img src='"+data.file+"'>";
-if(data.type.startsWith("video")) content="<video src='"+data.file+"' controls></video>";
+if(d.text) content=d.text;
+if(d.file){
+if(d.type.startsWith("image")) content="<img src='"+d.file+"'>";
+if(d.type.startsWith("video")) content="<video src='"+d.file+"' controls></video>";
 }
 
-div.innerHTML=content+"<span class='time'>"+data.time+"</span>";
+let del="";
+if(d.sender===userId){
+del="<button class='deleteBtn' onclick='deleteMsg(\""+snap.key+"\")'>🗑</button>";
+}
+
+div.innerHTML=del+content+"<span class='time'>"+d.time+"</span>";
 chatbox.appendChild(div);
 chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-// CALL
-let localStream;
-const peer=new Peer();
+function deleteMsg(id){
+db.ref("chat/"+id).remove();
+}
 
-peer.on("open",id=>{
-document.getElementById("myId").innerText=id;
+db.ref("chat").on("child_removed",snap=>{
+let msg=document.querySelector('[data-id="'+snap.key+'"]');
+if(msg) msg.remove();
 });
+
+// CALL
+let peer=new Peer();
+peer.on("open",id=>myId.innerText=id);
 
 function audioCall(){
-let id=document.getElementById("callId").value;
-navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-localStream=stream;
-const call=peer.call(id,stream);
-call.on("stream",remote=>{
-document.getElementById("remoteVideo").srcObject=remote;
-});
+navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{
+peer.call(callId.value,s).on("stream",r=>remoteVideo.srcObject=r);
 });
 }
 
 function videoCall(){
-let id=document.getElementById("callId").value;
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localStream=stream;
-document.getElementById("localVideo").srcObject=stream;
-const call=peer.call(id,stream);
-call.on("stream",remote=>{
-document.getElementById("remoteVideo").srcObject=remote;
-});
+navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(s=>{
+localVideo.srcObject=s;
+peer.call(callId.value,s).on("stream",r=>remoteVideo.srcObject=r);
 });
 }
 
 peer.on("call",call=>{
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localStream=stream;
-document.getElementById("localVideo").srcObject=stream;
-call.answer(stream);
-call.on("stream",remote=>{
-document.getElementById("remoteVideo").srcObject=remote;
-});
+navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(s=>{
+localVideo.srcObject=s;
+call.answer(s);
+call.on("stream",r=>remoteVideo.srcObject=r);
 });
 });
 </script>
