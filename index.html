@@ -63,7 +63,6 @@ font-size:14px;
 float:right;
 }
 
-/* ✅ COMPACT INPUT */
 .inputArea{
 display:flex;
 padding:6px;
@@ -105,16 +104,15 @@ width:90px;
 font-size:12px;
 }
 
-/* ✅ FULL EMOJI PANEL */
+/* ✅ WHATSAPP STYLE EMOJI PANEL */
 #emojiPicker{
 display:none;
 background:white;
-padding:8px;
-flex-wrap:wrap;
+padding:10px;
 position:sticky;
 bottom:60px;
 z-index:90;
-max-height:200px;
+max-height:250px;
 overflow-y:auto;
 border-top:1px solid #ccc;
 }
@@ -122,7 +120,18 @@ border-top:1px solid #ccc;
 #emojiPicker span{
 font-size:22px;
 cursor:pointer;
-margin:4px;
+margin:5px;
+display:inline-block;
+}
+
+#emojiPicker span:hover{
+background:#eee;
+border-radius:6px;
+}
+
+.categoryTitle{
+font-weight:bold;
+margin:6px 0;
 }
 
 .callArea{
@@ -190,15 +199,8 @@ if(pass === "2020"){
 
 <div class="chatbox" id="chatbox"></div>
 
-<!-- ✅ FULL EMOJIS -->
-<div id="emojiPicker">
-😀 😁 😂 🤣 😃 😄 😅 😆 😉 😊 😍 😘 😎 🤩 🥳 😏 😢 😭 😡 😱  
-❤️ 💖 💕 💘 💝 💞 💓 💗 💙 💚 💛 🖤 🤍 🤎  
-👍 👎 👏 🙏 👌 ✌️ 🤝 🤟 🤘  
-🔥 ⭐ ✨ 💯 🎉 🎂 🍕 🍔 🍟 🍩 🍫 ☕ 🧃  
-🚗 🏍️ ✈️ 🚀 🏠 🏫 📱 💻 ⌚ 🎮 🎧 📷  
-
-</div>
+<!-- ✅ NEW EMOJI PICKER -->
+<div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
@@ -225,6 +227,42 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
+// 🔥 EMOJI DATA
+const emojiData = {
+"😃 Smileys": ["😀","😃","😄","😁","😆","😅","😂","🤣","😊","😍","😘","😎","🤩","🥳","😢","😭","😡","😱"],
+"❤️ Love": ["❤️","💖","💕","💘","💝","💞","💓","💗","💙","💚","💛","🖤","🤍"],
+"👍 Gestures": ["👍","👎","👏","🙏","👌","✌️","🤝","🤟","🤘"],
+"🍔 Food": ["🍔","🍕","🍟","🍩","🍫","☕","🧃","🍎","🍌","🍇"],
+"⚽ Fun": ["⚽","🏀","🏏","🎮","🎯","🎳"],
+"🚗 Travel": ["🚗","🏍️","✈️","🚀","🚂","🚢"],
+"💡 Objects": ["📱","💻","⌚","🎧","📷","💡","🔑"],
+"🌍 Flags": ["🇮🇳","🇺🇸","🇬🇧","🇨🇦","🇦🇺","🇯🇵"]
+};
+
+// render emoji
+const picker=document.getElementById("emojiPicker");
+
+for(let cat in emojiData){
+let title=document.createElement("div");
+title.className="categoryTitle";
+title.innerText=cat;
+picker.appendChild(title);
+
+emojiData[cat].forEach(e=>{
+let span=document.createElement("span");
+span.innerText=e;
+span.onclick=()=>{document.getElementById("message").value+=e;}
+picker.appendChild(span);
+});
+}
+
+// toggle
+function toggleEmoji(){
+let box=document.getElementById("emojiPicker");
+box.style.display=box.style.display==="none"?"block":"none";
+}
+
+// ================== YOUR ORIGINAL CODE ==================
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
@@ -239,24 +277,6 @@ if(!userId){
 userId="user_"+Math.random().toString(36).substr(2,9);
 localStorage.setItem("chatUserId",userId);
 }
-
-function toggleEmoji(){
-let box=document.getElementById("emojiPicker");
-box.style.display=box.style.display==="none"?"block":"none";
-}
-
-function addEmoji(e){
-document.getElementById("message").value+=e;
-}
-
-/* ✅ EMOJI CLICK FIX */
-document.querySelectorAll("#emojiPicker span, #emojiPicker").forEach(el=>{
-el.addEventListener("click",function(e){
-if(e.target.innerText){
-document.getElementById("message").value+=e.target.innerText;
-}
-});
-});
 
 function sendMessage(){
 let msg=document.getElementById("message").value.trim();
