@@ -63,7 +63,7 @@ font-size:14px;
 float:right;
 }
 
-/* ✅ FIXED INPUT AREA */
+/* INPUT AREA FIX */
 .inputArea{
 display:flex;
 padding:8px;
@@ -76,17 +76,15 @@ align-items:center;
 border-top:1px solid #ccc;
 }
 
-/* message input */
 .inputArea input[type="text"]{
 flex:1;
-min-width:0; /* 🔥 main fix */
+min-width:0;
 padding:10px 14px;
 border-radius:25px;
 border:1px solid #ccc;
 font-size:16px;
 }
 
-/* emoji button */
 .inputArea button:first-child{
 width:40px;
 height:40px;
@@ -94,7 +92,6 @@ padding:0;
 font-size:18px;
 }
 
-/* send button */
 .inputArea button:last-child{
 padding:10px 14px;
 border:none;
@@ -104,14 +101,12 @@ border-radius:25px;
 cursor:pointer;
 }
 
-/* file icon button */
 .fileBtn{
 font-size:20px;
 cursor:pointer;
 padding:5px;
 }
 
-/* emoji picker */
 #emojiPicker{
 display:none;
 background:white;
@@ -204,15 +199,11 @@ if(pass === "2020"){
 <span onclick="addEmoji('👍')">👍</span>
 </div>
 
-<!-- ✅ FIXED INPUT AREA -->
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
-
 <input id="message" type="text" placeholder="Type message">
-
 <label for="fileInput" class="fileBtn">📎</label>
 <input type="file" id="fileInput" accept="image/*,video/*" hidden>
-
 <button onclick="sendMessage()">Send</button>
 </div>
 
@@ -234,6 +225,7 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
+// Firebase
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
@@ -243,21 +235,42 @@ projectId:"love--chat-872da"
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
+// USER ID
 let userId=localStorage.getItem("chatUserId");
 if(!userId){
 userId="user_"+Math.random().toString(36).substr(2,9);
 localStorage.setItem("chatUserId",userId);
 }
 
+// ✅ FIXED PEERJS
+const peer = new Peer({
+  host: "peerjs.com",
+  port: 443,
+  secure: true
+});
+
+// ✅ SHOW ID
+peer.on("open", id => {
+  console.log("My ID:", id);
+  document.getElementById("myId").innerText = id;
+});
+
+// ✅ ERROR HANDLE
+peer.on("error", err => {
+  console.log("Peer Error:", err);
+  alert("Connection error! Refresh page.");
+});
+
+// Emoji
 function toggleEmoji(){
 let box=document.getElementById("emojiPicker");
 box.style.display=box.style.display==="none"?"block":"none";
 }
-
 function addEmoji(e){
 document.getElementById("message").value+=e;
 }
 
+// Send Message
 function sendMessage(){
 let msg=document.getElementById("message").value.trim();
 if(msg==="")return;
@@ -265,6 +278,7 @@ db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()
 document.getElementById("message").value="";
 }
 
+// File Upload
 document.getElementById("fileInput").addEventListener("change",function(){
 let file=this.files[0];
 if(!file)return;
@@ -275,6 +289,7 @@ db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Da
 reader.readAsDataURL(file);
 });
 
+// Chat display
 const chatbox=document.getElementById("chatbox");
 
 db.ref("chat").on("child_added",function(snapshot){
@@ -321,6 +336,43 @@ document.body.appendChild(heart);
 setTimeout(()=>heart.remove(),3000);
 }
 }
+
+// CALL FUNCTIONS SAME
+let localStream;
+
+function audioCall(){
+let id=document.getElementById("callId").value;
+navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+localStream=stream;
+const call=peer.call(id,stream);
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
+});
+});
+}
+
+function videoCall(){
+let id=document.getElementById("callId").value;
+navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+localStream=stream;
+document.getElementById("localVideo").srcObject=stream;
+const call=peer.call(id,stream);
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
+});
+});
+}
+
+peer.on("call",call=>{
+navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+localStream=stream;
+document.getElementById("localVideo").srcObject=stream;
+call.answer(stream);
+call.on("stream",remote=>{
+document.getElementById("remoteVideo").srcObject=remote;
+});
+});
+});
 </script>
 
 </body>
