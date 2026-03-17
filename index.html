@@ -10,165 +10,168 @@ body{
   height:100vh;
   flex-direction:column;
   background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  margin:0;
 }
 
 .header{
-background:#ff4d6d;
-color:white;
-padding:12px;
-font-size:18px;
-text-align:center;
-position:sticky;
-top:0;
-z-index:100;
+  background:#ff4d6d;
+  color:white;
+  padding:12px;
+  font-size:18px;
+  text-align:center;
+  position:sticky;
+  top:0;
+  z-index:100;
 }
 
 .chatbox{
-flex:1;
-overflow-y:auto;
-padding:10px;
-display:flex;
-flex-direction:column;
-scroll-behavior:smooth;
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  scroll-behavior:smooth;
 }
 
 .message{
-padding:12px 16px;
-margin:6px;
-border-radius:20px;
-max-width:80%;
-animation:pop .25s ease;
-position:relative;
-word-wrap:break-word;
-font-size:16px;
-line-height:1.4;
+  padding:12px 16px;
+  margin:6px;
+  border-radius:20px;
+  max-width:80%;
+  animation:pop .25s ease;
+  position:relative;
+  word-wrap:break-word;
+  font-size:16px;
+  line-height:1.4;
 }
 
 .myMessage{background:#ffccd5;margin-left:auto;}
 .otherMessage{background:white;}
 
 .time{
-font-size:12px;
-display:block;
-margin-top:4px;
-text-align:right;
-opacity:.7;
+  font-size:12px;
+  display:block;
+  margin-top:4px;
+  text-align:right;
+  opacity:.7;
 }
 
 .deleteBtn{
-background:none;
-border:none;
-cursor:pointer;
-font-size:14px;
-float:right;
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:14px;
+  float:right;
 }
 
 .inputArea{
-display:flex;
-padding:6px;
-background:white;
-gap:6px;
-position:sticky;
-bottom:0;
-z-index:100;
-align-items:center;
-border-top:1px solid #ccc;
+  display:flex;
+  flex-wrap:wrap;
+  padding:6px;
+  background:white;
+  gap:6px;
+  position:sticky;
+  bottom:0;
+  z-index:100;
+  align-items:center;
+  border-top:1px solid #ccc;
 }
 
 .inputArea input[type="text"]{
-flex:1;
-padding:10px 12px;
-border-radius:20px;
-border:1px solid #ccc;
-font-size:14px;
-outline:none;
+  flex:1;
+  min-width:60%;
+  padding:10px 12px;
+  border-radius:20px;
+  border:1px solid #ccc;
+  font-size:14px;
+  outline:none;
 }
 
 .inputArea button{
-padding:8px;
-border:none;
-background:#ff4d6d;
-color:white;
-border-radius:50%;
-cursor:pointer;
-width:38px;
-height:38px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:16px;
+  padding:8px;
+  border:none;
+  background:#ff4d6d;
+  color:white;
+  border-radius:50%;
+  cursor:pointer;
+  width:38px;
+  height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
 }
 
 #fileInput{
-width:90px;
-font-size:12px;
+  width:90px;
+  font-size:12px;
 }
 
 #emojiPicker{
-display:none;
-background:white;
-padding:10px;
-position:sticky;
-bottom:60px;
-z-index:90;
-max-height:250px;
-overflow-y:auto;
-border-top:1px solid #ccc;
+  display:none;
+  background:white;
+  padding:10px;
+  position:sticky;
+  bottom:60px;
+  z-index:90;
+  max-height:250px;
+  overflow-y:auto;
+  border-top:1px solid #ccc;
 }
 
 #emojiPicker span{
-font-size:22px;
-cursor:pointer;
-margin:5px;
-display:inline-block;
+  font-size:22px;
+  cursor:pointer;
+  margin:5px;
+  display:inline-block;
 }
 
 #emojiPicker span:hover{
-background:#eee;
-border-radius:6px;
+  background:#eee;
+  border-radius:6px;
 }
 
 .categoryTitle{
-font-weight:bold;
-margin:6px 0;
+  font-weight:bold;
+  margin:6px 0;
 }
 
 .callArea{
-background:#fff;
-padding:10px;
-text-align:center;
-flex-shrink:0;
-border-top:1px solid #ccc;
+  background:#fff;
+  padding:10px;
+  text-align:center;
+  flex-shrink:0;
+  border-top:1px solid #ccc;
 }
 
 video{
-width:48%;
-max-width:300px;
-border-radius:10px;
-margin:5px 1%;
+  width:48%;
+  max-width:300px;
+  border-radius:10px;
+  margin:5px 1%;
 }
 
 img{
-max-width:100%;
-border-radius:10px;
-height:auto;
+  max-width:100%;
+  border-radius:10px;
+  height:auto;
 }
 
 @keyframes pop{
-from{transform:scale(.7);opacity:0;}
-to{transform:scale(1);opacity:1;}
+  from{transform:scale(.7);opacity:0;}
+  to{transform:scale(1);opacity:1;}
 }
 
 .heart{
-position:fixed;
-bottom:0;
-font-size:25px;
-animation:float 3s linear;
+  position:fixed;
+  bottom:0;
+  font-size:25px;
+  animation:float 3s linear;
 }
 
 @keyframes float{
-0%{transform:translateY(0);opacity:1;}
-100%{transform:translateY(-500px);opacity:0;}
+  0%{transform:translateY(0);opacity:1;}
+  100%{transform:translateY(-500px);opacity:0;}
 }
 </style>
 
@@ -194,23 +197,23 @@ if(pass === "2020"){
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
-<button onclick="toggleEmoji()">😊</button>
-<input id="message" type="text" placeholder="Type message...">
-<input type="file" id="fileInput" accept="image/*,video/*">
-<button onclick="sendMessage()">➤</button>
+  <button onclick="toggleEmoji()">😊</button>
+  <input id="message" type="text" placeholder="Type message...">
+  <input type="file" id="fileInput" accept="image/*,video/*">
+  <button onclick="sendMessage()">➤</button>
 </div>
 
 <div class="callArea">
-<p>Your Call ID:</p>
-<div id="myId">Connecting...</div>
-<input id="callId" placeholder="Enter partner ID">
-<br><br>
-<button onclick="audioCall()">📞</button>
-<button onclick="videoCall()">🎥</button>
-<div>
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
-</div>
+  <p>Your Call ID:</p>
+  <div id="myId">Connecting...</div>
+  <input id="callId" placeholder="Enter partner ID">
+  <br><br>
+  <button onclick="audioCall()">📞</button>
+  <button onclick="videoCall()">🎥</button>
+  <div>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+  </div>
 </div>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
@@ -220,33 +223,33 @@ if(pass === "2020"){
 <script>
 // ✅ EMOJI
 const emojiData={
-"😃":["😀","😃","😄","😁","😂","🤣","😊","😍","😘","😎","🤗","🫂"],
-"❤️":["❤️","💖","💕","💘","💝"],
-"👍":["👍","👎","👏","🙏","👌"],
-"🐶":["🐶","🐱","🐭","🐰"],
-"🍔":["🍔","🍕","🍟","🍩"],
-"⚽":["⚽","🏀","🎮"],
-"🚗":["🚗","✈️","🚀"]
+"😃":["😀","😃","😄","😁","😂","🤣","😊","😍","😘","😎","🤗","🫂","🥰","🤭","😭","😜"],
+"❤️":["❤️","💖","💕","💘","💝","💌","💟"],
+"👍":["👍","👎","👏","🙏","👌","✌️"],
+"🐶":["🐶","🐱","🐭","🐰","🦊","🐼"],
+"🍔":["🍔","🍕","🍟","🍩","🌭","🥪"],
+"⚽":["⚽","🏀","🎮","🎲","🎯"],
+"🚗":["🚗","✈️","🚀","🚢"]
 };
 
 const picker=document.getElementById("emojiPicker");
 
 for(let cat in emojiData){
-let t=document.createElement("div");
-t.className="categoryTitle";
-t.innerText=cat;
-picker.appendChild(t);
+  let t=document.createElement("div");
+  t.className="categoryTitle";
+  t.innerText=cat;
+  picker.appendChild(t);
 
-emojiData[cat].forEach(e=>{
-let s=document.createElement("span");
-s.innerText=e;
-s.onclick=()=>message.value+=e;
-picker.appendChild(s);
-});
+  emojiData[cat].forEach(e=>{
+    let s=document.createElement("span");
+    s.innerText=e;
+    s.onclick=()=>message.value+=e;
+    picker.appendChild(s);
+  });
 }
 
 function toggleEmoji(){
-picker.style.display=picker.style.display==="none"?"block":"none";
+  picker.style.display=picker.style.display==="none"?"block":"none";
 }
 
 // FIREBASE
@@ -261,81 +264,86 @@ const db=firebase.database();
 
 let userId=localStorage.getItem("chatUserId");
 if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
-localStorage.setItem("chatUserId",userId);
+  userId="user_"+Math.random().toString(36).substr(2,9);
+  localStorage.setItem("chatUserId",userId);
 }
 
 function sendMessage(){
-let msg=message.value.trim();
-if(msg==="")return;
-db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()});
-message.value="";
+  let msg=message.value.trim();
+  if(msg==="")return;
+  db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()});
+  message.value="";
 }
 
 fileInput.onchange=function(){
-let file=this.files[0];
-let reader=new FileReader();
-reader.onload=()=>{
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Date().toLocaleTimeString()});
-};
-reader.readAsDataURL(file);
+  let file=this.files[0];
+  let reader=new FileReader();
+  reader.onload=()=>{
+    db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Date().toLocaleTimeString()});
+  };
+  reader.readAsDataURL(file);
 };
 
 db.ref("chat").on("child_added",snap=>{
-let d=snap.val();
-let div=document.createElement("div");
-div.className=d.sender===userId?"message myMessage":"message otherMessage";
-div.setAttribute("data-id",snap.key);
+  let d=snap.val();
+  let div=document.createElement("div");
+  div.className=d.sender===userId?"message myMessage":"message otherMessage";
+  div.setAttribute("data-id",snap.key);
 
-let content="";
-if(d.text) content=d.text;
-if(d.file){
-if(d.type.startsWith("image")) content="<img src='"+d.file+"'>";
-if(d.type.startsWith("video")) content="<video src='"+d.file+"' controls></video>";
-}
+  let content="";
+  if(d.text) content=d.text;
+  if(d.file){
+    if(d.type.startsWith("image")) content="<img src='"+d.file+"'>";
+    if(d.type.startsWith("video")) content="<video src='"+d.file+"' controls autoplay muted></video>";
+  }
 
-let del="";
-if(d.sender===userId){
-del="<button class='deleteBtn' onclick='deleteMsg(\""+snap.key+"\")'>🗑</button>";
-}
+  let del="";
+  if(d.sender===userId){
+    del="<button class='deleteBtn' onclick='deleteMsg(\""+snap.key+"\")'>🗑</button>";
+  }
 
-div.innerHTML=del+content+"<span class='time'>"+d.time+"</span>";
-chatbox.appendChild(div);
-chatbox.scrollTop=chatbox.scrollHeight;
+  div.innerHTML=del+content+"<span class='time'>"+d.time+"</span>";
+  chatbox.appendChild(div);
+  chatbox.scrollTop=chatbox.scrollHeight;
 });
 
 function deleteMsg(id){
-db.ref("chat/"+id).remove();
+  db.ref("chat/"+id).remove();
 }
 
 db.ref("chat").on("child_removed",snap=>{
-let msg=document.querySelector('[data-id="'+snap.key+'"]');
-if(msg) msg.remove();
+  let msg=document.querySelector('[data-id="'+snap.key+'"]');
+  if(msg) msg.remove();
 });
 
-// CALL
+// ✅ CALL FIXED
 let peer=new Peer();
 peer.on("open",id=>myId.innerText=id);
 
 function audioCall(){
-navigator.mediaDevices.getUserMedia({audio:true}).then(s=>{
-peer.call(callId.value,s).on("stream",r=>remoteVideo.srcObject=r);
-});
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    peer.call(callId.value, stream, {metadata:{type:"audio"}});
+  });
 }
 
 function videoCall(){
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(s=>{
-localVideo.srcObject=s;
-peer.call(callId.value,s).on("stream",r=>remoteVideo.srcObject=r);
-});
+  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+    localVideo.srcObject = stream;
+    peer.call(callId.value, stream, {metadata:{type:"video"}});
+  });
 }
 
-peer.on("call",call=>{
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(s=>{
-localVideo.srcObject=s;
-call.answer(s);
-call.on("stream",r=>remoteVideo.srcObject=r);
-});
+peer.on("call", call=>{
+  let type = call.metadata?.type || "video"; // default video
+  let constraints = (type==="audio") ? {audio:true} : {video:true,audio:true};
+
+  navigator.mediaDevices.getUserMedia(constraints).then(stream=>{
+    if(type==="video") localVideo.srcObject = stream;
+    call.answer(stream);
+    call.on("stream", r=>{
+      remoteVideo.srcObject = r;
+    });
+  });
 });
 </script>
 
