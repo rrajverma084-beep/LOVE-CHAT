@@ -210,6 +210,7 @@ if(pass === "2020"){
   <br><br>
   <button onclick="audioCall()">📞</button>
   <button onclick="videoCall()">🎥</button>
+  <button onclick="endCall()">❌ End Call</button> <!-- Hangup button added -->
   <div>
     <video id="localVideo" autoplay muted></video>
     <video id="remoteVideo" autoplay></video>
@@ -316,35 +317,57 @@ db.ref("chat").on("child_removed",snap=>{
   if(msg) msg.remove();
 });
 
-// ✅ CALL FIXED
+// ✅ CALL FIX + HANGUP
 let peer=new Peer();
+let currentCall = null; // store current call
+
 peer.on("open",id=>myId.innerText=id);
 
 function audioCall(){
   navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-    peer.call(callId.value, stream, {metadata:{type:"audio"}});
+    if(currentCall) currentCall.close(); // close existing call
+    currentCall = peer.call(callId.value, stream, {metadata:{type:"audio"}});
+    currentCall.on("stream", r=> remoteVideo.srcObject = r);
+    currentCall.on("close", ()=> clearCall());
   });
 }
 
 function videoCall(){
   navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+    if(currentCall) currentCall.close();
     localVideo.srcObject = stream;
-    peer.call(callId.value, stream, {metadata:{type:"video"}});
+    currentCall = peer.call(callId.value, stream, {metadata:{type:"video"}});
+    currentCall.on("stream", r=> remoteVideo.srcObject = r);
+    currentCall.on("close", ()=> clearCall());
   });
 }
 
 peer.on("call", call=>{
-  let type = call.metadata?.type || "video"; // default video
+  let type = call.metadata?.type || "video";
   let constraints = (type==="audio") ? {audio:true} : {video:true,audio:true};
 
   navigator.mediaDevices.getUserMedia(constraints).then(stream=>{
     if(type==="video") localVideo.srcObject = stream;
     call.answer(stream);
-    call.on("stream", r=>{
-      remoteVideo.srcObject = r;
-    });
+    currentCall = call;
+    call.on("stream", r=> remoteVideo.srcObject = r);
+    call.on("close", ()=> clearCall());
   });
 });
+
+// Hangup button function
+function endCall(){
+  if(currentCall){
+    currentCall.close();
+    clearCall();
+  }
+}
+
+function clearCall(){
+  currentCall = null;
+  remoteVideo.srcObject = null;
+  localVideo.srcObject = null;
+}
 </script>
 
 </body>
