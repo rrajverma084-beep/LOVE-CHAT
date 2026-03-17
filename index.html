@@ -317,15 +317,34 @@ db.ref("chat").on("child_removed",snap=>{
   if(msg) msg.remove();
 });
 
-// ✅ CALL FIX + HANGUP
+// ✅ CALL FIX + HANGUP + SMOOTH AUDIO
 let peer=new Peer();
 let currentCall = null;
 
+// Function to get smooth audio stream
+function getSmoothAudioStream(constraints={audio:true, video:false}){
+  return navigator.mediaDevices.getUserMedia(constraints)
+    .then(stream=>{
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const source = audioCtx.createMediaStreamSource(stream);
+      const gainNode = audioCtx.createGain();
+      gainNode.gain.value = 0.8; // slightly lower for smoothness
+      source.connect(gainNode);
+      const dest = audioCtx.createMediaStreamDestination();
+      gainNode.connect(dest);
+      if(constraints.video){
+        // combine video track
+        stream.getVideoTracks().forEach(track => dest.stream.addTrack(track));
+      }
+      return dest.stream;
+    });
+}
+
 peer.on("open",id=>myId.innerText=id);
 
+// Audio Call
 function audioCall(){
-  navigator.mediaDevices.getUserMedia({audio:true})
-  .then(stream=>{
+  getSmoothAudioStream({audio:true}).then(stream=>{
     if(currentCall) currentCall.close();
     currentCall = peer.call(callId.value, stream, {metadata:{type:"audio"}});
     currentCall.on("stream", r=> remoteVideo.srcObject = r);
@@ -333,9 +352,9 @@ function audioCall(){
   });
 }
 
+// Video Call
 function videoCall(){
-  navigator.mediaDevices.getUserMedia({video:true,audio:true})
-  .then(stream=>{
+  getSmoothAudioStream({audio:true, video:true}).then(stream=>{
     if(currentCall) currentCall.close();
     localVideo.srcObject = stream;
     currentCall = peer.call(callId.value, stream, {metadata:{type:"video"}});
@@ -344,12 +363,12 @@ function videoCall(){
   });
 }
 
+// Incoming call
 peer.on("call", call=>{
   let type = call.metadata?.type || "video";
-  let constraints = (type==="audio") ? {audio:true} : {video:true,audio:true};
+  let constraints = (type==="audio") ? {audio:true} : {audio:true, video:true};
 
-  navigator.mediaDevices.getUserMedia(constraints)
-  .then(stream=>{
+  getSmoothAudioStream(constraints).then(stream=>{
     if(type==="video") localVideo.srcObject = stream;
     call.answer(stream);
     currentCall = call;
@@ -359,6 +378,7 @@ peer.on("call", call=>{
   });
 });
 
+// Hangup
 function endCall(){
   if(currentCall){
     currentCall.close();
