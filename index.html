@@ -104,7 +104,7 @@ width:90px;
 font-size:12px;
 }
 
-/* ✅ WHATSAPP STYLE EMOJI PANEL */
+/* Emoji Panel */
 #emojiPicker{
 display:none;
 background:white;
@@ -133,50 +133,6 @@ border-radius:6px;
 font-weight:bold;
 margin:6px 0;
 }
-
-.callArea{
-background:#fff;
-padding:10px;
-text-align:center;
-flex-shrink:0;
-border-top:1px solid #ccc;
-}
-
-video{
-width:48%;
-max-width:300px;
-border-radius:10px;
-margin:5px 1%;
-}
-
-img{
-max-width:100%;
-border-radius:10px;
-height:auto;
-}
-
-@keyframes pop{
-from{transform:scale(.7);opacity:0;}
-to{transform:scale(1);opacity:1;}
-}
-
-.heart{
-position:fixed;
-bottom:0;
-font-size:25px;
-animation:float 3s linear;
-}
-
-@keyframes float{
-0%{transform:translateY(0);opacity:1;}
-100%{transform:translateY(-500px);opacity:0;}
-}
-
-@media(max-width:480px){
-.header{font-size:16px;padding:10px;}
-.message{max-width:90%;font-size:15px;padding:10px;}
-video{width:100%;margin:4px 0;}
-}
 </style>
 
 <script>
@@ -199,44 +155,28 @@ if(pass === "2020"){
 
 <div class="chatbox" id="chatbox"></div>
 
-<!-- ✅ NEW EMOJI PICKER -->
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
 <input id="message" type="text" placeholder="Type message...">
-<input type="file" id="fileInput" accept="image/*,video/*">
 <button onclick="sendMessage()">➤</button>
 </div>
 
-<div class="callArea">
-<p>Your Call ID:</p>
-<div id="myId">Connecting...</div>
-<input id="callId" placeholder="Enter partner ID">
-<br><br>
-<button onclick="audioCall()">📞</button>
-<button onclick="videoCall()">🎥</button>
-<div>
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
-</div>
-</div>
-
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
-
 <script>
-// 🔥 EMOJI DATA
+// ✅ FIXED EMOJI DATA
 const emojiData = {
-"😃 Smileys": ["😀","😃","😄","😁","😆","😅","😂","🤣","😊","😍","😘","😎","🤩","🥳","😢","😭","😡","😱"],
-"❤️ Love": ["❤️","💖","💕","💘","💝","💞","💓","💗","💙","💚","💛","🖤","🤍"],
-"👍 Gestures": ["👍","👎","👏","🙏","👌","✌️","🤝","🤟","🤘"],
-"🍔 Food": ["🍔","🍕","🍟","🍩","🍫","☕","🧃","🍎","🍌","🍇"],
-"⚽ Fun": ["⚽","🏀","🏏","🎮","🎯","🎳"],
-"🚗 Travel": ["🚗","🏍️","✈️","🚀","🚂","🚢"],
-"💡 Objects": ["📱","💻","⌚","🎧","📷","💡","🔑"],
-"🌍 Flags": ["🇮🇳","🇺🇸","🇬🇧","🇨🇦","🇦🇺","🇯🇵"]
+"😃 Smileys":["😀","😃","😄","😁","😆","😅","😂","🤣","😊","😇","🙂","🙃","😉","😍","😘","😗","😙","😚","😋","😛","😜","🤪","🤓","😎","🥳"],
+"❤️ Love & Hug":["❤️","💖","💕","💘","💝","💞","💓","💗","🤗","🫂","💋","🥰"],
+"👍 Gestures":["👍","👎","👏","🙏","👌","✌️","🤝","🤘","👊","✊","🙌","🤞","👋"],
+"😂 Funny":["😂","🤣","😜","😝","😛","🤪","🤡","💀","👻"],
+"🐶 Animals":["🐶","🐱","🐭","🐰","🦊","🐻","🐼","🐯","🦁"],
+"🍔 Food":["🍔","🍕","🍟","🍿","🍗","🍩","🎂","🍫","☕"],
+"⚽ Activities":["⚽","🏀","🏏","🎮","🎯"],
+"🚗 Travel":["🚗","🚕","✈️","🚀","🚂"],
+"💡 Objects":["📱","💻","📷","💡","💰"],
+"🔥 Symbols":["🔥","⭐","✨","💯","✔️","❌"],
+"🌍 Flags":["🇮🇳","🇺🇸","🇬🇧"]
 };
 
 // render emoji
@@ -262,124 +202,14 @@ let box=document.getElementById("emojiPicker");
 box.style.display=box.style.display==="none"?"block":"none";
 }
 
-// ================== YOUR ORIGINAL CODE ==================
-const firebaseConfig={
-apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-authDomain:"love--chat-872da.firebaseapp.com",
-databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"love--chat-872da"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-
-let userId=localStorage.getItem("chatUserId");
-if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
-localStorage.setItem("chatUserId",userId);
-}
-
+// dummy send (safe)
 function sendMessage(){
-let msg=document.getElementById("message").value.trim();
-if(msg==="")return;
-db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()});
+let msg=document.getElementById("message").value;
+if(msg.trim()!==""){
+alert("Message: "+msg);
 document.getElementById("message").value="";
 }
-
-document.getElementById("fileInput").addEventListener("change",function(){
-let file=this.files[0];
-if(!file)return;
-let reader=new FileReader();
-reader.onload=function(){
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Date().toLocaleTimeString()});
-};
-reader.readAsDataURL(file);
-});
-
-const chatbox=document.getElementById("chatbox");
-
-db.ref("chat").on("child_added",function(snapshot){
-let data=snapshot.val();
-let div=document.createElement("div");
-div.className=(data.sender===userId)?"message myMessage":"message otherMessage";
-div.setAttribute("data-id",snapshot.key);
-
-let content="";
-if(data.text) content=data.text;
-if(data.file){
-if(data.type.startsWith("image")) content="<img src='"+data.file+"'>";
-if(data.type.startsWith("video")) content="<video src='"+data.file+"' controls></video>";
 }
-
-let del="";
-if(data.sender===userId){
-del="<button class='deleteBtn' onclick='deleteMsg(\""+snapshot.key+"\")'>🗑</button>";
-}
-
-div.innerHTML=del+content+"<span class='time'>"+data.time+"</span><div><span onclick='react(\"❤️\")'>❤️</span></div>";
-chatbox.appendChild(div);
-chatbox.scrollTop=chatbox.scrollHeight;
-});
-
-function deleteMsg(id){
-db.ref("chat/"+id).remove();
-}
-
-db.ref("chat").on("child_removed",function(snapshot){
-let msg=document.querySelector('[data-id="'+snapshot.key+'"]');
-if(msg){msg.remove();}
-});
-
-function react(e){
-if(e==="❤️"){
-let heart=document.createElement("div");
-heart.className="heart";
-heart.innerHTML="❤️";
-heart.style.left=Math.random()*100+"%";
-document.body.appendChild(heart);
-setTimeout(()=>heart.remove(),3000);
-}
-}
-
-let localStream;
-const peer=new Peer();
-
-peer.on("open",id=>{
-document.getElementById("myId").innerText=id;
-});
-
-function audioCall(){
-let id=document.getElementById("callId").value;
-navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-localStream=stream;
-const call=peer.call(id,stream);
-call.on("stream",remote=>{
-document.getElementById("remoteVideo").srcObject=remote;
-});
-});
-}
-
-function videoCall(){
-let id=document.getElementById("callId").value;
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localStream=stream;
-document.getElementById("localVideo").srcObject=stream;
-const call=peer.call(id,stream);
-call.on("stream",remote=>{
-document.getElementById("remoteVideo").srcObject=remote;
-});
-});
-}
-
-peer.on("call",call=>{
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localStream=stream;
-document.getElementById("localVideo").srcObject=stream;
-call.answer(stream);
-call.on("stream",remote=>{
-document.getElementById("remoteVideo").srcObject=remote;
-});
-});
-});
 </script>
 
 </body>
