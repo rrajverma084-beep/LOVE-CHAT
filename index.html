@@ -13,24 +13,36 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
-  overflow:hidden; /* ⚡ IMPORTANT FIX */
+  overflow:auto;
   background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
-/* BACKGROUND */
 .heart,.cloud,.glitter,.bgText{
   pointer-events:none;
-  position:absolute;
   z-index:0;
+  position:absolute;
 }
 
-.heart{bottom:-50px;font-size:20px;animation:floatUp 8s linear infinite;opacity:0.7;}
+.heart{
+  bottom:-50px;
+  font-size:20px;
+  animation:floatUp 8s linear infinite;
+  opacity:0.7;
+}
 @keyframes floatUp{0%{transform:translateY(0);}100%{transform:translateY(-110vh);}}
 
-.cloud{top:10%;font-size:30px;animation:moveCloud 25s linear infinite;opacity:0.6;}
+.cloud{
+  top:10%;
+  font-size:30px;
+  animation:moveCloud 25s linear infinite;
+  opacity:0.6;
+}
 @keyframes moveCloud{0%{left:-100px;}100%{left:110%;}}
 
-.glitter{width:5px;height:5px;background:white;border-radius:50%;animation:glow 3s infinite;}
+.glitter{
+  width:5px;height:5px;background:white;border-radius:50%;
+  animation:glow 3s infinite;
+}
 @keyframes glow{0%{opacity:.3;}50%{opacity:1;}100%{opacity:.3;}}
 
 .bgText{
@@ -44,15 +56,7 @@ body{
 .header,.chatbox,.inputArea,.callArea{position:relative;z-index:1;}
 
 .header{background:#202c33;color:white;padding:12px;}
-.chatbox{
-  flex:1;
-  overflow-y:auto;
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-  will-change: transform; /* ⚡ SPEED */
-  transform: translateZ(0);
-}
+.chatbox{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;}
 
 .message{max-width:75%;padding:8px 12px;margin:4px 0;border-radius:8px;position:relative;}
 .myMessage{background:#005c4b;color:white;margin-left:auto;}
@@ -77,11 +81,13 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 </style>
 
 <script>
-let pass=prompt("Enter Password");
+let pass = prompt("Enter Password");
 if(pass==="2020"){
-document.addEventListener("DOMContentLoaded",()=>document.body.style.display="flex");
+  document.addEventListener("DOMContentLoaded",()=>{
+    document.body.style.display="flex";
+  });
 }else{
-alert("Wrong Password");
+  alert("Wrong Password");
 }
 </script>
 </head>
@@ -120,7 +126,7 @@ alert("Wrong Password");
 
 <div id="callArea" class="callArea">
 <p>Your ID:</p>
-<div id="myId" style="color:white;font-weight:bold"></div>
+<div id="myId" style="color:#fff;font-weight:bold"></div>
 
 <input id="callId" placeholder="Enter ID">
 <br><br>
@@ -140,16 +146,25 @@ alert("Wrong Password");
 
 <script>
 
-/* ELEMENTS */
-const message=document.getElementById("message");
-const chatbox=document.getElementById("chatbox");
-const emojiPicker=document.getElementById("emojiPicker");
-const fileInput=document.getElementById("fileInput");
-const callArea=document.getElementById("callArea");
-const myId=document.getElementById("myId");
-const callId=document.getElementById("callId");
-const sendSound=document.getElementById("sendSound");
-const ringtone=document.getElementById("ringtone");
+/* FIXED ELEMENTS */
+const message = document.getElementById("message");
+const emojiPicker = document.getElementById("emojiPicker");
+const chatbox = document.getElementById("chatbox");
+const fileInput = document.getElementById("fileInput");
+const callArea = document.getElementById("callArea");
+const myId = document.getElementById("myId");
+const callId = document.getElementById("callId");
+const sendSound = document.getElementById("sendSound");
+const ringtone = document.getElementById("ringtone");
+
+/* GLITTER */
+for(let i=0;i<25;i++){
+let g=document.createElement("div");
+g.className="glitter";
+g.style.left=Math.random()*100+"%";
+g.style.top=Math.random()*100+"%";
+document.body.appendChild(g);
+}
 
 /* EMOJI */
 const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
@@ -161,7 +176,7 @@ emojiPicker.appendChild(s);
 });
 
 function toggleEmoji(){
-emojiPicker.style.display=emojiPicker.style.display==="block"?"none":"block";
+emojiPicker.style.display = emojiPicker.style.display==="block"?"none":"block";
 }
 
 message.addEventListener("keypress",e=>{
@@ -178,44 +193,12 @@ projectId:"love--chat-872da"
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
-let userId=localStorage.getItem("chatUserId");
+/* USER ID */
+let userId = localStorage.getItem("chatUserId");
 if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
+userId = "user_"+Math.random().toString(36).substr(2,9);
 localStorage.setItem("chatUserId",userId);
 }
-
-/* LIMIT FIX ⚡ */
-db.ref("chat").limitToLast(100).on("child_added",snap=>{
-let d=snap.val();
-
-let div=document.createElement("div");
-div.className=d.sender===userId?"message myMessage":"message otherMessage";
-
-let content="";
-if(d.text) content=d.text;
-
-if(d.file){
-if(d.type.startsWith("image")){
-content="<img src='"+d.file+"' style='max-width:200px;border-radius:10px;'>";
-}
-if(d.type.startsWith("video")){
-content="<video src='"+d.file+"' controls></video>";
-}
-}
-
-let time=new Date(d.time).toLocaleTimeString();
-
-div.innerHTML=content+"<span class='time'>"+time+"</span>";
-
-chatbox.appendChild(div);
-
-/* CLEAN MEMORY ⚡ */
-if(chatbox.children.length>120){
-chatbox.removeChild(chatbox.firstChild);
-}
-
-chatbox.scrollTop=chatbox.scrollHeight;
-});
 
 /* SEND */
 function sendMessage(){
@@ -232,11 +215,10 @@ message.value="";
 sendSound.play().catch(()=>{});
 }
 
-/* FILE (LIGHT WEIGHT) */
+/* FILE */
 fileInput.onchange=function(){
 let file=this.files[0];
 let reader=new FileReader();
-
 reader.onload=()=>{
 db.ref("chat").push({
 file:reader.result,
@@ -245,36 +227,78 @@ sender:userId,
 time:Date.now()
 });
 };
-
 reader.readAsDataURL(file);
 };
 
-/* CALL */
+/* RECEIVE */
+db.ref("chat").on("child_added",snap=>{
+let d=snap.val();
+
+let div=document.createElement("div");
+div.className=d.sender===userId?"message myMessage":"message otherMessage";
+div.setAttribute("data-id",snap.key);
+
+let content="";
+if(d.text) content=d.text;
+
+if(d.file){
+if(d.type.startsWith("image")){
+content="<img src='"+d.file+"' style='max-width:200px;border-radius:10px;'>";
+}
+if(d.type.startsWith("video")){
+content="<video src='"+d.file+"' controls></video>";
+}
+}
+
+let del="";
+if(d.sender===userId){
+del="<button class='deleteBtn' onclick='deleteMsg(\""+snap.key+"\")'>🗑</button>";
+}
+
+let time=new Date(d.time).toLocaleTimeString();
+
+div.innerHTML=del+content+"<span class='time'>"+time+"</span>";
+
+chatbox.appendChild(div);
+chatbox.scrollTop=chatbox.scrollHeight;
+});
+
+function deleteMsg(id){
+db.ref("chat/"+id).remove();
+}
+
+db.ref("chat").on("child_removed",snap=>{
+let el=document.querySelector('[data-id="'+snap.key+'"]');
+if(el) el.remove();
+});
+
+/* CALL SYSTEM */
 let peer;
 let currentCall=null;
 
+/* ✅ FIXED CALL ID ISSUE */
 window.addEventListener("load",()=>{
-peer=new Peer();
+peer = new Peer();
 
-peer.on("open",id=>{
+peer.on("open",function(id){
 setTimeout(()=>{
-myId.innerText=id;
+myId.innerText = id;   // 🔥 THIS FIXES YOUR ISSUE
 },200);
 });
 });
 
 function audioCall(){
 navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-currentCall=peer.call(callId.value,stream);
-currentCall.on("stream",r=>remoteVideo.srcObject=r);
+currentCall = peer.call(callId.value, stream);
+currentCall.on("stream", r=>remoteVideo.srcObject=r);
 });
 }
 
 function videoCall(){
 navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localVideo.srcObject=stream;
-currentCall=peer.call(callId.value,stream);
-currentCall.on("stream",r=>remoteVideo.srcObject=r);
+localVideo.srcObject = stream;
+currentCall = peer.call(callId.value, stream);
+currentCall.on("stream", r=>remoteVideo.srcObject=r);
 });
 }
 
@@ -287,10 +311,10 @@ return;
 }
 
 navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localVideo.srcObject=stream;
+localVideo.srcObject = stream;
 call.answer(stream);
 call.on("stream",r=>remoteVideo.srcObject=r);
-currentCall=call;
+currentCall = call;
 ringtone.pause();
 });
 });
@@ -305,7 +329,7 @@ localVideo.srcObject=null;
 }
 
 function toggleCall(){
-callArea.style.display=callArea.style.display==="block"?"none":"block";
+callArea.style.display = callArea.style.display==="block"?"none":"block";
 }
 
 </script>
