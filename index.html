@@ -13,7 +13,49 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
-  background:#0b141a;
+  overflow:hidden;
+  background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
+}
+
+/* ❤️ Floating Hearts */
+.heart{
+  position:absolute;
+  bottom:-50px;
+  font-size:20px;
+  animation:floatUp 8s linear infinite;
+  opacity:0.7;
+}
+
+@keyframes floatUp{
+  0%{transform:translateY(0) scale(1);}
+  100%{transform:translateY(-110vh) scale(1.5);}
+}
+
+/* ☁️ Clouds */
+.cloud{
+  position:absolute;
+  top:10%;
+  font-size:30px;
+  animation:moveCloud 25s linear infinite;
+  opacity:0.6;
+}
+
+@keyframes moveCloud{
+  0%{left:-100px;}
+  100%{left:110%;}
+}
+
+/* 💖 Center Name */
+.bgText{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:40px;
+  color:white;
+  opacity:0.15;
+  font-weight:bold;
+  pointer-events:none;
 }
 
 .header{
@@ -110,13 +152,13 @@ button{
   cursor:pointer;
 }
 
-/* 🔥 CALL SECTION HIDDEN BY DEFAULT */
+/* CALL SECTION */
 .callArea{
   display:none;
   background:#202c33;
   padding:10px;
   text-align:center;
-  margin-top:25px; /* gap from input */
+  margin-top:25px;
 }
 
 .callArea input{
@@ -138,7 +180,6 @@ img{max-width:100%;border-radius:8px;}
   border-radius:0;
   background:#1f7a63;
 }
-
 </style>
 
 <script>
@@ -156,6 +197,21 @@ if(pass === "2020"){
 </head>
 <body>
 
+<!-- 💖 Background Text -->
+<div class="bgText">💖 LADUU PIYUU 💖</div>
+
+<!-- ❤️ Hearts -->
+<div class="heart" style="left:10%; animation-delay:0s;">❤️</div>
+<div class="heart" style="left:30%; animation-delay:2s;">💖</div>
+<div class="heart" style="left:50%; animation-delay:4s;">💕</div>
+<div class="heart" style="left:70%; animation-delay:1s;">💗</div>
+<div class="heart" style="left:90%; animation-delay:3s;">💓</div>
+
+<!-- ☁️ Clouds -->
+<div class="cloud" style="top:10%; animation-delay:0s;">☁️</div>
+<div class="cloud" style="top:20%; animation-delay:5s;">☁️</div>
+<div class="cloud" style="top:30%; animation-delay:10s;">☁️</div>
+
 <div class="header">💬 LADUU PIYUU CHAT</div>
 <div class="chatbox" id="chatbox"></div>
 <div id="emojiPicker"></div>
@@ -168,7 +224,6 @@ if(pass === "2020"){
 <button onclick="sendMessage()">➤</button>
 </div>
 
-<!-- 🔥 CALL OPEN BUTTON -->
 <button class="callToggle" onclick="toggleCall()">📞 Open Call Section</button>
 
 <div class="callArea" id="callArea">
@@ -189,13 +244,12 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// TOGGLE CALL
+// SAME JS (NO CHANGE)
 function toggleCall(){
   let c=document.getElementById("callArea");
   c.style.display = (c.style.display==="block") ? "none" : "block";
 }
 
-// EMOJI
 const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
 const picker=document.getElementById("emojiPicker");
 emojis.forEach(e=>{
@@ -208,12 +262,10 @@ function toggleEmoji(){
   picker.style.display=picker.style.display==='block'?'none':'block';
 }
 
-// ENTER SEND
 message.addEventListener("keypress",e=>{
   if(e.key==="Enter") sendMessage();
 });
 
-// FIREBASE
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
@@ -245,7 +297,6 @@ fileInput.onchange=function(){
   reader.readAsDataURL(file);
 };
 
-// RECEIVE
 db.ref("chat").on("child_added",snap=>{
   let d=snap.val();
   let div=document.createElement("div");
@@ -280,7 +331,6 @@ db.ref("chat").on("child_removed",snap=>{
   if(msg) msg.remove();
 });
 
-// CALL
 let peer=new Peer();
 let currentCall=null;
 peer.on("open",id=>myId.innerText=id);
