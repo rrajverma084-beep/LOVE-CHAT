@@ -8,333 +8,299 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
+  display:none;
   font-family:sans-serif;
   height:100vh;
   display:flex;
   flex-direction:column;
-  overflow:hidden;
+  overflow:auto;
   background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
-/* HEADER */
-.header{
-  background:#202c33;
-  color:white;
-  padding:12px;
-  text-align:center;
-}
-
-/* CHAT */
-.chatbox{
-  flex:1;
-  overflow-y:auto;
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-  min-height:0;
-}
-
-.message{
-  max-width:75%;
-  padding:8px 12px;
-  margin:4px 0;
-  border-radius:8px;
-  font-size:14px;
-}
-
-.myMessage{background:#005c4b;color:white;margin-left:auto;}
-.otherMessage{background:#202c33;color:white;}
-
-.time{
-  font-size:10px;
-  opacity:.6;
-  display:block;
-  text-align:right;
-}
-
-/* INPUT */
-.inputArea{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  padding:6px;
-  background:#202c33;
-}
-
-.inputArea input{
-  flex:1;
-  padding:10px;
-  border-radius:20px;
-  border:none;
-  outline:none;
-  background:#2a3942;
-  color:white;
-}
-
-button{
-  border:none;
-  background:#00a884;
-  color:white;
-  border-radius:50%;
-  width:38px;
-  height:38px;
-}
-
-/* EMOJI */
-#emojiPicker{
-  display:none;
-  background:#202c33;
-  padding:10px;
-  max-height:150px;
-  overflow:auto;
-}
-
-#emojiPicker span{
-  font-size:20px;
-  margin:5px;
-  cursor:pointer;
-}
-
-/* CALL FIXED POPUP */
-.callArea{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:rgba(32,44,51,0.98);
-  backdrop-filter: blur(8px);
-  padding:12px;
-  display:none;
-  z-index:999;
-  border-top-left-radius:12px;
-  border-top-right-radius:12px;
-}
-
-.callArea input{
-  width:100%;
-  padding:6px;
-  margin-top:5px;
-}
-
-video{
-  width:48%;
-  border-radius:8px;
-  margin-top:5px;
-}
-
-.callToggle{
-  width:100%;
-  border:none;
-  background:#1f7a63;
-  padding:10px;
-  color:white;
-}
-
-/* BG */
-.bgText{
+/* SAFE BACKGROUND LAYER */
+.heart,.cloud,.glitter,.bgText{
+  pointer-events:none;
+  z-index:0;
   position:absolute;
+}
+
+/* ❤️ Hearts */
+.heart{
+  bottom:-50px;
+  font-size:20px;
+  animation:floatUp 8s linear infinite;
+  opacity:0.7;
+}
+@keyframes floatUp{
+  0%{transform:translateY(0);}
+  100%{transform:translateY(-110vh);}
+}
+
+/* ☁️ Clouds */
+.cloud{
+  top:10%;
+  font-size:30px;
+  animation:moveCloud 25s linear infinite;
+  opacity:0.6;
+}
+@keyframes moveCloud{
+  0%{left:-100px;}
+  100%{left:110%;}
+}
+
+/* ✨ Glitter */
+.glitter{
+  width:5px;
+  height:5px;
+  background:white;
+  border-radius:50%;
+  animation:glow 3s infinite;
+}
+@keyframes glow{
+  0%{opacity:.3;}
+  50%{opacity:1;}
+  100%{opacity:.3;}
+}
+
+/* 💖 Center Text */
+.bgText{
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
   font-size:40px;
   color:white;
-  opacity:0.12;
-  pointer-events:none;
+  opacity:0.15;
 }
+
+/* FOREGROUND UI SAFE */
+.header,.chatbox,.inputArea,.callArea{
+  position:relative;
+  z-index:1;
+}
+
+/* ORIGINAL UI */
+.header{background:#202c33;color:white;padding:12px;}
+.chatbox{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;}
+.message{max-width:75%;padding:8px 12px;margin:4px 0;border-radius:8px;position:relative;word-wrap:break-word;}
+.myMessage{background:#005c4b;color:white;margin-left:auto;}
+.otherMessage{background:#202c33;color:white;}
+.time{font-size:10px;opacity:.6;display:block;text-align:right;}
+.deleteBtn{position:absolute;top:2px;right:5px;background:none;border:none;color:white;cursor:pointer;}
+
+.inputArea{display:flex;gap:5px;padding:6px;background:#202c33;}
+input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;color:white;}
+
+#fileInput{display:none;}
+.attachBtn{font-size:18px;color:white;}
+
+button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;height:38px;}
+
+#emojiPicker{display:none;background:#202c33;padding:10px;max-height:150px;overflow:auto;}
+#emojiPicker span{font-size:20px;margin:5px;cursor:pointer;}
+
+.callArea{display:none;background:#202c33;padding:10px;text-align:center;margin-top:25px;}
+video{width:48%;border-radius:8px;margin-top:5px;}
 </style>
+
+<script>
+let pass=prompt("Enter Password");
+if(pass==="2020"){
+document.addEventListener("DOMContentLoaded",()=>document.body.style.display="flex");
+}else{alert("Wrong Password");throw new Error();}
+</script>
 </head>
 
 <body>
 
 <div class="bgText">💖 LADUU PIYUU 💖</div>
 
+<div class="heart" style="left:10%">❤️</div>
+<div class="heart" style="left:30%">💖</div>
+<div class="heart" style="left:50%">💕</div>
+<div class="heart" style="left:70%">💗</div>
+<div class="heart" style="left:90%">💓</div>
+
+<div class="cloud" style="top:10%">☁️</div>
+<div class="cloud" style="top:20%">☁️</div>
+<div class="cloud" style="top:30%">☁️</div>
+
+<audio id="sendSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<audio id="ringtone" src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" loop></audio>
+
 <div class="header">💬 LADUU PIYUU CHAT</div>
-
-<div class="chatbox" id="chatbox"></div>
-
+<div id="chatbox" class="chatbox"></div>
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
 <input id="message" placeholder="Message">
-<label for="fileInput">📎</label>
-<input type="file" id="fileInput" accept="image/*,video/*" style="display:none;">
+<label class="attachBtn" for="fileInput">📎</label>
+<input type="file" id="fileInput" accept="image/*,video/*">
 <button onclick="sendMessage()">➤</button>
 </div>
 
-<button class="callToggle" onclick="toggleCall()">📞 Open Call Section</button>
+<button onclick="toggleCall()">📞 Open Call Section</button>
 
-<div class="callArea" id="callArea">
-<p style="color:white;">ID:</p>
-<div id="myId" style="color:white;font-size:12px;word-break:break-all;"></div>
-
+<div id="callArea" class="callArea">
+<p>ID:</p>
+<div id="myId"></div>
 <input id="callId" placeholder="Enter ID">
-
 <br><br>
-
 <button onclick="audioCall()">📞</button>
 <button onclick="videoCall()">🎥</button>
 <button onclick="endCall()">❌</button>
-
 <br>
-
 <video id="localVideo" autoplay muted></video>
 <video id="remoteVideo" autoplay></video>
 </div>
 
-<!-- LIBS -->
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-
-/* DOM SAFE */
-const chatbox=document.getElementById("chatbox");
-const message=document.getElementById("message");
-const fileInput=document.getElementById("fileInput");
-const picker=document.getElementById("emojiPicker");
-const callInput=document.getElementById("callId");
-const myIdBox=document.getElementById("myId");
-
-/* EMOJI */
-const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
-let emojiLoaded=false;
-
-function toggleEmoji(){
-  if(!emojiLoaded){
-    emojis.forEach(e=>{
-      let s=document.createElement("span");
-      s.innerText=e;
-      s.onclick=()=>message.value+=e;
-      picker.appendChild(s);
-    });
-    emojiLoaded=true;
-  }
-  picker.style.display = picker.style.display==='block'?'none':'block';
+// GLITTER
+for(let i=0;i<25;i++){
+let g=document.createElement("div");
+g.className="glitter";
+g.style.left=Math.random()*100+"%";
+g.style.top=Math.random()*100+"%";
+document.body.appendChild(g);
 }
 
-/* FIREBASE */
+// EMOJI
+const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
+emojis.forEach(e=>{
+let s=document.createElement("span");
+s.innerText=e;
+s.onclick=()=>message.value+=e;
+emojiPicker.appendChild(s);
+});
+function toggleEmoji(){
+emojiPicker.style.display=emojiPicker.style.display==="block"?"none":"block";
+}
+
+message.addEventListener("keypress",e=>{
+if(e.key==="Enter") sendMessage();
+});
+
+// FIREBASE
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"love--chat-872da"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
-/* USER */
 let userId=localStorage.getItem("chatUserId");
 if(!userId){
-  userId="user_"+Math.random().toString(36).substr(2,9);
-  localStorage.setItem("chatUserId",userId);
+userId="user_"+Math.random().toString(36).substr(2,9);
+localStorage.setItem("chatUserId",userId);
 }
 
-/* RENDER */
-function render(d){
-  let div=document.createElement("div");
-  div.className=d.sender===userId?"message myMessage":"message otherMessage";
-
-  let time=new Date(d.time).toLocaleTimeString();
-
-  let content="";
-  if(d.text) content=d.text;
-
-  if(d.file){
-    if(d.type.startsWith("image")){
-      content=`<img src="${d.file}" style="max-width:100%;border-radius:8px;">`;
-    }else{
-      content=`<video src="${d.file}" controls></video>`;
-    }
-  }
-
-  div.innerHTML=content+`<span class="time">${time}</span>`;
-
-  chatbox.appendChild(div);
-  chatbox.scrollTop=chatbox.scrollHeight;
-}
-
-/* SEND */
+// SEND
 function sendMessage(){
-  let msg=message.value.trim();
-  if(!msg) return;
+let msg=message.value.trim();
+if(!msg)return;
 
-  let data={text:msg,sender:userId,time:Date.now()};
-
-  render(data); // instant
-
-  db.ref("chat").push(data);
-
-  message.value="";
+db.ref("chat").push({text:msg,sender:userId,time:Date.now()});
+message.value="";
+sendSound.play().catch(()=>{});
 }
 
-/* FILE */
+// FILE
 fileInput.onchange=function(){
-  let file=this.files[0];
-  let reader=new FileReader();
-
-  reader.onload=()=>{
-    db.ref("chat").push({
-      file:reader.result,
-      type:file.type,
-      sender:userId,
-      time:Date.now()
-    });
-  };
-
-  reader.readAsDataURL(file);
+let file=this.files[0];
+let reader=new FileReader();
+reader.onload=()=>{
+db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+};
+reader.readAsDataURL(file);
 };
 
-/* FIREBASE LISTENER */
-db.ref("chat").limitToLast(50).on("child_added",snap=>{
-  render(snap.val());
+// RECEIVE
+db.ref("chat").on("child_added",snap=>{
+let d=snap.val();
+let div=document.createElement("div");
+div.className=d.sender===userId?"message myMessage":"message otherMessage";
+div.setAttribute("data-id",snap.key);
+
+let content="";
+if(d.text) content=d.text;
+if(d.file){
+if(d.type.startsWith("image")) content="<img src='"+d.file+"'>";
+if(d.type.startsWith("video")) content="<video src='"+d.file+"' controls></video>";
+}
+
+let del="";
+if(d.sender===userId){
+del="<button class='deleteBtn' onclick='deleteMsg(\""+snap.key+"\")'>🗑</button>";
+}
+
+let time=new Date(d.time).toLocaleTimeString();
+div.innerHTML=del+content+"<span class='time'>"+time+"</span>";
+
+chatbox.appendChild(div);
+chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-/* CALL */
+function deleteMsg(id){
+db.ref("chat/"+id).remove();
+}
+
+db.ref("chat").on("child_removed",snap=>{
+let msg=document.querySelector('[data-id="'+snap.key+'"]');
+if(msg) msg.remove();
+});
+
+// CALL
 let peer=new Peer();
 let currentCall=null;
 
-peer.on("open",id=>{
-  myIdBox.innerText=id;
-});
-
-function toggleCall(){
-  let c=document.getElementById("callArea");
-  c.style.display=(c.style.display==="block")?"none":"block";
-}
+peer.on("open",id=>myId.innerText=id);
 
 function audioCall(){
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-    currentCall=peer.call(callInput.value,stream);
-    currentCall.on("stream",r=>remoteVideo.srcObject=r);
-  });
+navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+currentCall=peer.call(callId.value,stream);
+currentCall.on("stream",r=>remoteVideo.srcObject=r);
+});
 }
 
 function videoCall(){
-  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-    localVideo.srcObject=stream;
-    currentCall=peer.call(callInput.value,stream);
-    currentCall.on("stream",r=>remoteVideo.srcObject=r);
-  });
+navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+localVideo.srcObject=stream;
+currentCall=peer.call(callId.value,stream);
+currentCall.on("stream",r=>remoteVideo.srcObject=r);
+});
 }
 
 peer.on("call",call=>{
-  navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-    localVideo.srcObject=stream;
-    call.answer(stream);
-    call.on("stream",r=>remoteVideo.srcObject=r);
-    currentCall=call;
-  });
+ringtone.play();
+let accept=confirm("Incoming Call 📞 Accept?");
+if(!accept){call.close();ringtone.pause();return;}
+navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
+localVideo.srcObject=stream;
+call.answer(stream);
+call.on("stream",r=>remoteVideo.srcObject=r);
+currentCall=call;
+ringtone.pause();
+});
 });
 
 function endCall(){
-  if(currentCall) currentCall.close();
-  remoteVideo.srcObject=null;
-  localVideo.srcObject=null;
+if(currentCall) currentCall.close();
+if(localVideo.srcObject){
+localVideo.srcObject.getTracks().forEach(t=>t.stop());
+}
+remoteVideo.srcObject=null;
+localVideo.srcObject=null;
 }
 
+function toggleCall(){
+callArea.style.display=callArea.style.display==="block"?"none":"block";
+}
 </script>
 
 </body>
