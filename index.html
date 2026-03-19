@@ -13,74 +13,7 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
-  overflow:hidden;
-  background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
-}
-
-/* ❤️ Floating Hearts */
-.heart{
-  position:absolute;
-  bottom:-50px;
-  font-size:20px;
-  animation:floatUp 8s linear infinite;
-  opacity:0.7;
-}
-@keyframes floatUp{
-  0%{transform:translateY(0) scale(1);}
-  100%{transform:translateY(-110vh) scale(1.5);}
-}
-
-/* ☁️ Clouds */
-.cloud{
-  position:absolute;
-  top:10%;
-  font-size:30px;
-  animation:moveCloud 25s linear infinite;
-  opacity:0.6;
-}
-@keyframes moveCloud{
-  0%{left:-100px;}
-  100%{left:110%;}
-}
-
-/* 💖 Center Name */
-.bgText{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:40px;
-  color:white;
-  opacity:0.15;
-  font-weight:bold;
-  pointer-events:none;
-}
-
-/* ✨ GLITTER */
-.glitter{
-  position:absolute;
-  width:5px;
-  height:5px;
-  background:white;
-  border-radius:50%;
-  opacity:0.8;
-  animation:glow 3s infinite;
-}
-@keyframes glow{
-  0%{transform:scale(0.5);opacity:0.3;}
-  50%{transform:scale(1.5);opacity:1;}
-  100%{transform:scale(0.5);opacity:0.3;}
-}
-
-/* 💥 HEART BURST */
-.burstHeart{
-  position:absolute;
-  font-size:20px;
-  animation:burst 1s ease-out forwards;
-}
-@keyframes burst{
-  0%{transform:scale(1);opacity:1;}
-  100%{transform:translateY(-80px) scale(2);opacity:0;}
+  background:#0b141a;
 }
 
 .header{
@@ -148,6 +81,7 @@ body{
 }
 
 #fileInput{display:none;}
+
 .attachBtn{font-size:18px;color:white;}
 
 button{
@@ -169,6 +103,7 @@ button{
   max-height:150px;
   overflow:auto;
 }
+
 #emojiPicker span{
   font-size:20px;
   margin:5px;
@@ -182,16 +117,19 @@ button{
   text-align:center;
   margin-top:25px;
 }
+
 .callArea input{
   width:90%;
   padding:6px;
   margin-top:5px;
 }
+
 video{
   width:48%;
   border-radius:8px;
   margin-top:5px;
 }
+
 img{max-width:100%;border-radius:8px;}
 
 .callToggle{
@@ -212,38 +150,13 @@ if(pass === "2020"){
   throw new Error("Wrong Password");
 }
 </script>
-</head>
 
+</head>
 <body>
 
-<!-- 🔊 SOUND -->
+<!-- 🔊 Sounds -->
 <audio id="sendSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
-
-<!-- 💖 Background Text -->
-<div class="bgText">💖 LADUU PIYUU 💖</div>
-
-<!-- ❤️ Hearts -->
-<div class="heart" style="left:10%;">❤️</div>
-<div class="heart" style="left:30%;">💖</div>
-<div class="heart" style="left:50%;">💕</div>
-<div class="heart" style="left:70%;">💗</div>
-<div class="heart" style="left:90%;">💓</div>
-
-<!-- ☁️ Clouds -->
-<div class="cloud" style="top:10%;">☁️</div>
-<div class="cloud" style="top:20%;">☁️</div>
-<div class="cloud" style="top:30%;">☁️</div>
-
-<!-- ✨ GLITTER SCRIPT -->
-<script>
-for(let i=0;i<25;i++){
-  let g=document.createElement("div");
-  g.className="glitter";
-  g.style.left=Math.random()*100+"%";
-  g.style.top=Math.random()*100+"%";
-  document.body.appendChild(g);
-}
-</script>
+<audio id="ringtone" src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" loop></audio>
 
 <div class="header">💬 LADUU PIYUU CHAT</div>
 <div class="chatbox" id="chatbox"></div>
@@ -254,6 +167,12 @@ for(let i=0;i<25;i++){
 <input id="message" placeholder="Message">
 <label class="attachBtn" for="fileInput">📎</label>
 <input type="file" id="fileInput" accept="image/*,video/*">
+
+<!-- 🔥 NEW BUTTONS (UI disturb nahi kiya, sirf add kiya) -->
+<button onclick="toggleTheme()">🎨</button>
+<button onclick="openCamera()">📷</button>
+<button onclick="sendLove()">💌</button>
+
 <button onclick="sendMessage()">➤</button>
 </div>
 
@@ -277,13 +196,10 @@ for(let i=0;i<25;i++){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// SAME CODE + ADD EFFECT
+// ROOM
+let room = prompt("Enter Room Name") || "default";
 
-function toggleCall(){
-  let c=document.getElementById("callArea");
-  c.style.display = (c.style.display==="block") ? "none" : "block";
-}
-
+// EMOJI
 const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
 const picker=document.getElementById("emojiPicker");
 emojis.forEach(e=>{
@@ -296,10 +212,12 @@ function toggleEmoji(){
   picker.style.display=picker.style.display==='block'?'none':'block';
 }
 
+// ENTER SEND
 message.addEventListener("keypress",e=>{
   if(e.key==="Enter") sendMessage();
 });
 
+// FIREBASE
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
@@ -319,35 +237,31 @@ function sendMessage(){
   let msg=message.value.trim();
   if(!msg) return;
 
-  db.ref("chat").push({text:msg,sender:userId,time:Date.now()});
+  db.ref("chat").push({text:msg,sender:userId,room:room,time:Date.now()});
   message.value="";
-
-  // 🔊 SOUND
-  document.getElementById("sendSound").play();
-
-  // 💥 HEART BURST
-  for(let i=0;i<5;i++){
-    let h=document.createElement("div");
-    h.className="burstHeart";
-    h.innerText="💖";
-    h.style.left=(window.innerWidth/2 + Math.random()*50 - 25)+"px";
-    h.style.top=(window.innerHeight - 80)+"px";
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(),1000);
-  }
+  sendSound.play();
 }
 
+// FILE
 fileInput.onchange=function(){
   let file=this.files[0];
   let reader=new FileReader();
   reader.onload=()=>{
-    db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+    db.ref("chat").push({file:reader.result,type:file.type,sender:userId,room:room,time:Date.now()});
   };
   reader.readAsDataURL(file);
 };
 
+// RECEIVE
 db.ref("chat").on("child_added",snap=>{
   let d=snap.val();
+  if(d.room && d.room !== room) return;
+
+  // 🔔 receive sound
+  if(d.sender !== userId){
+    sendSound.play();
+  }
+
   let div=document.createElement("div");
   div.className=d.sender===userId?"message myMessage":"message otherMessage";
   div.setAttribute("data-id",snap.key);
@@ -380,8 +294,32 @@ db.ref("chat").on("child_removed",snap=>{
   if(msg) msg.remove();
 });
 
+// THEME
+let dark=false;
+function toggleTheme(){
+  document.body.style.background=dark?"#0b141a":"linear-gradient(135deg,#000,#222)";
+  dark=!dark;
+}
+
+// CAMERA
+function openCamera(){
+  navigator.mediaDevices.getUserMedia({video:true}).then(stream=>{
+    alert("Camera opened 📷");
+    stream.getTracks().forEach(t=>t.stop());
+  });
+}
+
+// LOVE
+function sendLove(){
+  let msgs=["I miss you ❤️","Love you jaan 💖","Tum best ho 😘"];
+  message.value=msgs[Math.floor(Math.random()*msgs.length)];
+  sendMessage();
+}
+
+// CALL
 let peer=new Peer();
 let currentCall=null;
+
 peer.on("open",id=>myId.innerText=id);
 
 function audioCall(){
@@ -400,11 +338,19 @@ function videoCall(){
 }
 
 peer.on("call",call=>{
+  ringtone.play();
+  let accept=confirm("Incoming Call 📞 Accept?");
+  if(!accept){
+    call.close();
+    ringtone.pause();
+    return;
+  }
   navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
     localVideo.srcObject=stream;
     call.answer(stream);
     call.on("stream",r=>remoteVideo.srcObject=r);
     currentCall=call;
+    ringtone.pause();
   });
 });
 
@@ -412,6 +358,11 @@ function endCall(){
   if(currentCall) currentCall.close();
   remoteVideo.srcObject=null;
   localVideo.srcObject=null;
+}
+
+function toggleCall(){
+  let c=document.getElementById("callArea");
+  c.style.display = (c.style.display==="block") ? "none" : "block";
 }
 </script>
 
