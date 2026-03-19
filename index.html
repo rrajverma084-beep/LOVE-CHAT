@@ -2,36 +2,28 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍭 LADUU PIYUU CHAT 💖 </title>
+<title>WhatsApp Style Chat</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
   display:none;
-  font-family:Arial, sans-serif;
+  font-family:sans-serif;
   height:100vh;
   display:flex;
   flex-direction:column;
-  background:linear-gradient(135deg,#0f172a,#1e293b);
-  color:white;
+  background:#111b21;
 }
 
 .header{
-  background:#1e293b;
+  background:#202c33;
+  color:white;
   padding:12px;
-  text-align:center;
   font-size:18px;
-  position:sticky;
-  top:0;
-  z-index:100;
-}
-
-.status{
-  text-align:center;
-  font-size:12px;
-  opacity:.7;
-  margin:4px 0;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .chatbox{
@@ -40,37 +32,43 @@ body{
   padding:10px;
   display:flex;
   flex-direction:column;
-  -webkit-overflow-scrolling:touch;
+  background:#0b141a;
 }
 
 .message{
-  padding:10px 14px;
-  margin:5px;
-  border-radius:16px;
-  max-width:80%;
-  word-wrap:break-word;
-  font-size:15px;
+  max-width:75%;
+  padding:8px 12px;
+  margin:4px 0;
+  border-radius:8px;
+  font-size:14px;
+  position:relative;
 }
 
-.myMessage{background:#22c55e;margin-left:auto;}
-.otherMessage{background:#334155;}
+.myMessage{
+  background:#005c4b;
+  color:white;
+  margin-left:auto;
+}
+
+.otherMessage{
+  background:#202c33;
+  color:white;
+}
 
 .time{
   font-size:10px;
-  display:block;
-  margin-top:3px;
-  text-align:right;
   opacity:.6;
+  display:block;
+  text-align:right;
+  margin-top:3px;
 }
 
 .inputArea{
   display:flex;
-  padding:6px;
-  gap:5px;
+  padding:8px;
+  background:#202c33;
   align-items:center;
-  background:#1e293b;
-  position:sticky;
-  bottom:0;
+  gap:6px;
 }
 
 .inputArea input[type="text"]{
@@ -79,30 +77,23 @@ body{
   border-radius:20px;
   border:none;
   outline:none;
-  font-size:14px;
-}
-
-#fileInput{
-  width:80px;
-  font-size:10px;
+  background:#2a3942;
+  color:white;
 }
 
 button{
   border:none;
-  background:#22c55e;
+  background:#00a884;
   color:white;
   border-radius:50%;
-  width:38px;
-  height:38px;
-  font-size:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:40px;
+  height:40px;
+  font-size:16px;
 }
 
 #emojiPicker{
   display:none;
-  background:#1e293b;
+  background:#202c33;
   padding:10px;
   max-height:200px;
   overflow:auto;
@@ -110,41 +101,27 @@ button{
 
 #emojiPicker span{
   font-size:20px;
-  margin:4px;
+  margin:5px;
   cursor:pointer;
 }
 
 .callArea{
-  background:#1e293b;
+  background:#202c33;
   padding:10px;
   text-align:center;
 }
 
-.callArea input{
-  width:90%;
-  padding:6px;
-  margin-top:5px;
-}
-
 video{
-  width:100%;
-  max-width:300px;
-  border-radius:10px;
-  margin-top:5px;
+  width:48%;
+  border-radius:8px;
+  margin:2px;
 }
 
 img{
   max-width:100%;
-  border-radius:10px;
+  border-radius:8px;
 }
 
-/* 🔥 MOBILE RESPONSIVE */
-@media (max-width:600px){
-  .header{font-size:16px;padding:10px;}
-  .message{font-size:14px;max-width:85%;}
-  button{width:34px;height:34px;font-size:12px;}
-  #fileInput{width:65px;font-size:9px;}
-}
 </style>
 
 <script>
@@ -162,22 +139,21 @@ if(pass === "2020"){
 </head>
 <body>
 
-<div class="header">🍭 LADUU PIYUU CHAT 💖</div>
-<div id="status" class="status">Online 🟢</div>
+<div class="header">💬 WhatsApp Style Chat</div>
 <div class="chatbox" id="chatbox"></div>
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
-<input id="message" placeholder="Type message...">
+<input id="message" placeholder="Message">
 <input type="file" id="fileInput" accept="image/*,video/*">
 <button onclick="sendMessage()">➤</button>
 </div>
 
 <div class="callArea">
-<p>Your Call ID:</p>
-<div id="myId">...</div>
-<input id="callId" placeholder="Enter partner ID">
+<p>ID:</p>
+<div id="myId"></div>
+<input id="callId" placeholder="Enter ID">
 <br><br>
 <button onclick="audioCall()">📞</button>
 <button onclick="videoCall()">🎥</button>
@@ -192,8 +168,7 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// EMOJI
-const emojis=["😀","😂","😍","😘","😎","😭","👍","🙏","🔥","❤️","💖","🥰"];
+const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
 const picker=document.getElementById("emojiPicker");
 emojis.forEach(e=>{
   let s=document.createElement("span");
@@ -205,13 +180,13 @@ function toggleEmoji(){
   picker.style.display=picker.style.display==='block'?'none':'block';
 }
 
-// FIREBASE
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"love--chat-872da"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
@@ -221,7 +196,6 @@ if(!userId){
   localStorage.setItem("chatUserId",userId);
 }
 
-// SEND
 function sendMessage(){
   let msg=message.value.trim();
   if(!msg) return;
@@ -229,7 +203,6 @@ function sendMessage(){
   message.value="";
 }
 
-// FILE
 fileInput.onchange=function(){
   let file=this.files[0];
   let reader=new FileReader();
@@ -239,7 +212,6 @@ fileInput.onchange=function(){
   reader.readAsDataURL(file);
 };
 
-// RECEIVE
 db.ref("chat").on("child_added",snap=>{
   let d=snap.val();
   let div=document.createElement("div");
@@ -259,7 +231,6 @@ db.ref("chat").on("child_added",snap=>{
   chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-// CALL
 let peer=new Peer();
 let currentCall=null;
 peer.on("open",id=>myId.innerText=id);
