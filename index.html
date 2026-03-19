@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍭 LADUU PIYUU CHAT 💖 </title>
+<title>🍭 LADUU PIYUU CHAT 💖</title>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
@@ -12,17 +13,14 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
-  background:#111b21;
+  background:#0b141a;
 }
 
 .header{
   background:#202c33;
   color:white;
   padding:12px;
-  font-size:18px;
-  display:flex;
-  align-items:center;
-  gap:10px;
+  font-size:16px;
 }
 
 .chatbox{
@@ -31,7 +29,6 @@ body{
   padding:10px;
   display:flex;
   flex-direction:column;
-  background:#0b141a;
 }
 
 .message{
@@ -41,33 +38,36 @@ body{
   border-radius:8px;
   font-size:14px;
   position:relative;
+  word-wrap:break-word;
 }
 
-.myMessage{
-  background:#005c4b;
-  color:white;
-  margin-left:auto;
-}
-
-.otherMessage{
-  background:#202c33;
-  color:white;
-}
+.myMessage{background:#005c4b;color:white;margin-left:auto;}
+.otherMessage{background:#202c33;color:white;}
 
 .time{
   font-size:10px;
   opacity:.6;
   display:block;
   text-align:right;
-  margin-top:3px;
+}
+
+.deleteBtn{
+  position:absolute;
+  top:2px;
+  right:5px;
+  background:none;
+  border:none;
+  color:white;
+  font-size:12px;
+  cursor:pointer;
 }
 
 .inputArea{
   display:flex;
-  padding:8px;
-  background:#202c33;
   align-items:center;
-  gap:6px;
+  gap:5px;
+  padding:6px;
+  background:#202c33;
 }
 
 .inputArea input[type="text"]{
@@ -80,21 +80,31 @@ body{
   color:white;
 }
 
+#fileInput{
+  display:none;
+}
+
+.attachBtn{
+  font-size:18px;
+}
+
 button{
   border:none;
   background:#00a884;
   color:white;
   border-radius:50%;
-  width:40px;
-  height:40px;
-  font-size:16px;
+  width:38px;
+  height:38px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 #emojiPicker{
   display:none;
   background:#202c33;
   padding:10px;
-  max-height:200px;
+  max-height:150px;
   overflow:auto;
 }
 
@@ -106,20 +116,16 @@ button{
 
 .callArea{
   background:#202c33;
-  padding:10px;
+  padding:8px;
   text-align:center;
 }
 
 video{
   width:48%;
   border-radius:8px;
-  margin:2px;
 }
 
-img{
-  max-width:100%;
-  border-radius:8px;
-}
+img{max-width:100%;border-radius:8px;}
 
 </style>
 
@@ -138,13 +144,14 @@ if(pass === "2020"){
 </head>
 <body>
 
-<div class="header">LADUU 😘PIYUU CHAT </div>
+<div class="header">💬 LADUU PIYUU CHAT</div>
 <div class="chatbox" id="chatbox"></div>
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
 <input id="message" placeholder="Message">
+<label class="attachBtn" for="fileInput">📎</label>
 <input type="file" id="fileInput" accept="image/*,video/*">
 <button onclick="sendMessage()">➤</button>
 </div>
@@ -167,6 +174,7 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
+// EMOJI
 const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
 const picker=document.getElementById("emojiPicker");
 emojis.forEach(e=>{
@@ -179,13 +187,13 @@ function toggleEmoji(){
   picker.style.display=picker.style.display==='block'?'none':'block';
 }
 
+// FIREBASE
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"love--chat-872da"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
@@ -211,10 +219,12 @@ fileInput.onchange=function(){
   reader.readAsDataURL(file);
 };
 
+// RECEIVE
 db.ref("chat").on("child_added",snap=>{
   let d=snap.val();
   let div=document.createElement("div");
   div.className=d.sender===userId?"message myMessage":"message otherMessage";
+  div.setAttribute("data-id",snap.key);
 
   let content="";
   if(d.text) content=d.text;
@@ -223,13 +233,28 @@ db.ref("chat").on("child_added",snap=>{
     if(d.type.startsWith("video")) content="<video src='"+d.file+"' controls></video>";
   }
 
+  let del="";
+  if(d.sender===userId){
+    del="<button class='deleteBtn' onclick='deleteMsg(\""+snap.key+"\")'>🗑</button>";
+  }
+
   let time=new Date(d.time).toLocaleTimeString();
-  div.innerHTML=content+"<span class='time'>"+time+"</span>";
+  div.innerHTML=del+content+"<span class='time'>"+time+"</span>";
 
   chatbox.appendChild(div);
   chatbox.scrollTop=chatbox.scrollHeight;
 });
 
+function deleteMsg(id){
+  db.ref("chat/"+id).remove();
+}
+
+db.ref("chat").on("child_removed",snap=>{
+  let msg=document.querySelector('[data-id="'+snap.key+'"]');
+  if(msg) msg.remove();
+});
+
+// CALL
 let peer=new Peer();
 let currentCall=null;
 peer.on("open",id=>myId.innerText=id);
