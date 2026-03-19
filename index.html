@@ -11,13 +11,12 @@ body{
   display:none;
   font-family:sans-serif;
   height:100vh;
-  display:flex;
   flex-direction:column;
   overflow:hidden;
   background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
-/* ❤️ Floating Hearts */
+/* ❤️ Hearts */
 .heart{
   position:absolute;
   bottom:-50px;
@@ -45,7 +44,6 @@ body{
   100%{left:110%;}
 }
 
-/* 💖 Center Name */
 .bgText{
   position:absolute;
   top:50%;
@@ -123,7 +121,6 @@ body{
 }
 
 #fileInput{display:none;}
-
 .attachBtn{font-size:18px;color:white;}
 
 button{
@@ -152,7 +149,6 @@ button{
   cursor:pointer;
 }
 
-/* CALL SECTION */
 .callArea{
   display:none;
   background:#202c33;
@@ -173,8 +169,6 @@ video{
   margin-top:5px;
 }
 
-img{max-width:100%;border-radius:8px;}
-
 .callToggle{
   width:100%;
   border-radius:0;
@@ -182,37 +176,35 @@ img{max-width:100%;border-radius:8px;}
 }
 </style>
 
-<script>
+<!-- FAST LOAD -->
+<script defer>
 let pass = prompt("Enter Password");
-if(pass === "2020"){
-  document.addEventListener("DOMContentLoaded", ()=>{
-    document.body.style.display="flex";
-  });
-}else{
+if(pass !== "2020"){
   alert("Wrong Password");
-  throw new Error("Wrong Password");
+  throw new Error("Blocked");
 }
+document.addEventListener("DOMContentLoaded",()=>{
+  document.body.style.display="flex";
+});
 </script>
 
 </head>
+
 <body>
 
-<!-- 💖 Background Text -->
 <div class="bgText">💖 LADUU PIYUU 💖</div>
 
-<!-- ❤️ Hearts -->
-<div class="heart" style="left:10%; animation-delay:0s;">❤️</div>
+<div class="heart" style="left:10%;">❤️</div>
 <div class="heart" style="left:30%; animation-delay:2s;">💖</div>
 <div class="heart" style="left:50%; animation-delay:4s;">💕</div>
 <div class="heart" style="left:70%; animation-delay:1s;">💗</div>
 <div class="heart" style="left:90%; animation-delay:3s;">💓</div>
 
-<!-- ☁️ Clouds -->
-<div class="cloud" style="top:10%; animation-delay:0s;">☁️</div>
+<div class="cloud" style="top:10%;">☁️</div>
 <div class="cloud" style="top:20%; animation-delay:5s;">☁️</div>
-<div class="cloud" style="top:30%; animation-delay:10s;">☁️</div>
 
 <div class="header">💬 LADUU PIYUU CHAT</div>
+
 <div class="chatbox" id="chatbox"></div>
 <div id="emojiPicker"></div>
 
@@ -239,48 +231,60 @@ if(pass === "2020"){
 <video id="remoteVideo" autoplay></video>
 </div>
 
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+<!-- FAST CDN LOAD -->
+<script defer src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// SAME JS (NO CHANGE)
 function toggleCall(){
   let c=document.getElementById("callArea");
   c.style.display = (c.style.display==="block") ? "none" : "block";
 }
 
+/* EMOJI (lazy but same) */
 const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
 const picker=document.getElementById("emojiPicker");
-emojis.forEach(e=>{
-  let s=document.createElement("span");
-  s.innerText=e;
-  s.onclick=()=>message.value+=e;
-  picker.appendChild(s);
-});
+
+function loadEmoji(){
+  if(picker.childNodes.length>0) return;
+  emojis.forEach(e=>{
+    let s=document.createElement("span");
+    s.innerText=e;
+    s.onclick=()=>message.value+=e;
+    picker.appendChild(s);
+  });
+}
+
 function toggleEmoji(){
+  loadEmoji();
   picker.style.display=picker.style.display==='block'?'none':'block';
 }
 
+/* INPUT */
 message.addEventListener("keypress",e=>{
   if(e.key==="Enter") sendMessage();
 });
 
+/* FIREBASE */
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"love--chat-872da"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
+/* USER */
 let userId=localStorage.getItem("chatUserId");
 if(!userId){
   userId="user_"+Math.random().toString(36).substr(2,9);
   localStorage.setItem("chatUserId",userId);
 }
 
+/* SEND */
 function sendMessage(){
   let msg=message.value.trim();
   if(!msg) return;
@@ -288,16 +292,23 @@ function sendMessage(){
   message.value="";
 }
 
+/* FILE */
 fileInput.onchange=function(){
   let file=this.files[0];
   let reader=new FileReader();
   reader.onload=()=>{
-    db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+    db.ref("chat").push({
+      file:reader.result,
+      type:file.type,
+      sender:userId,
+      time:Date.now()
+    });
   };
   reader.readAsDataURL(file);
 };
 
-db.ref("chat").on("child_added",snap=>{
+/* LIMIT FIX (FAST LOAD) */
+db.ref("chat").limitToLast(50).on("child_added",snap=>{
   let d=snap.val();
   let div=document.createElement("div");
   div.className=d.sender===userId?"message myMessage":"message otherMessage";
@@ -331,8 +342,10 @@ db.ref("chat").on("child_removed",snap=>{
   if(msg) msg.remove();
 });
 
+/* CALL (UNCHANGED) */
 let peer=new Peer();
 let currentCall=null;
+
 peer.on("open",id=>myId.innerText=id);
 
 function audioCall(){
