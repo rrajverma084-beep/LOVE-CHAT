@@ -1,27 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>🍭 LADUU PIYUU CHAT 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔥 PRO CHAT APP</title>
 
 <style>
 body{
-  display:none;
-  font-family: Arial, sans-serif;
-  height:100vh;
-  flex-direction:column;
-  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
   margin:0;
+  font-family:sans-serif;
+  display:flex;
+  flex-direction:column;
+  height:100vh;
+  background:#0f172a;
+  color:white;
 }
 
 .header{
-  background:#ff4d6d;
-  color:white;
+  background:#1e293b;
   padding:12px;
-  font-size:18px;
   text-align:center;
-  position:sticky;
-  top:0;
-  z-index:100;
+  font-size:18px;
 }
 
 .chatbox{
@@ -30,367 +28,127 @@ body{
   padding:10px;
   display:flex;
   flex-direction:column;
-  scroll-behavior:smooth;
 }
 
 .message{
-  padding:12px 16px;
-  margin:6px;
-  border-radius:20px;
-  max-width:80%;
-  animation:pop .25s ease;
-  position:relative;
-  word-wrap:break-word;
-  font-size:16px;
-  line-height:1.4;
+  padding:10px 14px;
+  margin:5px;
+  border-radius:15px;
+  max-width:75%;
 }
 
-.myMessage{background:#ffccd5;margin-left:auto;}
-.otherMessage{background:white;}
-
-.time{
-  font-size:12px;
-  display:block;
-  margin-top:4px;
-  text-align:right;
-  opacity:.7;
-}
-
-.deleteBtn{
-  background:none;
-  border:none;
-  cursor:pointer;
-  font-size:14px;
-  float:right;
-}
+.my{background:#22c55e; margin-left:auto;}
+.other{background:#334155;}
 
 .inputArea{
   display:flex;
-  flex-wrap:wrap;
-  padding:6px;
-  background:white;
-  gap:6px;
-  position:sticky;
-  bottom:0;
-  z-index:100;
-  align-items:center;
-  border-top:1px solid #ccc;
-}
-
-.inputArea input[type="text"]{
-  flex:1;
-  min-width:60%;
-  padding:10px 12px;
-  border-radius:20px;
-  border:1px solid #ccc;
-  font-size:14px;
-  outline:none;
-}
-
-.inputArea button{
   padding:8px;
+  background:#1e293b;
+}
+
+input{
+  flex:1;
+  padding:10px;
+  border-radius:20px;
   border:none;
-  background:#ff4d6d;
+}
+
+button{
+  margin-left:5px;
+  border:none;
+  background:#22c55e;
   color:white;
   border-radius:50%;
-  cursor:pointer;
-  width:38px;
-  height:38px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:16px;
+  width:40px;
 }
 
-#fileInput{
-  width:90px;
+.status{
   font-size:12px;
-}
-
-#emojiPicker{
-  display:none;
-  background:white;
-  padding:10px;
-  position:sticky;
-  bottom:60px;
-  z-index:90;
-  max-height:250px;
-  overflow-y:auto;
-  border-top:1px solid #ccc;
-}
-
-#emojiPicker span{
-  font-size:22px;
-  cursor:pointer;
-  margin:5px;
-  display:inline-block;
-}
-
-#emojiPicker span:hover{
-  background:#eee;
-  border-radius:6px;
-}
-
-.categoryTitle{
-  font-weight:bold;
-  margin:6px 0;
-}
-
-.callArea{
-  background:#fff;
-  padding:10px;
-  text-align:center;
-  flex-shrink:0;
-  border-top:1px solid #ccc;
-}
-
-video{
-  width:48%;
-  max-width:300px;
-  border-radius:10px;
-  margin:5px 1%;
-}
-
-img{
-  max-width:100%;
-  border-radius:10px;
-  height:auto;
-}
-
-@keyframes pop{
-  from{transform:scale(.7);opacity:0;}
-  to{transform:scale(1);opacity:1;}
-}
-
-.heart{
-  position:fixed;
-  bottom:0;
-  font-size:25px;
-  animation:float 3s linear;
-}
-
-@keyframes float{
-  0%{transform:translateY(0);opacity:1;}
-  100%{transform:translateY(-500px);opacity:0;}
+  opacity:0.7;
 }
 </style>
-
-<script>
-let pass = prompt("Enter Password");
-if(pass === "2020"){
-  document.addEventListener("DOMContentLoaded", function(){
-    document.body.style.display = "flex";
-  });
-} else {
-  alert("❌ Wrong Password!");
-  throw new Error("Wrong Password");
-}
-</script>
-
 </head>
 
 <body>
 
-<div class="header">🍭 LADUU PIYUU CHAT 💖</div>
+<div class="header">🔥 PRO CHAT</div>
+<div id="status" class="status">Connecting...</div>
 <div class="chatbox" id="chatbox"></div>
 
-<div id="emojiPicker"></div>
-
 <div class="inputArea">
-  <button onclick="toggleEmoji()">😊</button>
-  <input id="message" type="text" placeholder="Type message...">
-  <input type="file" id="fileInput" accept="image/*,video/*">
-  <button onclick="sendMessage()">➤</button>
+<input id="msg" placeholder="Type message...">
+<button onclick="send()">➤</button>
 </div>
 
-<div class="callArea">
-  <p>Your Call ID:</p>
-  <div id="myId">Connecting...</div>
-  <input id="callId" placeholder="Enter partner ID">
-  <br><br>
-  <button onclick="audioCall()">📞</button>
-  <button onclick="videoCall()">🎥</button>
-  <button onclick="endCall()">❌ End Call</button>
-  <div>
-    <video id="localVideo" autoplay muted></video>
-    <video id="remoteVideo" autoplay></video>
-  </div>
-</div>
-
-<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// ✅ EMOJI
-const emojiData={
-"😃":["😀","😃","😄","😁","😂","🤣","😊","😍","😘","😎","🤗","🫂","🥰","🤭","😭","😜"],
-"❤️":["❤️","💖","💕","💘","💝","💌","💟"],
-"👍":["👍","👎","👏","🙏","👌","✌️"],
-"🐶":["🐶","🐱","🐭","🐰","🦊","🐼"],
-"🍔":["🍔","🍕","🍟","🍩","🌭","🥪"],
-"⚽":["⚽","🏀","🎮","🎲","🎯"],
-"🚗":["🚗","✈️","🚀","🚢"]
-};
-
-const picker=document.getElementById("emojiPicker");
-
-for(let cat in emojiData){
-  let t=document.createElement("div");
-  t.className="categoryTitle";
-  t.innerText=cat;
-  picker.appendChild(t);
-
-  emojiData[cat].forEach(e=>{
-    let s=document.createElement("span");
-    s.innerText=e;
-    s.onclick=()=>message.value+=e;
-    picker.appendChild(s);
-  });
-}
-
-function toggleEmoji(){
-  picker.style.display=picker.style.display==="none"?"block":"none";
-}
-
-// FIREBASE
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"love--chat-872da"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
-let userId=localStorage.getItem("chatUserId");
+let userId=localStorage.getItem("userId");
 if(!userId){
   userId="user_"+Math.random().toString(36).substr(2,9);
-  localStorage.setItem("chatUserId",userId);
+  localStorage.setItem("userId",userId);
 }
 
-function sendMessage(){
-  let msg=message.value.trim();
-  if(msg==="")return;
-  db.ref("chat").push({text:msg,sender:userId,time:new Date().toLocaleTimeString()});
-  message.value="";
+// ONLINE STATUS
+const statusRef=db.ref("status/"+userId);
+statusRef.set("online");
+statusRef.onDisconnect().set("offline");
+
+document.getElementById("status").innerText="Online 🟢";
+
+// SEND
+function send(){
+  let text=msg.value.trim();
+  if(!text) return;
+
+  db.ref("rooms/global").push({
+    text,
+    sender:userId,
+    time:Date.now()
+  });
+
+  msg.value="";
 }
 
-fileInput.onchange=function(){
-  let file=this.files[0];
-  let reader=new FileReader();
-  reader.onload=()=>{
-    db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:new Date().toLocaleTimeString()});
-  };
-  reader.readAsDataURL(file);
-};
-
-db.ref("chat").on("child_added",snap=>{
+// RECEIVE
+db.ref("rooms/global").on("child_added",snap=>{
   let d=snap.val();
+
   let div=document.createElement("div");
-  div.className=d.sender===userId?"message myMessage":"message otherMessage";
-  div.setAttribute("data-id",snap.key);
+  div.className="message "+(d.sender===userId?"my":"other");
 
-  let content="";
-  if(d.text) content=d.text;
-  if(d.file){
-    if(d.type.startsWith("image")) content="<img src='"+d.file+"'>";
-    if(d.type.startsWith("video")) content="<video src='"+d.file+"' controls autoplay muted></video>";
-  }
+  let time=new Date(d.time).toLocaleTimeString();
 
-  let del="";
-  if(d.sender===userId){
-    del="<button class='deleteBtn' onclick='deleteMsg(\""+snap.key+"\")'>🗑</button>";
-  }
+  div.innerHTML=d.text+"<br><small>"+time+"</small>";
 
-  div.innerHTML=del+content+"<span class='time'>"+d.time+"</span>";
   chatbox.appendChild(div);
   chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-function deleteMsg(id){
-  db.ref("chat/"+id).remove();
-}
+// TYPING INDICATOR
+msg.oninput=()=>{
+  db.ref("typing").set(userId);
+};
 
-db.ref("chat").on("child_removed",snap=>{
-  let msg=document.querySelector('[data-id="'+snap.key+'"]');
-  if(msg) msg.remove();
-});
-
-// ✅ CALL FIX + HANGUP + SMOOTH AUDIO
-let peer=new Peer();
-let currentCall = null;
-
-// Function to get smooth audio stream
-function getSmoothAudioStream(constraints={audio:true, video:false}){
-  return navigator.mediaDevices.getUserMedia(constraints)
-    .then(stream=>{
-      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      const source = audioCtx.createMediaStreamSource(stream);
-      const gainNode = audioCtx.createGain();
-      gainNode.gain.value = 0.8; // slightly lower for smoothness
-      source.connect(gainNode);
-      const dest = audioCtx.createMediaStreamDestination();
-      gainNode.connect(dest);
-      if(constraints.video){
-        // combine video track
-        stream.getVideoTracks().forEach(track => dest.stream.addTrack(track));
-      }
-      return dest.stream;
-    });
-}
-
-peer.on("open",id=>myId.innerText=id);
-
-// Audio Call
-function audioCall(){
-  getSmoothAudioStream({audio:true}).then(stream=>{
-    if(currentCall) currentCall.close();
-    currentCall = peer.call(callId.value, stream, {metadata:{type:"audio"}});
-    currentCall.on("stream", r=> remoteVideo.srcObject = r);
-    currentCall.on("close", ()=> clearCall());
-  });
-}
-
-// Video Call
-function videoCall(){
-  getSmoothAudioStream({audio:true, video:true}).then(stream=>{
-    if(currentCall) currentCall.close();
-    localVideo.srcObject = stream;
-    currentCall = peer.call(callId.value, stream, {metadata:{type:"video"}});
-    currentCall.on("stream", r=> remoteVideo.srcObject = r);
-    currentCall.on("close", ()=> clearCall());
-  });
-}
-
-// Incoming call
-peer.on("call", call=>{
-  let type = call.metadata?.type || "video";
-  let constraints = (type==="audio") ? {audio:true} : {audio:true, video:true};
-
-  getSmoothAudioStream(constraints).then(stream=>{
-    if(type==="video") localVideo.srcObject = stream;
-    call.answer(stream);
-    currentCall = call;
-
-    call.on("stream", r=> remoteVideo.srcObject = r);
-    call.on("close", ()=> clearCall());
-  });
-});
-
-// Hangup
-function endCall(){
-  if(currentCall){
-    currentCall.close();
-    clearCall();
+db.ref("typing").on("value",snap=>{
+  let val=snap.val();
+  if(val && val!==userId){
+    document.getElementById("status").innerText="Typing... ✍️";
+  } else {
+    document.getElementById("status").innerText="Online 🟢";
   }
-}
-
-function clearCall(){
-  currentCall = null;
-  remoteVideo.srcObject = null;
-  localVideo.srcObject = null;
-}
+});
 </script>
 
 </body>
