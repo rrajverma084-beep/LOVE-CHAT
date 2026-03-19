@@ -25,7 +25,6 @@ body{
   animation:floatUp 8s linear infinite;
   opacity:0.7;
 }
-
 @keyframes floatUp{
   0%{transform:translateY(0) scale(1);}
   100%{transform:translateY(-110vh) scale(1.5);}
@@ -39,7 +38,6 @@ body{
   animation:moveCloud 25s linear infinite;
   opacity:0.6;
 }
-
 @keyframes moveCloud{
   0%{left:-100px;}
   100%{left:110%;}
@@ -56,6 +54,33 @@ body{
   opacity:0.15;
   font-weight:bold;
   pointer-events:none;
+}
+
+/* ✨ GLITTER */
+.glitter{
+  position:absolute;
+  width:5px;
+  height:5px;
+  background:white;
+  border-radius:50%;
+  opacity:0.8;
+  animation:glow 3s infinite;
+}
+@keyframes glow{
+  0%{transform:scale(0.5);opacity:0.3;}
+  50%{transform:scale(1.5);opacity:1;}
+  100%{transform:scale(0.5);opacity:0.3;}
+}
+
+/* 💥 HEART BURST */
+.burstHeart{
+  position:absolute;
+  font-size:20px;
+  animation:burst 1s ease-out forwards;
+}
+@keyframes burst{
+  0%{transform:scale(1);opacity:1;}
+  100%{transform:translateY(-80px) scale(2);opacity:0;}
 }
 
 .header{
@@ -123,7 +148,6 @@ body{
 }
 
 #fileInput{display:none;}
-
 .attachBtn{font-size:18px;color:white;}
 
 button{
@@ -145,14 +169,12 @@ button{
   max-height:150px;
   overflow:auto;
 }
-
 #emojiPicker span{
   font-size:20px;
   margin:5px;
   cursor:pointer;
 }
 
-/* CALL SECTION */
 .callArea{
   display:none;
   background:#202c33;
@@ -160,19 +182,16 @@ button{
   text-align:center;
   margin-top:25px;
 }
-
 .callArea input{
   width:90%;
   padding:6px;
   margin-top:5px;
 }
-
 video{
   width:48%;
   border-radius:8px;
   margin-top:5px;
 }
-
 img{max-width:100%;border-radius:8px;}
 
 .callToggle{
@@ -193,24 +212,38 @@ if(pass === "2020"){
   throw new Error("Wrong Password");
 }
 </script>
-
 </head>
+
 <body>
+
+<!-- 🔊 SOUND -->
+<audio id="sendSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 
 <!-- 💖 Background Text -->
 <div class="bgText">💖 LADUU PIYUU 💖</div>
 
 <!-- ❤️ Hearts -->
-<div class="heart" style="left:10%; animation-delay:0s;">❤️</div>
-<div class="heart" style="left:30%; animation-delay:2s;">💖</div>
-<div class="heart" style="left:50%; animation-delay:4s;">💕</div>
-<div class="heart" style="left:70%; animation-delay:1s;">💗</div>
-<div class="heart" style="left:90%; animation-delay:3s;">💓</div>
+<div class="heart" style="left:10%;">❤️</div>
+<div class="heart" style="left:30%;">💖</div>
+<div class="heart" style="left:50%;">💕</div>
+<div class="heart" style="left:70%;">💗</div>
+<div class="heart" style="left:90%;">💓</div>
 
 <!-- ☁️ Clouds -->
-<div class="cloud" style="top:10%; animation-delay:0s;">☁️</div>
-<div class="cloud" style="top:20%; animation-delay:5s;">☁️</div>
-<div class="cloud" style="top:30%; animation-delay:10s;">☁️</div>
+<div class="cloud" style="top:10%;">☁️</div>
+<div class="cloud" style="top:20%;">☁️</div>
+<div class="cloud" style="top:30%;">☁️</div>
+
+<!-- ✨ GLITTER SCRIPT -->
+<script>
+for(let i=0;i<25;i++){
+  let g=document.createElement("div");
+  g.className="glitter";
+  g.style.left=Math.random()*100+"%";
+  g.style.top=Math.random()*100+"%";
+  document.body.appendChild(g);
+}
+</script>
 
 <div class="header">💬 LADUU PIYUU CHAT</div>
 <div class="chatbox" id="chatbox"></div>
@@ -244,7 +277,8 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// SAME JS (NO CHANGE)
+// SAME CODE + ADD EFFECT
+
 function toggleCall(){
   let c=document.getElementById("callArea");
   c.style.display = (c.style.display==="block") ? "none" : "block";
@@ -284,8 +318,23 @@ if(!userId){
 function sendMessage(){
   let msg=message.value.trim();
   if(!msg) return;
+
   db.ref("chat").push({text:msg,sender:userId,time:Date.now()});
   message.value="";
+
+  // 🔊 SOUND
+  document.getElementById("sendSound").play();
+
+  // 💥 HEART BURST
+  for(let i=0;i<5;i++){
+    let h=document.createElement("div");
+    h.className="burstHeart";
+    h.innerText="💖";
+    h.style.left=(window.innerWidth/2 + Math.random()*50 - 25)+"px";
+    h.style.top=(window.innerHeight - 80)+"px";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),1000);
+  }
 }
 
 fileInput.onchange=function(){
