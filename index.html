@@ -106,7 +106,9 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 let pass=prompt("Enter Password");
 if(pass==="2020"){
 document.addEventListener("DOMContentLoaded",()=>document.body.style.display="flex");
-}else{alert("Wrong Password");throw new Error();}
+}else{
+alert("Wrong Password");
+}
 </script>
 </head>
 
@@ -159,7 +161,19 @@ document.addEventListener("DOMContentLoaded",()=>document.body.style.display="fl
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// GLITTER
+
+/* ✅ FIXED DOM REFERENCES */
+const message = document.getElementById("message");
+const emojiPicker = document.getElementById("emojiPicker");
+const chatbox = document.getElementById("chatbox");
+const fileInput = document.getElementById("fileInput");
+const callArea = document.getElementById("callArea");
+const sendSound = document.getElementById("sendSound");
+const ringtone = document.getElementById("ringtone");
+const myId = document.getElementById("myId");
+const callId = document.getElementById("callId");
+
+/* GLITTER */
 for(let i=0;i<25;i++){
 let g=document.createElement("div");
 g.className="glitter";
@@ -168,7 +182,7 @@ g.style.top=Math.random()*100+"%";
 document.body.appendChild(g);
 }
 
-// EMOJI
+/* EMOJI */
 const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
 emojis.forEach(e=>{
 let s=document.createElement("span");
@@ -176,6 +190,7 @@ s.innerText=e;
 s.onclick=()=>message.value+=e;
 emojiPicker.appendChild(s);
 });
+
 function toggleEmoji(){
 emojiPicker.style.display=emojiPicker.style.display==="block"?"none":"block";
 }
@@ -184,7 +199,7 @@ message.addEventListener("keypress",e=>{
 if(e.key==="Enter") sendMessage();
 });
 
-// FIREBASE
+/* FIREBASE */
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
@@ -200,7 +215,7 @@ userId="user_"+Math.random().toString(36).substr(2,9);
 localStorage.setItem("chatUserId",userId);
 }
 
-// SEND
+/* SEND */
 function sendMessage(){
 let msg=message.value.trim();
 if(!msg)return;
@@ -210,7 +225,7 @@ message.value="";
 sendSound.play().catch(()=>{});
 }
 
-// FILE
+/* FILE */
 fileInput.onchange=function(){
 let file=this.files[0];
 let reader=new FileReader();
@@ -220,7 +235,7 @@ db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.n
 reader.readAsDataURL(file);
 };
 
-// RECEIVE
+/* RECEIVE */
 db.ref("chat").on("child_added",snap=>{
 let d=snap.val();
 let div=document.createElement("div");
@@ -230,7 +245,7 @@ div.setAttribute("data-id",snap.key);
 let content="";
 if(d.text) content=d.text;
 if(d.file){
-if(d.type.startsWith("image")) content="<img src='"+d.file+"'>";
+if(d.type.startsWith("image")) content="<img src='"+d.file+"' style='max-width:200px;border-radius:10px;'>";
 if(d.type.startsWith("video")) content="<video src='"+d.file+"' controls></video>";
 }
 
@@ -255,8 +270,13 @@ let msg=document.querySelector('[data-id="'+snap.key+'"]');
 if(msg) msg.remove();
 });
 
-// CALL
-let peer=new Peer();
+/* CALL */
+let peer=new Peer(undefined,{
+host:"peerjs.com",
+secure:true,
+port:443
+});
+
 let currentCall=null;
 
 peer.on("open",id=>myId.innerText=id);
@@ -301,6 +321,7 @@ localVideo.srcObject=null;
 function toggleCall(){
 callArea.style.display=callArea.style.display==="block"?"none":"block";
 }
+
 </script>
 
 </body>
