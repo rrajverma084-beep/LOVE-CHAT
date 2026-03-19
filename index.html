@@ -80,13 +80,9 @@ body{
   color:white;
 }
 
-#fileInput{
-  display:none;
-}
+#fileInput{display:none;}
 
-.attachBtn{
-  font-size:18px;
-}
+.attachBtn{font-size:18px;color:white;}
 
 button{
   border:none;
@@ -114,18 +110,34 @@ button{
   cursor:pointer;
 }
 
+/* 🔥 CALL SECTION HIDDEN BY DEFAULT */
 .callArea{
+  display:none;
   background:#202c33;
-  padding:8px;
+  padding:10px;
   text-align:center;
+  margin-top:25px; /* gap from input */
+}
+
+.callArea input{
+  width:90%;
+  padding:6px;
+  margin-top:5px;
 }
 
 video{
   width:48%;
   border-radius:8px;
+  margin-top:5px;
 }
 
 img{max-width:100%;border-radius:8px;}
+
+.callToggle{
+  width:100%;
+  border-radius:0;
+  background:#1f7a63;
+}
 
 </style>
 
@@ -156,7 +168,10 @@ if(pass === "2020"){
 <button onclick="sendMessage()">➤</button>
 </div>
 
-<div class="callArea">
+<!-- 🔥 CALL OPEN BUTTON -->
+<button class="callToggle" onclick="toggleCall()">📞 Open Call Section</button>
+
+<div class="callArea" id="callArea">
 <p>ID:</p>
 <div id="myId"></div>
 <input id="callId" placeholder="Enter ID">
@@ -174,6 +189,12 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
+// TOGGLE CALL
+function toggleCall(){
+  let c=document.getElementById("callArea");
+  c.style.display = (c.style.display==="block") ? "none" : "block";
+}
+
 // EMOJI
 const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
 const picker=document.getElementById("emojiPicker");
@@ -186,6 +207,11 @@ emojis.forEach(e=>{
 function toggleEmoji(){
   picker.style.display=picker.style.display==='block'?'none':'block';
 }
+
+// ENTER SEND
+message.addEventListener("keypress",e=>{
+  if(e.key==="Enter") sendMessage();
+});
 
 // FIREBASE
 const firebaseConfig={
