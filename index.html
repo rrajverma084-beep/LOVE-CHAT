@@ -13,13 +13,19 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
-  overflow:hidden;
+  overflow:auto;
   background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
+}
+
+/* SAFE BACKGROUND LAYER */
+.heart,.cloud,.glitter,.bgText{
+  pointer-events:none;
+  z-index:0;
+  position:absolute;
 }
 
 /* ❤️ Hearts */
 .heart{
-  position:absolute;
   bottom:-50px;
   font-size:20px;
   animation:floatUp 8s linear infinite;
@@ -32,7 +38,6 @@ body{
 
 /* ☁️ Clouds */
 .cloud{
-  position:absolute;
   top:10%;
   font-size:30px;
   animation:moveCloud 25s linear infinite;
@@ -45,7 +50,6 @@ body{
 
 /* ✨ Glitter */
 .glitter{
-  position:absolute;
   width:5px;
   height:5px;
   background:white;
@@ -60,14 +64,18 @@ body{
 
 /* 💖 Center Text */
 .bgText{
-  position:absolute;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
   font-size:40px;
   color:white;
   opacity:0.15;
-  pointer-events:none;
+}
+
+/* FOREGROUND UI SAFE */
+.header,.chatbox,.inputArea,.callArea{
+  position:relative;
+  z-index:1;
 }
 
 /* ORIGINAL UI */
@@ -104,22 +112,18 @@ document.addEventListener("DOMContentLoaded",()=>document.body.style.display="fl
 
 <body>
 
-<!-- 💖 BG TEXT -->
 <div class="bgText">💖 LADUU PIYUU 💖</div>
 
-<!-- ❤️ HEARTS -->
 <div class="heart" style="left:10%">❤️</div>
 <div class="heart" style="left:30%">💖</div>
 <div class="heart" style="left:50%">💕</div>
 <div class="heart" style="left:70%">💗</div>
 <div class="heart" style="left:90%">💓</div>
 
-<!-- ☁️ CLOUDS -->
 <div class="cloud" style="top:10%">☁️</div>
 <div class="cloud" style="top:20%">☁️</div>
 <div class="cloud" style="top:30%">☁️</div>
 
-<!-- 🔊 SOUND -->
 <audio id="sendSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 <audio id="ringtone" src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" loop></audio>
 
@@ -180,7 +184,7 @@ message.addEventListener("keypress",e=>{
 if(e.key==="Enter") sendMessage();
 });
 
-// FIREBASE FULL
+// FIREBASE
 const firebaseConfig={
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
@@ -203,7 +207,7 @@ if(!msg)return;
 
 db.ref("chat").push({text:msg,sender:userId,time:Date.now()});
 message.value="";
-sendSound.play();
+sendSound.play().catch(()=>{});
 }
 
 // FILE
@@ -287,6 +291,9 @@ ringtone.pause();
 
 function endCall(){
 if(currentCall) currentCall.close();
+if(localVideo.srcObject){
+localVideo.srcObject.getTracks().forEach(t=>t.stop());
+}
 remoteVideo.srcObject=null;
 localVideo.srcObject=null;
 }
