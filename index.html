@@ -12,73 +12,150 @@ body{
   height:100vh;
   display:flex;
   flex-direction:column;
-  overflow:auto;
   background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
+  overflow:hidden;
 }
 
+/* LOGIN */
 #loginBox{
   position:fixed;
-  top:0;left:0;
-  width:100%;height:100%;
+  inset:0;
   background:linear-gradient(135deg,#ff4d6d,#ff9a9e);
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  z-index:99999;
+  z-index:9999;
 }
 
-.header,.chatbox,.inputArea,.callArea{position:relative;z-index:1;}
+/* EFFECTS */
+.heart,.cloud,.bgText{
+  position:absolute;
+  pointer-events:none;
+}
 
-.chatbox{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;}
+.heart{
+  bottom:-50px;
+  animation:up 8s linear infinite;
+}
 
-.message{max-width:75%;padding:8px 12px;margin:4px 0;border-radius:8px;word-wrap:break-word;position:relative;}
-.myMessage{background:#005c4b;color:white;margin-left:auto;}
-.otherMessage{background:#202c33;color:white;}
+@keyframes up{
+  0%{transform:translateY(0);}
+  100%{transform:translateY(-110vh);}
+}
 
-.time{font-size:10px;opacity:.6;display:block;text-align:right;}
+.cloud{
+  top:20px;
+  animation:move 20s linear infinite;
+}
 
-.inputArea{display:flex;gap:5px;padding:6px;background:#202c33;}
-input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;color:white;}
+@keyframes move{
+  0%{left:-100px;}
+  100%{left:110%;}
+}
 
-button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;height:38px;cursor:pointer;}
+.bgText{
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:40px;
+  opacity:0.15;
+  color:white;
+}
 
-#emojiTabs{
+/* HEADER */
+.header{
+  background:#111b21;
+  color:white;
+  padding:10px;
+  text-align:center;
+}
+
+/* CHAT */
+.chatbox{
+  flex:1;
+  overflow-y:auto;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+}
+
+.message{
+  max-width:75%;
+  padding:8px;
+  margin:5px;
+  border-radius:10px;
+  color:white;
+}
+
+.my{background:#005c4b;margin-left:auto;}
+
+/* INPUT */
+.inputArea{
   display:flex;
   gap:5px;
-  overflow-x:auto;
+  padding:6px;
   background:#111b21;
-  padding:5px;
+}
+
+input{
+  flex:1;
+  padding:8px;
+  border-radius:20px;
+  border:none;
+}
+
+button{
+  width:40px;
+  border:none;
+  border-radius:50%;
+  background:#00a884;
+  color:white;
+}
+
+/* EMOJI */
+#emojiTabs{
+  display:flex;
+  overflow-x:auto;
+  background:#202c33;
 }
 
 #emojiTabs button{
-  background:#202c33;
-  color:white;
-  border:none;
-  font-size:12px;
+  margin:5px;
   padding:5px 10px;
+  border:none;
   border-radius:10px;
-  width:auto;
-  height:auto;
+  background:#111b21;
+  color:white;
 }
 
 #emojiPicker{
   display:none;
-  background:#202c33;
-  padding:10px;
-  max-height:150px;
+  height:120px;
   overflow:auto;
+  background:#202c33;
 }
 
 #emojiPicker span{
-  font-size:20px;
+  font-size:22px;
   margin:5px;
   cursor:pointer;
 }
 
-.callArea{display:none;background:#202c33;padding:10px;text-align:center;margin-top:25px;}
+/* CALL */
+.callArea{
+  background:#111b21;
+  color:white;
+  padding:10px;
+  text-align:center;
+}
 
-video{width:48%;border-radius:8px;margin-top:5px;}
+video{
+  width:48%;
+  border-radius:10px;
+  margin-top:5px;
+}
 </style>
 </head>
 
@@ -86,223 +163,145 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 
 <!-- LOGIN -->
 <div id="loginBox">
-<h2 style="color:white;">🔐 ENTER PASSWORD</h2>
-<input id="passInput" type="password" placeholder="Password">
-<button onclick="checkPassword()">GO</button>
-<p id="error" style="color:white;margin-top:10px;"></p>
+<h2>🔐 Password</h2>
+<input id="pass" type="password">
+<button onclick="login()">GO</button>
 </div>
 
 <div id="app">
 
-<div class="header">💬 LADUU PIYUU CHAT</div>
+<div class="bgText">💖 LADUU PIYUU 💖</div>
+
+<div class="heart" style="left:10%">❤️</div>
+<div class="heart" style="left:50%">💖</div>
+<div class="cloud">☁️</div>
+
+<div class="header">💬 CHAT</div>
+
 <div id="chatbox" class="chatbox"></div>
 
-<!-- EMOJI -->
 <div id="emojiTabs"></div>
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
-<input id="message" placeholder="Message">
-<label style="color:white;">📎<input type="file" id="fileInput" hidden></label>
-<button onclick="sendMessage()">➤</button>
+<input id="msg">
+<label>📎<input type="file" id="file" hidden></label>
+<button onclick="send()">➤</button>
 </div>
 
-<button onclick="toggleCall()">📞 Call</button>
-
-<div id="callArea" class="callArea">
-<div id="myId" style="color:white"></div>
-<input id="callId" placeholder="Enter ID">
-<br><br>
-<button onclick="audioCall()">📞</button>
-<button onclick="videoCall()">🎥</button>
+<!-- CALL -->
+<div class="callArea">
+<h3>📞 CALL</h3>
+<input id="callId" placeholder="ID">
+<button onclick="callUser()">📞</button>
 <button onclick="endCall()">❌</button>
 
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
+<br>
+<video id="myVid" autoplay muted></video>
+<video id="urVid" autoplay></video>
 </div>
 
 </div>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
 
-/* PASSWORD */
-function checkPassword(){
-let pass=document.getElementById("passInput").value;
-if(pass==="2020"){
+/* LOGIN */
+function login(){
+if(document.getElementById("pass").value==="2020"){
 document.getElementById("loginBox").style.display="none";
-}else{
-document.getElementById("error").innerText="❌ Wrong Password!";
 }
 }
 
-const message=document.getElementById("message");
-const chatbox=document.getElementById("chatbox");
-const emojiPicker=document.getElementById("emojiPicker");
-const emojiTabs=document.getElementById("emojiTabs");
+/* CHAT */
+let chat=document.getElementById("chatbox");
+let msg=document.getElementById("msg");
+let file=document.getElementById("file");
+let picker=document.getElementById("emojiPicker");
 
-/* 🔥 WHATSAPP STYLE EMOJI SYSTEM */
-const emojiGroups = {
-"😀": [
-"😀","😁","😂","🤣","😃","😄","😅","😆","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚",
-"😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️",
-"😣","😖","😫","😩","🥺","😭","😢","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓",
-"🤗","🤭","🫣","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","💤","😪",
-"😵","🤤","😷","🤒","🤕","🤢","🤮","🤧"
-],
-
-"❤️": [
-"❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","💕","💞","💓","💗","💖","💘","💝","💟"
-],
-
-"👋": [
-"👋","🤚","✋","🖐","👌","🤌","🤏","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","👇","☝️",
-"👍","👎","✊","👊","🤛","🤜","👏","🙌","👐","🤲","🙏","💪","🤝"
-],
-
-"🤗": [
-"🤗","🫂","💏","💑","👨‍❤️‍👨","👩‍❤️‍👩","👨‍❤️‍💋‍👨","👩‍❤️‍💋‍👩","💋","👀","👂","👃","👄","👅"
-],
-
-"🔥": [
-"🔥","💯","⭐","🌟","✨","⚡","☀️","🌤️","⛅","🌈","☁️","🌙","🌚","🌝","🌸","🌹","🌺","🌻","🌼","🍀"
-],
-
-"😎": [
-"🤓","🧐","😏","😒","😔","😞","😩","😫","😤","😡","🤯","🥶","🥵","😵","😴","💀","☠️","👻","👽","🤖"
-],
-
-"🎉": [
-"🎉","🎊","🎈","🎁","🎀","🏆","🥇","🥈","🥉","🏅","🎖️","⚽","🏀","🏐","🎮","🎯","🎲","🎸","🎧"
-],
-
-"🐻": [
-"🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐔","🐧","🐦","🐤","🦄"
-]
+/* EMOJI */
+const emojis={
+"😀":["😀","😂","🤣","😊","😍","😎","😭","😡","🤗"],
+"❤️":["❤️","💔","💕","💖","💗"],
+"🔥":["🔥","⭐","✨","⚡","🌈"],
+"👍":["👍","👏","🙏","💪"]
 };
 
-function loadEmojis(cat){
-emojiPicker.innerHTML="";
-emojiGroups[cat].forEach(e=>{
+Object.keys(emojis).forEach(c=>{
+let b=document.createElement("button");
+b.innerText=c;
+b.onclick=()=>{
+picker.innerHTML="";
+emojis[c].forEach(e=>{
 let s=document.createElement("span");
 s.innerText=e;
-s.onclick=()=>message.value+=e;
-emojiPicker.appendChild(s);
+s.onclick=()=>msg.value+=e;
+picker.appendChild(s);
 });
-}
-
-Object.keys(emojiGroups).forEach((cat,i)=>{
-let btn=document.createElement("button");
-btn.innerText=cat;
-btn.onclick=()=>loadEmojis(cat);
-emojiTabs.appendChild(btn);
+};
+document.getElementById("emojiTabs").appendChild(b);
 });
-
-loadEmojis("😀");
 
 function toggleEmoji(){
-emojiPicker.style.display=emojiPicker.style.display==="block"?"none":"block";
+picker.style.display=picker.style.display==="block"?"none":"block";
 }
 
-message.addEventListener("keypress",e=>{
-if(e.key==="Enter") sendMessage();
-});
-
-/* FIREBASE */
-firebase.initializeApp({
-apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-authDomain:"love--chat-872da.firebaseapp.com",
-databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"love--chat-872da"
-});
-
-const db=firebase.database();
-
-let userId=localStorage.getItem("chatUserId");
-if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
-localStorage.setItem("chatUserId",userId);
+function send(){
+if(!msg.value)return;
+chat.innerHTML+=`<div class="message my">${msg.value}</div>`;
+msg.value="";
 }
 
-function sendMessage(){
-let msg=message.value.trim();
-if(!msg)return;
-db.ref("chat").push({text:msg,sender:userId,time:Date.now()});
-message.value="";
-}
-
-fileInput.onchange=function(){
-let file=this.files[0];
-let reader=new FileReader();
-reader.onload=()=>{
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+file.onchange=function(){
+let r=new FileReader();
+r.onload=()=>{
+chat.innerHTML+=`<div class="message my"><img src="${r.result}" style="max-width:200px"></div>`;
 };
-reader.readAsDataURL(file);
+r.readAsDataURL(file.files[0]);
 };
 
-db.ref("chat").on("child_added",snap=>{
-let d=snap.val();
-let div=document.createElement("div");
-div.className=d.sender===userId?"message myMessage":"message otherMessage";
-
-let content="";
-if(d.text) content=d.text;
-if(d.file){
-if(d.type.startsWith("image")) content=`<img src="${d.file}" style="max-width:200px;">`;
-if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
-}
-
-div.innerHTML=content;
-chatbox.appendChild(div);
-chatbox.scrollTop=chatbox.scrollHeight;
-});
-
-/* CALL SYSTEM */
+/* CALL */
 let peer=new Peer();
-let currentCall=null;
+let myStream;
+let call;
 
-peer.on("open",id=>document.getElementById("myId").innerText=id);
+peer.on("call",c=>{
+navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(s=>{
+myStream=s;
+document.getElementById("myVid").srcObject=s;
+c.answer(s);
+c.on("stream",r=>{
+document.getElementById("urVid").srcObject=r;
+});
+call=c;
+});
+});
 
-function audioCall(){
-navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-currentCall=peer.call(document.getElementById("callId").value,stream);
-currentCall.on("stream",r=>remoteVideo.srcObject=r);
+function callUser(){
+let id=document.getElementById("callId").value;
+
+navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(s=>{
+myStream=s;
+document.getElementById("myVid").srcObject=s;
+
+let c=peer.call(id,s);
+c.on("stream",r=>{
+document.getElementById("urVid").srcObject=r;
+});
+call=c;
 });
 }
-
-function videoCall(){
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localVideo.srcObject=stream;
-currentCall=peer.call(document.getElementById("callId").value,stream);
-currentCall.on("stream",r=>remoteVideo.srcObject=r);
-});
-}
-
-peer.on("call",call=>{
-if(!confirm("Incoming Call?")) return call.close();
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localVideo.srcObject=stream;
-call.answer(stream);
-call.on("stream",r=>remoteVideo.srcObject=r);
-currentCall=call;
-});
-});
 
 function endCall(){
-if(currentCall) currentCall.close();
-localVideo.srcObject=null;
-remoteVideo.srcObject=null;
-}
-
-function toggleCall(){
-document.getElementById("callArea").style.display=
-document.getElementById("callArea").style.display==="block"?"none":"block";
+if(call)call.close();
+if(myStream)myStream.getTracks().forEach(t=>t.stop());
+document.getElementById("urVid").srcObject=null;
+document.getElementById("myVid").srcObject=null;
 }
 
 </script>
+
 </body>
-</html> BHAI DEKHO SAB KUCH THIK HAI N KUCH GADBADI TO N HAI SAHI SE KAM KAR RAHA HAI N 
+</html>
