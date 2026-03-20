@@ -115,21 +115,23 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 }
 </style>
 
-<!-- 🔐 SECURE PASSWORD FIX (ONLY THIS CHANGED) -->
+<!-- 🔐 ONLY PASSWORD FIX (INTEGRATED PROPERLY) -->
 <script>
-document.body.style.display = "none";
+document.addEventListener("DOMContentLoaded", () => {
 
-let pass = prompt("Enter Password");
+  document.body.style.display = "none";
 
-if(pass === "2020"){
-  document.addEventListener("DOMContentLoaded", () => {
+  let pass = prompt("Enter Password");
+
+  if (pass === "2020") {
     document.body.style.display = "flex";
-  });
-} else {
-  alert("Wrong Password ❌");
-  document.documentElement.innerHTML = "<h2 style='color:white;text-align:center;margin-top:50px;'>ACCESS DENIED</h2>";
-  throw new Error("Blocked");
-}
+  } else {
+    alert("Wrong Password ❌");
+    document.documentElement.innerHTML =
+      "<h2 style='color:white;text-align:center;margin-top:50px;font-family:sans-serif;'>ACCESS DENIED</h2>";
+  }
+
+});
 </script>
 
 </head>
@@ -183,7 +185,7 @@ if(pass === "2020"){
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// SAME JS (UNCHANGED)
+// SAME ORIGINAL JS (UNCHANGED)
 </script>
 
 </body>
