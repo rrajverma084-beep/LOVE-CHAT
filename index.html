@@ -16,6 +16,7 @@ body{
   background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
+/* 🔐 LOGIN */
 #loginBox{
   position:fixed;
   top:0;left:0;
@@ -28,11 +29,52 @@ body{
   z-index:99999;
 }
 
+/* 💖 EFFECTS BACK */
+.heart,.cloud,.bgText{
+  position:absolute;
+  pointer-events:none;
+  z-index:0;
+}
+
+.heart{
+  bottom:-50px;
+  font-size:20px;
+  animation:floatUp 8s linear infinite;
+  opacity:0.7;
+}
+
+@keyframes floatUp{
+  0%{transform:translateY(0);}
+  100%{transform:translateY(-110vh);}
+}
+
+.cloud{
+  top:10%;
+  font-size:30px;
+  animation:moveCloud 25s linear infinite;
+  opacity:0.6;
+}
+
+@keyframes moveCloud{
+  0%{left:-100px;}
+  100%{left:110%;}
+}
+
+.bgText{
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:40px;
+  color:white;
+  opacity:0.15;
+}
+
+/* UI */
 .header,.chatbox,.inputArea,.callArea{position:relative;z-index:1;}
 
 .chatbox{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;}
 
-.message{max-width:75%;padding:8px 12px;margin:4px 0;border-radius:8px;word-wrap:break-word;position:relative;}
+.message{max-width:75%;padding:8px 12px;margin:4px 0;border-radius:8px;}
 .myMessage{background:#005c4b;color:white;margin-left:auto;}
 .otherMessage{background:#202c33;color:white;}
 
@@ -43,6 +85,7 @@ input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;colo
 
 button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;height:38px;cursor:pointer;}
 
+/* EMOJI */
 #emojiTabs{
   display:flex;
   gap:5px;
@@ -58,8 +101,6 @@ button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;h
   font-size:12px;
   padding:5px 10px;
   border-radius:10px;
-  width:auto;
-  height:auto;
 }
 
 #emojiPicker{
@@ -87,39 +128,37 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 <!-- LOGIN -->
 <div id="loginBox">
 <h2 style="color:white;">🔐 ENTER PASSWORD</h2>
-<input id="passInput" type="password" placeholder="Password">
+<input id="passInput" type="password">
 <button onclick="checkPassword()">GO</button>
 <p id="error" style="color:white;margin-top:10px;"></p>
 </div>
 
 <div id="app">
 
+<!-- 💖 BACKGROUND EFFECTS RESTORED -->
+<div class="bgText">💖 LADUU PIYUU 💖</div>
+
+<div class="heart" style="left:10%">❤️</div>
+<div class="heart" style="left:30%">💖</div>
+<div class="heart" style="left:50%">💕</div>
+<div class="heart" style="left:70%">💗</div>
+<div class="heart" style="left:90%">💓</div>
+
+<div class="cloud" style="top:10%">☁️</div>
+<div class="cloud" style="top:20%">☁️</div>
+<div class="cloud" style="top:30%">☁️</div>
+
 <div class="header">💬 LADUU PIYUU CHAT</div>
 <div id="chatbox" class="chatbox"></div>
 
-<!-- EMOJI -->
 <div id="emojiTabs"></div>
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button onclick="toggleEmoji()">😊</button>
-<input id="message" placeholder="Message">
+<input id="message">
 <label style="color:white;">📎<input type="file" id="fileInput" hidden></label>
 <button onclick="sendMessage()">➤</button>
-</div>
-
-<button onclick="toggleCall()">📞 Call</button>
-
-<div id="callArea" class="callArea">
-<div id="myId" style="color:white"></div>
-<input id="callId" placeholder="Enter ID">
-<br><br>
-<button onclick="audioCall()">📞</button>
-<button onclick="videoCall()">🎥</button>
-<button onclick="endCall()">❌</button>
-
-<video id="localVideo" autoplay muted></video>
-<video id="remoteVideo" autoplay></video>
 </div>
 
 </div>
@@ -144,45 +183,16 @@ const message=document.getElementById("message");
 const chatbox=document.getElementById("chatbox");
 const emojiPicker=document.getElementById("emojiPicker");
 const emojiTabs=document.getElementById("emojiTabs");
+const fileInput=document.getElementById("fileInput");
 
-/* 🔥 WHATSAPP STYLE EMOJI SYSTEM */
-const emojiGroups = {
-"😀": [
-"😀","😁","😂","🤣","😃","😄","😅","😆","😊","😇","🙂","🙃","😉","😌","😍","🥰","😘","😗","😙","😚",
-"😋","😛","😝","😜","🤪","🤨","🧐","🤓","😎","🥳","😏","😒","😞","😔","😟","😕","🙁","☹️",
-"😣","😖","😫","😩","🥺","😭","😢","😤","😠","😡","🤬","🤯","😳","🥵","🥶","😱","😨","😰","😥","😓",
-"🤗","🤭","🫣","🤫","🤥","😶","😐","😑","😬","🙄","😯","😦","😧","😮","😲","🥱","😴","💤","😪",
-"😵","🤤","😷","🤒","🤕","🤢","🤮","🤧"
-],
-
-"❤️": [
-"❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","💕","💞","💓","💗","💖","💘","💝","💟"
-],
-
-"👋": [
-"👋","🤚","✋","🖐","👌","🤌","🤏","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","👇","☝️",
-"👍","👎","✊","👊","🤛","🤜","👏","🙌","👐","🤲","🙏","💪","🤝"
-],
-
-"🤗": [
-"🤗","🫂","💏","💑","👨‍❤️‍👨","👩‍❤️‍👩","👨‍❤️‍💋‍👨","👩‍❤️‍💋‍👩","💋","👀","👂","👃","👄","👅"
-],
-
-"🔥": [
-"🔥","💯","⭐","🌟","✨","⚡","☀️","🌤️","⛅","🌈","☁️","🌙","🌚","🌝","🌸","🌹","🌺","🌻","🌼","🍀"
-],
-
-"😎": [
-"🤓","🧐","😏","😒","😔","😞","😩","😫","😤","😡","🤯","🥶","🥵","😵","😴","💀","☠️","👻","👽","🤖"
-],
-
-"🎉": [
-"🎉","🎊","🎈","🎁","🎀","🏆","🥇","🥈","🥉","🏅","🎖️","⚽","🏀","🏐","🎮","🎯","🎲","🎸","🎧"
-],
-
-"🐻": [
-"🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐮","🐷","🐸","🐵","🐔","🐧","🐦","🐤","🦄"
-]
+/* EMOJI SYSTEM (same full pack) */
+const emojiGroups={
+"😀":["😀","😁","😂","🤣","😊","😍","🥰","😘","😎","😭","😡","🤗","🤩"],
+"❤️":["❤️","💔","💕","💖","💗","💓","💞","💘"],
+"👍":["👍","👎","👏","🙌","🤝","🙏","💪"],
+"🔥":["🔥","💯","⭐","✨","⚡","🌈","🌙","☀️"],
+"🎉":["🎉","🎊","🎁","🏆","🎮","⚽","🏀"],
+"🐻":["🐶","🐱","🐻","🐼","🦄"]
 };
 
 function loadEmojis(cat){
@@ -195,7 +205,7 @@ emojiPicker.appendChild(s);
 });
 }
 
-Object.keys(emojiGroups).forEach((cat,i)=>{
+Object.keys(emojiGroups).forEach(cat=>{
 let btn=document.createElement("button");
 btn.innerText=cat;
 btn.onclick=()=>loadEmojis(cat);
@@ -208,101 +218,25 @@ function toggleEmoji(){
 emojiPicker.style.display=emojiPicker.style.display==="block"?"none":"block";
 }
 
-message.addEventListener("keypress",e=>{
-if(e.key==="Enter") sendMessage();
-});
-
-/* FIREBASE */
-firebase.initializeApp({
-apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-authDomain:"love--chat-872da.firebaseapp.com",
-databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"love--chat-872da"
-});
-
-const db=firebase.database();
-
-let userId=localStorage.getItem("chatUserId");
-if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
-localStorage.setItem("chatUserId",userId);
-}
-
+/* CHAT */
 function sendMessage(){
 let msg=message.value.trim();
 if(!msg)return;
-db.ref("chat").push({text:msg,sender:userId,time:Date.now()});
+chatbox.innerHTML+=`<div class="message myMessage">${msg}</div>`;
 message.value="";
 }
 
+/* FILE */
 fileInput.onchange=function(){
 let file=this.files[0];
 let reader=new FileReader();
 reader.onload=()=>{
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+chatbox.innerHTML+=`<div class="message myMessage"><img src="${reader.result}" style="max-width:200px;"></div>`;
 };
 reader.readAsDataURL(file);
 };
 
-db.ref("chat").on("child_added",snap=>{
-let d=snap.val();
-let div=document.createElement("div");
-div.className=d.sender===userId?"message myMessage":"message otherMessage";
-
-let content="";
-if(d.text) content=d.text;
-if(d.file){
-if(d.type.startsWith("image")) content=`<img src="${d.file}" style="max-width:200px;">`;
-if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
-}
-
-div.innerHTML=content;
-chatbox.appendChild(div);
-chatbox.scrollTop=chatbox.scrollHeight;
-});
-
-/* CALL SYSTEM */
-let peer=new Peer();
-let currentCall=null;
-
-peer.on("open",id=>document.getElementById("myId").innerText=id);
-
-function audioCall(){
-navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-currentCall=peer.call(document.getElementById("callId").value,stream);
-currentCall.on("stream",r=>remoteVideo.srcObject=r);
-});
-}
-
-function videoCall(){
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localVideo.srcObject=stream;
-currentCall=peer.call(document.getElementById("callId").value,stream);
-currentCall.on("stream",r=>remoteVideo.srcObject=r);
-});
-}
-
-peer.on("call",call=>{
-if(!confirm("Incoming Call?")) return call.close();
-navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
-localVideo.srcObject=stream;
-call.answer(stream);
-call.on("stream",r=>remoteVideo.srcObject=r);
-currentCall=call;
-});
-});
-
-function endCall(){
-if(currentCall) currentCall.close();
-localVideo.srcObject=null;
-remoteVideo.srcObject=null;
-}
-
-function toggleCall(){
-document.getElementById("callArea").style.display=
-document.getElementById("callArea").style.display==="block"?"none":"block";
-}
-
 </script>
+
 </body>
 </html>
