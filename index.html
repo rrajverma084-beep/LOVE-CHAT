@@ -17,80 +17,62 @@ body{
   background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
-/* SAFE BACKGROUND LAYER */
 .heart,.cloud,.glitter,.bgText{
   pointer-events:none;
   z-index:0;
   position:absolute;
 }
 
-/* ❤️ Hearts */
 .heart{
   bottom:-50px;
   font-size:20px;
   animation:floatUp 8s linear infinite;
   opacity:0.7;
 }
-@keyframes floatUp{
-  0%{transform:translateY(0);}
-  100%{transform:translateY(-110vh);}
-}
 
-/* ☁️ Clouds */
+@keyframes floatUp{0%{transform:translateY(0);}100%{transform:translateY(-110vh);}}
+
 .cloud{
   top:10%;
   font-size:30px;
   animation:moveCloud 25s linear infinite;
   opacity:0.6;
 }
-@keyframes moveCloud{
-  0%{left:-100px;}
-  100%{left:110%;}
-}
 
-/* ✨ Glitter */
+@keyframes moveCloud{0%{left:-100px;}100%{left:110%;}}
+
 .glitter{
-  width:5px;
-  height:5px;
-  background:white;
-  border-radius:50%;
+  width:5px;height:5px;background:white;border-radius:50%;
   animation:glow 3s infinite;
 }
-@keyframes glow{
-  0%{opacity:.3;}
-  50%{opacity:1;}
-  100%{opacity:.3;}
-}
 
-/* 💖 Center Text */
+@keyframes glow{0%{opacity:.3;}50%{opacity:1;}100%{opacity:.3;}}
+
 .bgText{
-  top:50%;
-  left:50%;
+  top:50%;left:50%;
   transform:translate(-50%,-50%);
   font-size:40px;
   color:white;
   opacity:0.15;
 }
 
-/* FOREGROUND UI SAFE */
-.header,.chatbox,.inputArea,.callArea{
-  position:relative;
-  z-index:1;
-}
+.header,.chatbox,.inputArea,.callArea{position:relative;z-index:1;}
 
-/* ORIGINAL UI */
 .header{background:#202c33;color:white;padding:12px;}
 .chatbox{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;}
-.message{max-width:75%;padding:8px 12px;margin:4px 0;border-radius:8px;position:relative;word-wrap:break-word;}
+
+.message{max-width:75%;padding:8px 12px;margin:4px 0;border-radius:8px;word-wrap:break-word;}
 .myMessage{background:#005c4b;color:white;margin-left:auto;}
 .otherMessage{background:#202c33;color:white;}
+
 .time{font-size:10px;opacity:.6;display:block;text-align:right;}
+
 .deleteBtn{position:absolute;top:2px;right:5px;background:none;border:none;color:white;cursor:pointer;}
 
 .inputArea{display:flex;gap:5px;padding:6px;background:#202c33;}
+
 input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;color:white;}
 
-#fileInput{display:none;}
 .attachBtn{font-size:18px;color:white;}
 
 button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;height:38px;}
@@ -98,88 +80,87 @@ button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;h
 #emojiPicker{display:none;background:#202c33;padding:10px;max-height:150px;overflow:auto;}
 #emojiPicker span{font-size:20px;margin:5px;cursor:pointer;}
 
-.callArea{display:none;background:#202c33;padding:10px;text-align:center;margin-top:25px;}
+.callArea{display:none;background:#202c33;padding:10px;text-align:center;margin-top:10px;}
+
 video{width:48%;border-radius:8px;margin-top:5px;}
 
-/* ✅ FIX ADDED ONLY (IMAGE/VIDEO SIZE CONTROL) */
-.message img,
-.message video{
-  max-width: 200px;
-  max-height: 200px;
-  border-radius: 10px;
-  margin-top: 5px;
-  object-fit: cover;
-  display: block;
+.message img,.message video{
+  max-width:200px;
+  max-height:200px;
+  border-radius:10px;
+  margin-top:5px;
 }
 </style>
-
-<script>
-let pass=prompt("Enter Password");
-if(pass==="2020"){
-document.addEventListener("DOMContentLoaded",()=>document.body.style.display="flex");
-}else{alert("Wrong Password");throw new Error();}
-</script>
 </head>
 
 <body>
 
 <div class="bgText">💖 LADUU PIYUU 💖</div>
 
-<div class="heart" style="left:10%">❤️</div>
-<div class="heart" style="left:30%">💖</div>
-<div class="heart" style="left:50%">💕</div>
-<div class="heart" style="left:70%">💗</div>
-<div class="heart" style="left:90%">💓</div>
-
-<div class="cloud" style="top:10%">☁️</div>
-<div class="cloud" style="top:20%">☁️</div>
-<div class="cloud" style="top:30%">☁️</div>
-
-<audio id="sendSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
-<audio id="ringtone" src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" loop></audio>
-
 <div class="header">💬 LADUU PIYUU CHAT</div>
 <div id="chatbox" class="chatbox"></div>
+
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
-<button onclick="toggleEmoji()">😊</button>
+<button id="emojiBtn">😊</button>
 <input id="message" placeholder="Message">
-<label class="attachBtn" for="fileInput">📎</label>
-<input type="file" id="fileInput" accept="image/*,video/*">
-<button onclick="sendMessage()">➤</button>
+<label class="attachBtn">📎</label>
+<input type="file" id="fileInput" hidden>
+<button id="sendBtn">➤</button>
 </div>
 
-<button onclick="toggleCall()">📞 Open Call Section</button>
+<button id="callToggle">📞 Call</button>
 
 <div id="callArea" class="callArea">
-<p>ID:</p>
-<div id="myId"></div>
+<p id="myId"></p>
 <input id="callId" placeholder="Enter ID">
 <br><br>
-<button onclick="audioCall()">📞</button>
-<button onclick="videoCall()">🎥</button>
-<button onclick="endCall()">❌</button>
+<button id="audioBtn">📞</button>
+<button id="videoBtn">🎥</button>
+<button id="endBtn">❌</button>
+
 <br>
 <video id="localVideo" autoplay muted></video>
 <video id="remoteVideo" autoplay></video>
 </div>
+
+<audio id="sendSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<audio id="ringtone" src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" loop></audio>
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-// (SAME JS - NO CHANGE)
-let g=document.createElement("div");
+/* SAFE DOM */
+const message=document.getElementById("message");
+const chatbox=document.getElementById("chatbox");
+const emojiPicker=document.getElementById("emojiPicker");
+const fileInput=document.getElementById("fileInput");
+const callArea=document.getElementById("callArea");
+const callId=document.getElementById("callId");
+const myId=document.getElementById("myId");
+const localVideo=document.getElementById("localVideo");
+const remoteVideo=document.getElementById("remoteVideo");
+const sendSound=document.getElementById("sendSound");
+const ringtone=document.getElementById("ringtone");
+
+/* PASSWORD */
+let pass=prompt("Enter Password");
+if(pass!=="2020") throw new Error("Wrong Password");
+document.body.style.display="flex";
+
+/* BACKGROUND EFFECT */
 for(let i=0;i<25;i++){
-g=document.createElement("div");
+let g=document.createElement("div");
 g.className="glitter";
 g.style.left=Math.random()*100+"%";
 g.style.top=Math.random()*100+"%";
 document.body.appendChild(g);
 }
 
+/* EMOJIS */
 const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
 emojis.forEach(e=>{
 let s=document.createElement("span");
@@ -188,106 +169,113 @@ s.onclick=()=>message.value+=e;
 emojiPicker.appendChild(s);
 });
 
-function toggleEmoji(){
+document.getElementById("emojiBtn").onclick=()=>{
 emojiPicker.style.display=emojiPicker.style.display==="block"?"none":"block";
-}
+};
 
-message.addEventListener("keypress",e=>{
-if(e.key==="Enter") sendMessage();
-});
-
-const firebaseConfig={
+/* FIREBASE */
+firebase.initializeApp({
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"love--chat-872da"
-};
+});
 
-firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
-let userId=localStorage.getItem("chatUserId");
-if(!userId){
-userId="user_"+Math.random().toString(36).substr(2,9);
+let userId=localStorage.getItem("chatUserId")||("user_"+Math.random().toString(36).substr(2,9));
 localStorage.setItem("chatUserId",userId);
-}
 
+/* SEND MESSAGE */
 function sendMessage(){
 let msg=message.value.trim();
 if(!msg)return;
 
-db.ref("chat").push({text:msg,sender:userId,time:Date.now()});
+db.ref("chat").push({
+text:msg,
+sender:userId,
+time:Date.now()
+});
+
 message.value="";
 sendSound.play().catch(()=>{});
 }
 
+document.getElementById("sendBtn").onclick=sendMessage;
+
+message.addEventListener("keypress",e=>{
+if(e.key==="Enter")sendMessage();
+});
+
+/* FILE */
 fileInput.onchange=function(){
 let file=this.files[0];
 let reader=new FileReader();
 reader.onload=()=>{
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+db.ref("chat").push({
+file:reader.result,
+type:file.type,
+sender:userId,
+time:Date.now()
+});
 };
 reader.readAsDataURL(file);
 };
 
+/* CHAT LOAD */
 db.ref("chat").on("child_added",snap=>{
 let d=snap.val();
 let div=document.createElement("div");
 div.className=d.sender===userId?"message myMessage":"message otherMessage";
 div.setAttribute("data-id",snap.key);
 
-let content="";
-if(d.text) content=d.text;
+let content=d.text||"";
 if(d.file){
-if(d.type.startsWith("image")) content="<img src='"+d.file+"'>";
-if(d.type.startsWith("video")) content="<video src='"+d.file+"' controls></video>";
+if(d.type.startsWith("image")) content=`<img src="${d.file}">`;
+if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
 }
 
-let del="";
-if(d.sender===userId){
-del="<button class='deleteBtn' onclick='deleteMsg(\""+snap.key+"\")'>🗑</button>";
-}
-
-let time=new Date(d.time).toLocaleTimeString();
-div.innerHTML=del+content+"<span class='time'>"+time+"</span>";
+div.innerHTML=content+`
+<span class="time">${new Date(d.time).toLocaleTimeString()}</span>
+`;
 
 chatbox.appendChild(div);
 chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-function deleteMsg(id){
-db.ref("chat/"+id).remove();
-}
-
-db.ref("chat").on("child_removed",snap=>{
-let msg=document.querySelector('[data-id="'+snap.key+'"]');
-if(msg) msg.remove();
-});
-
+/* CALL */
 let peer=new Peer();
 let currentCall=null;
 
 peer.on("open",id=>myId.innerText=id);
 
-function audioCall(){
+document.getElementById("callToggle").onclick=()=>{
+callArea.style.display=callArea.style.display==="block"?"none":"block";
+};
+
+document.getElementById("audioBtn").onclick=()=>{
 navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
 currentCall=peer.call(callId.value,stream);
 currentCall.on("stream",r=>remoteVideo.srcObject=r);
 });
-}
+};
 
-function videoCall(){
+document.getElementById("videoBtn").onclick=()=>{
 navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
 localVideo.srcObject=stream;
 currentCall=peer.call(callId.value,stream);
 currentCall.on("stream",r=>remoteVideo.srcObject=r);
 });
-}
+};
 
 peer.on("call",call=>{
 ringtone.play();
-let accept=confirm("Incoming Call 📞 Accept?");
-if(!accept){call.close();ringtone.pause();return;}
+if(!confirm("Incoming Call Accept?")){
+call.close();
+ringtone.pause();
+return;
+}
+
 navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
 localVideo.srcObject=stream;
 call.answer(stream);
@@ -297,18 +285,11 @@ ringtone.pause();
 });
 });
 
-function endCall(){
-if(currentCall) currentCall.close();
-if(localVideo.srcObject){
-localVideo.srcObject.getTracks().forEach(t=>t.stop());
-}
-remoteVideo.srcObject=null;
+document.getElementById("endBtn").onclick=()=>{
+if(currentCall)currentCall.close();
 localVideo.srcObject=null;
-}
-
-function toggleCall(){
-callArea.style.display=callArea.style.display==="block"?"none":"block";
-}
+remoteVideo.srcObject=null;
+};
 </script>
 
 </body>
