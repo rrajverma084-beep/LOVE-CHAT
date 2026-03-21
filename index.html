@@ -42,21 +42,23 @@ font-size:40px;color:white;opacity:0.15;
 .message{max-width:75%;padding:8px;margin:4px 0;border-radius:8px;}
 .myMessage{background:#005c4b;color:white;margin-left:auto;}
 .otherMessage{background:#202c33;color:white;}
+
 .time{font-size:10px;opacity:.6;text-align:right;display:block;}
 
 .deleteBtn{
 background:red;color:white;border:none;border-radius:50%;
-width:20px;height:20px;margin-left:5px;cursor:pointer;
+width:20px;height:20px;font-size:12px;margin-left:5px;cursor:pointer;
 }
 
 .inputArea{display:flex;gap:5px;padding:6px;background:#202c33;}
 input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;color:white;}
-button{background:#00a884;color:white;border:none;border-radius:50%;width:38px;height:38px;}
+button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;height:38px;}
 
 #emojiPicker{display:none;background:#202c33;padding:10px;max-height:150px;overflow:auto;}
-#emojiPicker span{cursor:pointer;margin:4px;font-size:20px;}
+#emojiPicker span{cursor:pointer;margin:4px;}
 
 .callArea{display:none;background:#202c33;padding:10px;text-align:center;}
+
 video{width:48%;border-radius:8px;margin-top:5px;}
 .message img,.message video{max-width:200px;border-radius:10px;}
 </style>
@@ -64,17 +66,15 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginPage">
 <div class="loginBox">
 <h2>🔐 Secure Login</h2>
 <input id="passInput" type="password" placeholder="Enter Password">
 <br><button onclick="checkPass()">Login</button>
-<p id="errorText"></p>
+<p id="errorText" style="color:red;"></p>
 </div>
 </div>
 
-<!-- MAIN -->
 <div id="mainApp">
 
 <div class="bgText">💖 LADUU PIYUU 💖</div>
@@ -99,7 +99,9 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 <div class="inputArea">
 <button id="emojiBtn">😊</button>
 <input id="message" placeholder="Message">
-<label style="color:white;">📎<input type="file" id="fileInput" hidden></label>
+<label style="color:white;cursor:pointer;">📎
+<input type="file" id="fileInput" hidden>
+</label>
 <button id="sendBtn">➤</button>
 </div>
 
@@ -107,10 +109,10 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 
 <div id="callArea" class="callArea">
 <p id="myId"></p>
-<input id="callId" placeholder="Enter ID">
+<input id="callId" placeholder="Enter ID"><br><br>
 <button id="audioBtn">📞</button>
 <button id="videoBtn">🎥</button>
-<button id="endBtn">❌</button>
+<button id="endBtn">❌</button><br>
 <video id="localVideo" autoplay muted></video>
 <video id="remoteVideo" autoplay></video>
 </div>
@@ -125,7 +127,6 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-
 const PASS="2020";
 
 function checkPass(){
@@ -141,7 +142,6 @@ function startApp(){
 let roomId=null;
 let currentRef=null;
 
-/* GLITTER */
 for(let i=0;i<25;i++){
 let g=document.createElement("div");
 g.className="glitter";
@@ -150,7 +150,6 @@ g.style.top=Math.random()*100+"%";
 document.body.appendChild(g);
 }
 
-/* FIREBASE */
 if(!firebase.apps.length){
 firebase.initializeApp({
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app"
@@ -185,6 +184,7 @@ div.setAttribute("data-id",key);
 div.className=d.sender===userId?"message myMessage":"message otherMessage";
 
 let content=d.text||"";
+
 if(d.file){
 if(d.type.startsWith("image")) content=`<img src="${d.file}">`;
 if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
@@ -206,43 +206,8 @@ if(e.getAttribute("data-id")===key) e.remove();
 });
 });
 
+alert("✅ Private Chat Connected");
 };
-
-/* DELETE */
-window.deleteMsg=function(id){
-if(roomId) db.ref("chat/"+roomId+"/"+id).remove();
-};
-
-/* EMOJI FULL */
-const emojiCategories={
-"😀":["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😍","😘","🥰","😎","🤗"],
-"❤️":["❤️","💖","💗","💓","💕","💘","💝","💞","💟"],
-"😂":["😂","🤣","😹","😜","😝","😛","🤪"],
-"👍":["👍","👎","👏","🙌","🙏","💪","👌","✌️"]
-};
-
-function loadCategory(cat){
-emojiPicker.innerHTML="";
-for(let key in emojiCategories){
-let btn=document.createElement("span");
-btn.innerText=key;
-btn.onclick=()=>loadCategory(key);
-emojiPicker.appendChild(btn);
-}
-emojiPicker.appendChild(document.createElement("br"));
-
-emojiCategories[cat].forEach(e=>{
-let s=document.createElement("span");
-s.innerText=e;
-s.onclick=()=>message.value+=e;
-emojiPicker.appendChild(s);
-});
-}
-
-loadCategory("😀");
-
-emojiBtn.onclick=()=>emojiPicker.style.display=
-emojiPicker.style.display==="block"?"none":"block";
 
 /* SEND */
 sendBtn.onclick=()=>{
@@ -277,15 +242,53 @@ time:Date.now()
 reader.readAsDataURL(file);
 };
 
+/* DELETE */
+window.deleteMsg=function(id){
+if(roomId){
+db.ref("chat/"+roomId+"/"+id).remove();
+}
+};
+
+/* EMOJI */
+const emojiCategories={
+"😀":["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😍","😘"],
+"❤️":["❤️","💖","💗","💓","💕","💘","💝"],
+"🤗":["🤗","🥰","🤭","😌","😏"],
+"😂":["😂","🤣","😹","😜","😝"],
+"👍":["👍","👏","🙌","🙏","💪","👌"]
+};
+
+function loadCategory(cat){
+emojiPicker.innerHTML="";
+for(let key in emojiCategories){
+let btn=document.createElement("span");
+btn.innerText=key;
+btn.onclick=()=>loadCategory(key);
+emojiPicker.appendChild(btn);
+}
+emojiPicker.appendChild(document.createElement("br"));
+
+emojiCategories[cat].forEach(e=>{
+let s=document.createElement("span");
+s.innerText=e;
+s.onclick=()=>message.value+=e;
+emojiPicker.appendChild(s);
+});
+}
+
+loadCategory("😀");
+
+emojiBtn.onclick=()=>emojiPicker.style.display=
+emojiPicker.style.display==="block"?"none":"block";
+
 /* CALL SAME */
 let peer=new Peer();
 let currentCall=null;
 
 peer.on("open",id=>myId.innerText+=" | Call ID: "+id);
 
-callToggle.onclick=()=>{
-callArea.style.display=callArea.style.display==="block"?"none":"block";
-};
+callToggle.onclick=()=>callArea.style.display=
+callArea.style.display==="block"?"none":"block";
 
 audioBtn.onclick=()=>{
 navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
@@ -322,7 +325,6 @@ remoteVideo.srcObject=null;
 };
 
 }
-
 </script>
 </body>
 </html>
