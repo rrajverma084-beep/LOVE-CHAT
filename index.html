@@ -8,7 +8,6 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:sans-serif;}
 
-/* LOGIN */
 #loginPage{
 height:100vh;display:flex;justify-content:center;align-items:center;
 background:linear-gradient(135deg,#ff758c,#ff7eb3);
@@ -20,18 +19,15 @@ padding:30px;border-radius:20px;text-align:center;color:white;
 .loginBox input{padding:10px;border:none;border-radius:20px;margin-top:10px;}
 .loginBox button{margin-top:10px;padding:10px 20px;border:none;border-radius:20px;background:#00a884;color:white;}
 
-/* MAIN */
 #mainApp{
 display:none;height:100vh;flex-direction:column;overflow:auto;
 background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
 .heart,.cloud,.glitter,.bgText{pointer-events:none;position:absolute;z-index:0;}
-
-.heart{bottom:-50px;font-size:20px;animation:floatUp 8s linear infinite;opacity:0.7;}
+.heart{bottom:-50px;font-size:20px;animation:floatUp 8s linear infinite;}
 @keyframes floatUp{0%{transform:translateY(0);}100%{transform:translateY(-110vh);}}
-
-.cloud{top:10%;font-size:30px;animation:moveCloud 25s linear infinite;opacity:0.6;}
+.cloud{top:10%;font-size:30px;animation:moveCloud 25s linear infinite;}
 @keyframes moveCloud{0%{left:-100px;}100%{left:110%;}}
 
 .glitter{width:5px;height:5px;background:white;border-radius:50%;animation:glow 3s infinite;}
@@ -46,25 +42,23 @@ font-size:40px;color:white;opacity:0.15;
 .message{max-width:75%;padding:8px;margin:4px 0;border-radius:8px;}
 .myMessage{background:#005c4b;color:white;margin-left:auto;}
 .otherMessage{background:#202c33;color:white;}
-
-.time{font-size:10px;opacity:.6;display:block;text-align:right;}
+.time{font-size:10px;opacity:.6;text-align:right;display:block;}
 
 .deleteBtn{
 background:red;color:white;border:none;border-radius:50%;
-width:20px;height:20px;font-size:12px;margin-left:5px;cursor:pointer;
+width:20px;height:20px;margin-left:5px;cursor:pointer;
 }
 
 .inputArea{display:flex;gap:5px;padding:6px;background:#202c33;}
 input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;color:white;}
-button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;height:38px;}
+button{background:#00a884;color:white;border:none;border-radius:50%;width:38px;height:38px;}
 
 #emojiPicker{display:none;background:#202c33;padding:10px;max-height:150px;overflow:auto;}
-#emojiPicker span{cursor:pointer;}
+#emojiPicker span{cursor:pointer;margin:4px;font-size:20px;}
 
 .callArea{display:none;background:#202c33;padding:10px;text-align:center;}
-
 video{width:48%;border-radius:8px;margin-top:5px;}
-.message img,.message video{max-width:200px;max-height:200px;border-radius:10px;}
+.message img,.message video{max-width:200px;border-radius:10px;}
 </style>
 </head>
 
@@ -76,7 +70,7 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 <h2>🔐 Secure Login</h2>
 <input id="passInput" type="password" placeholder="Enter Password">
 <br><button onclick="checkPass()">Login</button>
-<p id="errorText" style="color:red;"></p>
+<p id="errorText"></p>
 </div>
 </div>
 
@@ -95,15 +89,17 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 <div class="cloud" style="top:20%">☁️</div>
 <div class="cloud" style="top:30%">☁️</div>
 
+<!-- PRIVATE CHAT -->
+<input id="friendId" placeholder="Enter Friend ID" style="margin:5px;padding:5px;">
+<button onclick="startPrivateChat()">Start Chat</button>
+
 <div id="chatbox" class="chatbox"></div>
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button id="emojiBtn">😊</button>
 <input id="message" placeholder="Message">
-<label style="color:white;cursor:pointer;">📎
-<input type="file" id="fileInput" hidden>
-</label>
+<label style="color:white;">📎<input type="file" id="fileInput" hidden></label>
 <button id="sendBtn">➤</button>
 </div>
 
@@ -111,10 +107,10 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 
 <div id="callArea" class="callArea">
 <p id="myId"></p>
-<input id="callId" placeholder="Enter ID"><br><br>
+<input id="callId" placeholder="Enter ID">
 <button id="audioBtn">📞</button>
 <button id="videoBtn">🎥</button>
-<button id="endBtn">❌</button><br>
+<button id="endBtn">❌</button>
 <video id="localVideo" autoplay muted></video>
 <video id="remoteVideo" autoplay></video>
 </div>
@@ -129,6 +125,7 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
+
 const PASS="2020";
 
 function checkPass(){
@@ -136,12 +133,13 @@ if(passInput.value===PASS){
 loginPage.style.display="none";
 mainApp.style.display="flex";
 startApp();
-}else{
-errorText.innerText="❌ Wrong Password!";
-}
+}else errorText.innerText="❌ Wrong Password!";
 }
 
 function startApp(){
+
+let roomId=null;
+let currentRef=null;
 
 /* GLITTER */
 for(let i=0;i<25;i++){
@@ -155,10 +153,7 @@ document.body.appendChild(g);
 /* FIREBASE */
 if(!firebase.apps.length){
 firebase.initializeApp({
-apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
-authDomain:"love--chat-872da.firebaseapp.com",
-databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"love--chat-872da"
+databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 }
 
@@ -167,13 +162,63 @@ const db=firebase.database();
 let userId=localStorage.getItem("chatUserId")||("user_"+Math.random());
 localStorage.setItem("chatUserId",userId);
 
-/* 🔥 EMOJI CATEGORY SYSTEM */
+myId.innerText="Your ID: "+userId;
+
+/* PRIVATE CHAT */
+window.startPrivateChat=function(){
+if(!friendId.value.trim()) return alert("Friend ID daalo");
+
+roomId=[userId,friendId.value].sort().join("_");
+
+if(currentRef) currentRef.off();
+chatbox.innerHTML="";
+
+currentRef=db.ref("chat/"+roomId);
+
+currentRef.on("child_added",snap=>{
+let d=snap.val();
+let key=snap.key;
+
+let div=document.createElement("div");
+div.setAttribute("data-id",key);
+
+div.className=d.sender===userId?"message myMessage":"message otherMessage";
+
+let content=d.text||"";
+if(d.file){
+if(d.type.startsWith("image")) content=`<img src="${d.file}">`;
+if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
+}
+
+let delBtn=d.sender===userId?`<button class="deleteBtn" onclick="deleteMsg('${key}')">❌</button>`:"";
+
+div.innerHTML=content+delBtn+
+`<span class="time">${new Date(d.time).toLocaleTimeString()}</span>`;
+
+chatbox.appendChild(div);
+chatbox.scrollTop=chatbox.scrollHeight;
+});
+
+currentRef.on("child_removed",snap=>{
+let key=snap.key;
+document.querySelectorAll("[data-id]").forEach(e=>{
+if(e.getAttribute("data-id")===key) e.remove();
+});
+});
+
+};
+
+/* DELETE */
+window.deleteMsg=function(id){
+if(roomId) db.ref("chat/"+roomId+"/"+id).remove();
+};
+
+/* EMOJI FULL */
 const emojiCategories={
-"😀":["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😍","😘"],
-"❤️":["❤️","💖","💗","💓","💕","💘","💝"],
-"🤗":["🤗","🥰","🤭","😌","😏"],
-"😂":["😂","🤣","😹","😜","😝"],
-"👍":["👍","👏","🙌","🙏","💪","👌"]
+"😀":["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😍","😘","🥰","😎","🤗"],
+"❤️":["❤️","💖","💗","💓","💕","💘","💝","💞","💟"],
+"😂":["😂","🤣","😹","😜","😝","😛","🤪"],
+"👍":["👍","👎","👏","🙌","🙏","💪","👌","✌️"]
 };
 
 function loadCategory(cat){
@@ -181,8 +226,6 @@ emojiPicker.innerHTML="";
 for(let key in emojiCategories){
 let btn=document.createElement("span");
 btn.innerText=key;
-btn.style.fontSize="20px";
-btn.style.margin="5px";
 btn.onclick=()=>loadCategory(key);
 emojiPicker.appendChild(btn);
 }
@@ -191,8 +234,6 @@ emojiPicker.appendChild(document.createElement("br"));
 emojiCategories[cat].forEach(e=>{
 let s=document.createElement("span");
 s.innerText=e;
-s.style.fontSize="22px";
-s.style.margin="5px";
 s.onclick=()=>message.value+=e;
 emojiPicker.appendChild(s);
 });
@@ -205,64 +246,46 @@ emojiPicker.style.display==="block"?"none":"block";
 
 /* SEND */
 sendBtn.onclick=()=>{
+if(!roomId) return alert("Start Chat first");
 if(!message.value.trim())return;
-db.ref("chat").push({text:message.value,sender:userId,time:Date.now()});
+
+db.ref("chat/"+roomId).push({
+text:message.value,
+sender:userId,
+time:Date.now()
+});
+
 message.value="";
 sendSound.play().catch(()=>{});
 };
 
 /* FILE */
 fileInput.onchange=function(){
+if(!roomId) return alert("Start Chat first");
+
 let file=this.files[0];
 let reader=new FileReader();
+
 reader.onload=()=>{
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+db.ref("chat/"+roomId).push({
+file:reader.result,
+type:file.type,
+sender:userId,
+time:Date.now()
+});
 };
 reader.readAsDataURL(file);
 };
-
-/* LOAD */
-db.ref("chat").on("child_added",snap=>{
-let d=snap.val();
-let key=snap.key;
-
-let div=document.createElement("div");
-div.setAttribute("data-id",key);
-div.className=d.sender===userId?"message myMessage":"message otherMessage";
-
-let content=d.text||"";
-if(d.file){
-if(d.type.startsWith("image")) content=`<img src="${d.file}">`;
-if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
-}
-
-let delBtn=d.sender===userId?`<button class="deleteBtn" onclick="deleteMsg('${key}')">❌</button>`:"";
-
-div.innerHTML=content+delBtn+`<span class="time">${new Date(d.time).toLocaleTimeString()}</span>`;
-chatbox.appendChild(div);
-chatbox.scrollTop=chatbox.scrollHeight;
-});
-
-/* DELETE */
-window.deleteMsg=function(id){
-db.ref("chat/"+id).remove();
-};
-
-db.ref("chat").on("child_removed",snap=>{
-let key=snap.key;
-document.querySelectorAll("[data-id]").forEach(e=>{
-if(e.getAttribute("data-id")===key) e.remove();
-});
-});
 
 /* CALL SAME */
 let peer=new Peer();
 let currentCall=null;
 
-peer.on("open",id=>myId.innerText=id);
+peer.on("open",id=>myId.innerText+=" | Call ID: "+id);
 
-callToggle.onclick=()=>callArea.style.display=
-callArea.style.display==="block"?"none":"block";
+callToggle.onclick=()=>{
+callArea.style.display=callArea.style.display==="block"?"none":"block";
+};
 
 audioBtn.onclick=()=>{
 navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
@@ -282,6 +305,7 @@ currentCall.on("stream",r=>remoteVideo.srcObject=r);
 peer.on("call",call=>{
 ringtone.play();
 if(!confirm("Accept Call?")){call.close();return;}
+
 navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
 localVideo.srcObject=stream;
 call.answer(stream);
@@ -298,6 +322,7 @@ remoteVideo.srcObject=null;
 };
 
 }
+
 </script>
 </body>
 </html>
