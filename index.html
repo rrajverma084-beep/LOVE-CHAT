@@ -9,6 +9,38 @@
 
 body{
   font-family:sans-serif;
+}
+
+/* LOGIN PAGE */
+#loginPage{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  background:#0b141a;
+  color:white;
+}
+
+#loginPage input{
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+}
+
+#loginPage button{
+  margin-top:10px;
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  background:#00a884;
+  color:white;
+}
+
+/* ORIGINAL BODY STYLE */
+#mainApp{
+  display:none;
   height:100vh;
   display:flex;
   flex-direction:column;
@@ -156,6 +188,17 @@ video{
 
 <body>
 
+<!-- LOGIN PAGE -->
+<div id="loginPage">
+<h2>🔐 Enter Password</h2>
+<input id="passInput" type="password" placeholder="Password">
+<button onclick="checkPass()">Enter</button>
+<p id="errorText" style="color:red;"></p>
+</div>
+
+<!-- MAIN APP -->
+<div id="mainApp">
+
 <div class="bgText">💖 LADUU PIYUU 💖</div>
 
 <div class="heart" style="left:10%">❤️</div>
@@ -197,20 +240,30 @@ video{
 <audio id="sendSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 <audio id="ringtone" src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" loop></audio>
 
+</div>
+
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
 
-try{
-
 const PASS="2020";
-let p=prompt("Enter Password");
-if(p!==PASS){
-alert("Wrong Password");
-throw new Error("stop");
+
+function checkPass(){
+let val=document.getElementById("passInput").value;
+
+if(val===PASS){
+document.getElementById("loginPage").style.display="none";
+document.getElementById("mainApp").style.display="flex";
+startApp();
+}else{
+document.getElementById("errorText").innerText="❌ Wrong Password!";
 }
+}
+
+/* MAIN APP START */
+function startApp(){
 
 for(let i=0;i<25;i++){
 let g=document.createElement("div");
@@ -314,11 +367,11 @@ msg.remove();
 });
 
 /* DELETE */
-function deleteMsg(id){
+window.deleteMsg=function(id){
 if(confirm("Delete message?")){
 db.ref("chat/"+id).remove();
 }
-}
+};
 
 /* CALL */
 let peer=new Peer();
@@ -367,9 +420,6 @@ localVideo.srcObject=null;
 remoteVideo.srcObject=null;
 };
 
-}catch(e){
-console.error(e);
-alert("Error aaya hai console check karo");
 }
 
 </script>
