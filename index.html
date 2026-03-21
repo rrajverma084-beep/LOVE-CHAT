@@ -27,10 +27,11 @@ background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
 .heart,.cloud,.glitter,.bgText{pointer-events:none;position:absolute;z-index:0;}
-.heart{bottom:-50px;font-size:20px;animation:floatUp 8s linear infinite;}
+
+.heart{bottom:-50px;font-size:20px;animation:floatUp 8s linear infinite;opacity:0.7;}
 @keyframes floatUp{0%{transform:translateY(0);}100%{transform:translateY(-110vh);}}
 
-.cloud{top:10%;font-size:30px;animation:moveCloud 25s linear infinite;}
+.cloud{top:10%;font-size:30px;animation:moveCloud 25s linear infinite;opacity:0.6;}
 @keyframes moveCloud{0%{left:-100px;}100%{left:110%;}}
 
 .glitter{width:5px;height:5px;background:white;border-radius:50%;animation:glow 3s infinite;}
@@ -94,10 +95,6 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 <div class="cloud" style="top:20%">☁️</div>
 <div class="cloud" style="top:30%">☁️</div>
 
-<!-- PRIVATE CHAT -->
-<input id="friendId" placeholder="Enter Friend ID" style="margin:5px;padding:5px;">
-<button onclick="startPrivateChat()">Start Chat</button>
-
 <div id="chatbox" class="chatbox"></div>
 <div id="emojiPicker"></div>
 
@@ -139,13 +136,12 @@ if(passInput.value===PASS){
 loginPage.style.display="none";
 mainApp.style.display="flex";
 startApp();
-}else errorText.innerText="❌ Wrong Password!";
+}else{
+errorText.innerText="❌ Wrong Password!";
+}
 }
 
 function startApp(){
-
-let roomId=null;
-let currentRef=null;
 
 /* GLITTER */
 for(let i=0;i<25;i++){
@@ -156,109 +152,22 @@ g.style.top=Math.random()*100+"%";
 document.body.appendChild(g);
 }
 
-/* FIREBASE FULL CONFIG */
+/* FIREBASE */
+if(!firebase.apps.length){
 firebase.initializeApp({
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"love--chat-872da"
 });
+}
 
 const db=firebase.database();
 
 let userId=localStorage.getItem("chatUserId")||("user_"+Math.random());
 localStorage.setItem("chatUserId",userId);
 
-myId.innerText="Your ID: "+userId;
-
-/* PRIVATE CHAT */
-window.startPrivateChat=function(){
-
-if(!friendId.value.trim()){
-alert("Friend ID daalo");
-return;
-}
-
-roomId=[userId,friendId.value].sort().join("_");
-
-if(currentRef) currentRef.off();
-chatbox.innerHTML="";
-
-currentRef=db.ref("chat/"+roomId);
-
-currentRef.on("child_added",snap=>{
-let d=snap.val();
-let key=snap.key;
-
-let div=document.createElement("div");
-div.setAttribute("data-id",key);
-div.className=d.sender===userId?"message myMessage":"message otherMessage";
-
-let content=d.text||"";
-
-if(d.file){
-if(d.type.startsWith("image")) content=`<img src="${d.file}">`;
-if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
-}
-
-let delBtn=d.sender===userId?`<button class="deleteBtn" onclick="deleteMsg('${key}')">❌</button>`:"";
-
-div.innerHTML=content+delBtn+`<span class="time">${new Date(d.time).toLocaleTimeString()}</span>`;
-chatbox.appendChild(div);
-chatbox.scrollTop=chatbox.scrollHeight;
-});
-
-currentRef.on("child_removed",snap=>{
-let key=snap.key;
-document.querySelectorAll("[data-id]").forEach(e=>{
-if(e.getAttribute("data-id")===key) e.remove();
-});
-});
-
-alert("✅ Private Chat Connected");
-};
-
-/* SEND */
-sendBtn.onclick=()=>{
-if(!roomId) return alert("Start Chat dabao");
-if(!message.value.trim())return;
-
-db.ref("chat/"+roomId).push({
-text:message.value,
-sender:userId,
-time:Date.now()
-});
-
-message.value="";
-sendSound.play().catch(()=>{});
-};
-
-/* FILE */
-fileInput.onchange=function(){
-if(!roomId) return alert("Start Chat first");
-
-let file=this.files[0];
-let reader=new FileReader();
-
-reader.onload=()=>{
-db.ref("chat/"+roomId).push({
-file:reader.result,
-type:file.type,
-sender:userId,
-time:Date.now()
-});
-};
-reader.readAsDataURL(file);
-};
-
-/* DELETE */
-window.deleteMsg=function(id){
-if(roomId){
-db.ref("chat/"+roomId+"/"+id).remove();
-}
-};
-
-/* EMOJI CATEGORY SAME */
+/* 🔥 EMOJI CATEGORY SYSTEM */
 const emojiCategories={
 "😀":["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😍","😘"],
 "❤️":["❤️","💖","💗","💓","💕","💘","💝"],
@@ -272,6 +181,8 @@ emojiPicker.innerHTML="";
 for(let key in emojiCategories){
 let btn=document.createElement("span");
 btn.innerText=key;
+btn.style.fontSize="20px";
+btn.style.margin="5px";
 btn.onclick=()=>loadCategory(key);
 emojiPicker.appendChild(btn);
 }
@@ -280,6 +191,8 @@ emojiPicker.appendChild(document.createElement("br"));
 emojiCategories[cat].forEach(e=>{
 let s=document.createElement("span");
 s.innerText=e;
+s.style.fontSize="22px";
+s.style.margin="5px";
 s.onclick=()=>message.value+=e;
 emojiPicker.appendChild(s);
 });
@@ -290,11 +203,63 @@ loadCategory("😀");
 emojiBtn.onclick=()=>emojiPicker.style.display=
 emojiPicker.style.display==="block"?"none":"block";
 
-/* CALL SYSTEM SAME */
+/* SEND */
+sendBtn.onclick=()=>{
+if(!message.value.trim())return;
+db.ref("chat").push({text:message.value,sender:userId,time:Date.now()});
+message.value="";
+sendSound.play().catch(()=>{});
+};
+
+/* FILE */
+fileInput.onchange=function(){
+let file=this.files[0];
+let reader=new FileReader();
+reader.onload=()=>{
+db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+};
+reader.readAsDataURL(file);
+};
+
+/* LOAD */
+db.ref("chat").on("child_added",snap=>{
+let d=snap.val();
+let key=snap.key;
+
+let div=document.createElement("div");
+div.setAttribute("data-id",key);
+div.className=d.sender===userId?"message myMessage":"message otherMessage";
+
+let content=d.text||"";
+if(d.file){
+if(d.type.startsWith("image")) content=`<img src="${d.file}">`;
+if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
+}
+
+let delBtn=d.sender===userId?`<button class="deleteBtn" onclick="deleteMsg('${key}')">❌</button>`:"";
+
+div.innerHTML=content+delBtn+`<span class="time">${new Date(d.time).toLocaleTimeString()}</span>`;
+chatbox.appendChild(div);
+chatbox.scrollTop=chatbox.scrollHeight;
+});
+
+/* DELETE */
+window.deleteMsg=function(id){
+db.ref("chat/"+id).remove();
+};
+
+db.ref("chat").on("child_removed",snap=>{
+let key=snap.key;
+document.querySelectorAll("[data-id]").forEach(e=>{
+if(e.getAttribute("data-id")===key) e.remove();
+});
+});
+
+/* CALL SAME */
 let peer=new Peer();
 let currentCall=null;
 
-peer.on("open",id=>myId.innerText+=" | Call ID: "+id);
+peer.on("open",id=>myId.innerText=id);
 
 callToggle.onclick=()=>callArea.style.display=
 callArea.style.display==="block"?"none":"block";
