@@ -6,183 +6,65 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-
 body{font-family:sans-serif;}
 
-/* 🔐 LOGIN */
+/* LOGIN */
 #loginPage{
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:linear-gradient(135deg,#ff758c,#ff7eb3);
+height:100vh;display:flex;justify-content:center;align-items:center;
+background:linear-gradient(135deg,#ff758c,#ff7eb3);
 }
 .loginBox{
-  background:rgba(255,255,255,0.1);
-  backdrop-filter:blur(15px);
-  padding:30px;
-  border-radius:20px;
-  text-align:center;
-  color:white;
+background:rgba(255,255,255,0.1);backdrop-filter:blur(15px);
+padding:30px;border-radius:20px;text-align:center;color:white;
 }
-.loginBox input{
-  padding:10px;
-  border:none;
-  border-radius:20px;
-  margin-top:10px;
-}
-.loginBox button{
-  margin-top:10px;
-  padding:10px 20px;
-  border:none;
-  border-radius:20px;
-  background:#00a884;
-  color:white;
-}
+.loginBox input{padding:10px;border:none;border-radius:20px;margin-top:10px;}
+.loginBox button{margin-top:10px;padding:10px 20px;border:none;border-radius:20px;background:#00a884;color:white;}
 
-/* ORIGINAL */
+/* MAIN */
 #mainApp{
-  display:none;
-  height:100vh;
-  flex-direction:column;
-  overflow:auto;
-  background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
+display:none;height:100vh;flex-direction:column;overflow:auto;
+background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
-.heart,.cloud,.glitter,.bgText{
-  pointer-events:none;
-  z-index:0;
-  position:absolute;
-}
+.heart,.cloud,.glitter,.bgText{pointer-events:none;position:absolute;z-index:0;}
 
-.heart{
-  bottom:-50px;
-  font-size:20px;
-  animation:floatUp 8s linear infinite;
-  opacity:0.7;
-}
-
+.heart{bottom:-50px;font-size:20px;animation:floatUp 8s linear infinite;opacity:0.7;}
 @keyframes floatUp{0%{transform:translateY(0);}100%{transform:translateY(-110vh);}}
 
-.cloud{
-  top:10%;
-  font-size:30px;
-  animation:moveCloud 25s linear infinite;
-  opacity:0.6;
-}
-
+.cloud{top:10%;font-size:30px;animation:moveCloud 25s linear infinite;opacity:0.6;}
 @keyframes moveCloud{0%{left:-100px;}100%{left:110%;}}
 
-.glitter{
-  width:5px;height:5px;background:white;border-radius:50%;
-  animation:glow 3s infinite;
-}
-
+.glitter{width:5px;height:5px;background:white;border-radius:50%;animation:glow 3s infinite;}
 @keyframes glow{0%{opacity:.3;}50%{opacity:1;}100%{opacity:.3;}}
 
 .bgText{
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  font-size:40px;
-  color:white;
-  opacity:0.15;
+top:50%;left:50%;transform:translate(-50%,-50%);
+font-size:40px;color:white;opacity:0.15;
 }
 
-.header,.chatbox,.inputArea,.callArea{position:relative;z-index:1;}
-
-.chatbox{
-  flex:1;
-  overflow-y:auto;
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-}
-
-.message{
-  max-width:75%;
-  padding:8px 12px;
-  margin:4px 0;
-  border-radius:8px;
-  word-wrap:break-word;
-}
-
+.chatbox{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;position:relative;z-index:1;}
+.message{max-width:75%;padding:8px;margin:4px 0;border-radius:8px;}
 .myMessage{background:#005c4b;color:white;margin-left:auto;}
 .otherMessage{background:#202c33;color:white;}
 
 .time{font-size:10px;opacity:.6;display:block;text-align:right;}
 
 .deleteBtn{
-  background:red;
-  border:none;
-  color:white;
-  border-radius:50%;
-  width:20px;
-  height:20px;
-  font-size:12px;
-  margin-left:5px;
-  cursor:pointer;
+background:red;color:white;border:none;border-radius:50%;
+width:20px;height:20px;font-size:12px;margin-left:5px;cursor:pointer;
 }
 
-.inputArea{
-  display:flex;
-  gap:5px;
-  padding:6px;
-  background:#202c33;
-}
+.inputArea{display:flex;gap:5px;padding:6px;background:#202c33;}
+input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;color:white;}
+button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;height:38px;}
 
-input{
-  flex:1;
-  padding:10px;
-  border-radius:20px;
-  border:none;
-  background:#2a3942;
-  color:white;
-}
+#emojiPicker{display:none;background:#202c33;padding:10px;max-height:150px;overflow:auto;}
+#emojiPicker span{cursor:pointer;}
 
-button{
-  border:none;
-  background:#00a884;
-  color:white;
-  border-radius:50%;
-  width:38px;
-  height:38px;
-}
+.callArea{display:none;background:#202c33;padding:10px;text-align:center;}
 
-#emojiPicker{
-  display:none;
-  background:#202c33;
-  padding:10px;
-  max-height:120px;
-  overflow:auto;
-  position:relative;
-  z-index:2;
-}
-
-#emojiPicker span{
-  font-size:22px;
-  margin:5px;
-  cursor:pointer;
-}
-
-.callArea{
-  display:none;
-  background:#202c33;
-  padding:10px;
-  text-align:center;
-}
-
-video{
-  width:48%;
-  border-radius:8px;
-  margin-top:5px;
-}
-
-.message img,.message video{
-  max-width:200px;
-  max-height:200px;
-  border-radius:10px;
-}
+video{width:48%;border-radius:8px;margin-top:5px;}
+.message img,.message video{max-width:200px;max-height:200px;border-radius:10px;}
 </style>
 </head>
 
@@ -190,16 +72,15 @@ video{
 
 <!-- LOGIN -->
 <div id="loginPage">
-  <div class="loginBox">
-    <h2>🔐 Secure Login</h2>
-    <input id="passInput" type="password" placeholder="Enter Password">
-    <br>
-    <button onclick="checkPass()">Login</button>
-    <p id="errorText" style="color:red;"></p>
-  </div>
+<div class="loginBox">
+<h2>🔐 Secure Login</h2>
+<input id="passInput" type="password" placeholder="Enter Password">
+<br><button onclick="checkPass()">Login</button>
+<p id="errorText" style="color:red;"></p>
+</div>
 </div>
 
-<!-- MAIN APP -->
+<!-- MAIN -->
 <div id="mainApp">
 
 <div class="bgText">💖 LADUU PIYUU 💖</div>
@@ -215,14 +96,12 @@ video{
 <div class="cloud" style="top:30%">☁️</div>
 
 <div id="chatbox" class="chatbox"></div>
-
 <div id="emojiPicker"></div>
 
 <div class="inputArea">
 <button id="emojiBtn">😊</button>
 <input id="message" placeholder="Message">
-<label style="color:white;font-size:18px;cursor:pointer;">
-📎
+<label style="color:white;cursor:pointer;">📎
 <input type="file" id="fileInput" hidden>
 </label>
 <button id="sendBtn">➤</button>
@@ -250,7 +129,6 @@ video{
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
-
 const PASS="2020";
 
 function checkPass(){
@@ -275,26 +153,52 @@ document.body.appendChild(g);
 }
 
 /* FIREBASE */
+if(!firebase.apps.length){
 firebase.initializeApp({
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
 databaseURL:"https://love--chat-872da-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"love--chat-872da"
 });
+}
 
 const db=firebase.database();
 
 let userId=localStorage.getItem("chatUserId")||("user_"+Math.random());
 localStorage.setItem("chatUserId",userId);
 
-/* EMOJI */
-const emojis=["😀","😂","😍","😘","😎","😭","👍","🔥","❤️"];
-emojis.forEach(e=>{
+/* 🔥 EMOJI CATEGORY SYSTEM */
+const emojiCategories={
+"😀":["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😍","😘"],
+"❤️":["❤️","💖","💗","💓","💕","💘","💝"],
+"🤗":["🤗","🥰","🤭","😌","😏"],
+"😂":["😂","🤣","😹","😜","😝"],
+"👍":["👍","👏","🙌","🙏","💪","👌"]
+};
+
+function loadCategory(cat){
+emojiPicker.innerHTML="";
+for(let key in emojiCategories){
+let btn=document.createElement("span");
+btn.innerText=key;
+btn.style.fontSize="20px";
+btn.style.margin="5px";
+btn.onclick=()=>loadCategory(key);
+emojiPicker.appendChild(btn);
+}
+emojiPicker.appendChild(document.createElement("br"));
+
+emojiCategories[cat].forEach(e=>{
 let s=document.createElement("span");
 s.innerText=e;
+s.style.fontSize="22px";
+s.style.margin="5px";
 s.onclick=()=>message.value+=e;
 emojiPicker.appendChild(s);
 });
+}
+
+loadCategory("😀");
 
 emojiBtn.onclick=()=>emojiPicker.style.display=
 emojiPicker.style.display==="block"?"none":"block";
@@ -302,13 +206,7 @@ emojiPicker.style.display==="block"?"none":"block";
 /* SEND */
 sendBtn.onclick=()=>{
 if(!message.value.trim())return;
-
-db.ref("chat").push({
-text:message.value,
-sender:userId,
-time:Date.now()
-});
-
+db.ref("chat").push({text:message.value,sender:userId,time:Date.now()});
 message.value="";
 sendSound.play().catch(()=>{});
 };
@@ -317,14 +215,8 @@ sendSound.play().catch(()=>{});
 fileInput.onchange=function(){
 let file=this.files[0];
 let reader=new FileReader();
-
 reader.onload=()=>{
-db.ref("chat").push({
-file:reader.result,
-type:file.type,
-sender:userId,
-time:Date.now()
-});
+db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
 };
 reader.readAsDataURL(file);
 };
@@ -336,7 +228,6 @@ let key=snap.key;
 
 let div=document.createElement("div");
 div.setAttribute("data-id",key);
-
 div.className=d.sender===userId?"message myMessage":"message otherMessage";
 
 let content=d.text||"";
@@ -345,45 +236,33 @@ if(d.type.startsWith("image")) content=`<img src="${d.file}">`;
 if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
 }
 
-let delBtn="";
-if(d.sender===userId){
-delBtn=`<button class="deleteBtn" onclick="deleteMsg('${key}')">❌</button>`;
-}
+let delBtn=d.sender===userId?`<button class="deleteBtn" onclick="deleteMsg('${key}')">❌</button>`:"";
 
-div.innerHTML=content+delBtn+
-`<span class="time">${new Date(d.time).toLocaleTimeString()}</span>`;
-
+div.innerHTML=content+delBtn+`<span class="time">${new Date(d.time).toLocaleTimeString()}</span>`;
 chatbox.appendChild(div);
 chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-/* DELETE REALTIME */
-db.ref("chat").on("child_removed",snap=>{
-let key=snap.key;
-
-document.querySelectorAll(".message").forEach(msg=>{
-if(msg.getAttribute("data-id")===key){
-msg.remove();
-}
-});
-});
-
 /* DELETE */
 window.deleteMsg=function(id){
-if(confirm("Delete message?")){
 db.ref("chat/"+id).remove();
-}
 };
 
-/* CALL */
+db.ref("chat").on("child_removed",snap=>{
+let key=snap.key;
+document.querySelectorAll("[data-id]").forEach(e=>{
+if(e.getAttribute("data-id")===key) e.remove();
+});
+});
+
+/* CALL SAME */
 let peer=new Peer();
 let currentCall=null;
 
 peer.on("open",id=>myId.innerText=id);
 
-callToggle.onclick=()=>{
-callArea.style.display=callArea.style.display==="block"?"none":"block";
-};
+callToggle.onclick=()=>callArea.style.display=
+callArea.style.display==="block"?"none":"block";
 
 audioBtn.onclick=()=>{
 navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
@@ -402,11 +281,7 @@ currentCall.on("stream",r=>remoteVideo.srcObject=r);
 
 peer.on("call",call=>{
 ringtone.play();
-if(!confirm("Accept Call?")){
-call.close();
-return;
-}
-
+if(!confirm("Accept Call?")){call.close();return;}
 navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
 localVideo.srcObject=stream;
 call.answer(stream);
@@ -423,7 +298,6 @@ remoteVideo.srcObject=null;
 };
 
 }
-
 </script>
 </body>
 </html>
