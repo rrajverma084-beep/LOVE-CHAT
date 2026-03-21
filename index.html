@@ -16,7 +16,6 @@ body{
   background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
 }
 
-/* 💖 EFFECTS */
 .heart,.cloud,.glitter,.bgText{
   pointer-events:none;
   z-index:0;
@@ -57,7 +56,6 @@ body{
   opacity:0.15;
 }
 
-/* UI */
 .header,.chatbox,.inputArea,.callArea{position:relative;z-index:1;}
 
 .chatbox{
@@ -207,7 +205,6 @@ video{
 
 try{
 
-/* PASSWORD */
 const PASS="2020";
 let p=prompt("Enter Password");
 if(p!==PASS){
@@ -215,7 +212,6 @@ alert("Wrong Password");
 throw new Error("stop");
 }
 
-/* GLITTER */
 for(let i=0;i<25;i++){
 let g=document.createElement("div");
 g.className="glitter";
@@ -224,7 +220,6 @@ g.style.top=Math.random()*100+"%";
 document.body.appendChild(g);
 }
 
-/* FIREBASE */
 firebase.initializeApp({
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
 authDomain:"love--chat-872da.firebaseapp.com",
@@ -279,12 +274,14 @@ time:Date.now()
 reader.readAsDataURL(file);
 };
 
-/* LOAD + DELETE */
+/* LOAD */
 db.ref("chat").on("child_added",snap=>{
 let d=snap.val();
 let key=snap.key;
 
 let div=document.createElement("div");
+div.setAttribute("data-id",key);
+
 div.className=d.sender===userId?"message myMessage":"message otherMessage";
 
 let content=d.text||"";
@@ -305,15 +302,25 @@ chatbox.appendChild(div);
 chatbox.scrollTop=chatbox.scrollHeight;
 });
 
+/* REAL TIME DELETE */
+db.ref("chat").on("child_removed",snap=>{
+let key=snap.key;
+
+document.querySelectorAll(".message").forEach(msg=>{
+if(msg.getAttribute("data-id")===key){
+msg.remove();
+}
+});
+});
+
 /* DELETE */
 function deleteMsg(id){
 if(confirm("Delete message?")){
 db.ref("chat/"+id).remove();
-location.reload();
 }
 }
 
-/* CALL (same as before) */
+/* CALL */
 let peer=new Peer();
 let currentCall=null;
 
