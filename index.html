@@ -74,12 +74,25 @@ body{
   margin:4px 0;
   border-radius:8px;
   word-wrap:break-word;
+  position:relative;
 }
 
 .myMessage{background:#005c4b;color:white;margin-left:auto;}
 .otherMessage{background:#202c33;color:white;}
 
 .time{font-size:10px;opacity:.6;display:block;text-align:right;}
+
+.deleteBtn{
+  background:red;
+  border:none;
+  color:white;
+  border-radius:50%;
+  width:20px;
+  height:20px;
+  font-size:12px;
+  margin-left:5px;
+  cursor:pointer;
+}
 
 .inputArea{
   display:flex;
@@ -147,7 +160,6 @@ video{
 
 <div class="bgText">💖 LADUU PIYUU 💖</div>
 
-<!-- EFFECTS -->
 <div class="heart" style="left:10%">❤️</div>
 <div class="heart" style="left:30%">💖</div>
 <div class="heart" style="left:50%">💕</div>
@@ -267,9 +279,11 @@ time:Date.now()
 reader.readAsDataURL(file);
 };
 
-/* LOAD */
+/* LOAD + DELETE */
 db.ref("chat").on("child_added",snap=>{
 let d=snap.val();
+let key=snap.key;
+
 let div=document.createElement("div");
 div.className=d.sender===userId?"message myMessage":"message otherMessage";
 
@@ -279,12 +293,27 @@ if(d.type.startsWith("image")) content=`<img src="${d.file}">`;
 if(d.type.startsWith("video")) content=`<video src="${d.file}" controls></video>`;
 }
 
-div.innerHTML=content+`<span class="time">${new Date(d.time).toLocaleTimeString()}</span>`;
+let delBtn="";
+if(d.sender===userId){
+delBtn=`<button class="deleteBtn" onclick="deleteMsg('${key}')">❌</button>`;
+}
+
+div.innerHTML=content+delBtn+
+`<span class="time">${new Date(d.time).toLocaleTimeString()}</span>`;
+
 chatbox.appendChild(div);
 chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-/* CALL */
+/* DELETE */
+function deleteMsg(id){
+if(confirm("Delete message?")){
+db.ref("chat/"+id).remove();
+location.reload();
+}
+}
+
+/* CALL (same as before) */
 let peer=new Peer();
 let currentCall=null;
 
