@@ -111,7 +111,7 @@ startApp();
 }else{
 errorText.innerText="❌ Wrong Password!";
 }
-}
+
 
 let started = false;
 
@@ -130,13 +130,6 @@ firebase.auth().onAuthStateChanged(user=>{
 if(user && !started){
 started = true;
 initChat(user.uid);
-}
-});
-
-if(!firebase.auth().currentUser){
-firebase.auth().signInAnonymously().catch(err=>console.error(err));
-}
-
 }
 });
 
