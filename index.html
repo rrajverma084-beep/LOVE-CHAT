@@ -7,52 +7,27 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:sans-serif;}
-
-/* LOGIN */
-#loginPage{
-height:100vh;display:flex;justify-content:center;align-items:center;
-background:linear-gradient(135deg,#ff758c,#ff7eb3);
-}
-.loginBox{
-background:rgba(255,255,255,0.1);backdrop-filter:blur(15px);
-padding:30px;border-radius:20px;text-align:center;color:white;
-}
+#loginPage{height:100vh;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#ff758c,#ff7eb3);}
+.loginBox{background:rgba(255,255,255,0.1);backdrop-filter:blur(15px);padding:30px;border-radius:20px;text-align:center;color:white;}
 .loginBox input{padding:10px;border:none;border-radius:20px;margin-top:10px;}
 .loginBox button{margin-top:10px;padding:10px 20px;border:none;border-radius:20px;background:#00a884;color:white;}
 
-/* MAIN */
-#mainApp{
-display:none;height:100vh;flex-direction:column;overflow:auto;
-background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);
-}
-
+#mainApp{display:none;height:100vh;flex-direction:column;overflow:auto;background:linear-gradient(135deg,#ff9a9e,#ff4d6d,#ff758c);}
 .heart,.cloud,.glitter,.bgText{pointer-events:none;position:absolute;z-index:0;}
-
 .heart{bottom:-50px;font-size:20px;animation:floatUp 8s linear infinite;opacity:0.7;}
 @keyframes floatUp{0%{transform:translateY(0);}100%{transform:translateY(-110vh);}}
-
 .cloud{top:10%;font-size:30px;animation:moveCloud 25s linear infinite;opacity:0.6;}
 @keyframes moveCloud{0%{left:-100px;}100%{left:110%;}}
-
 .glitter{width:5px;height:5px;background:white;border-radius:50%;animation:glow 3s infinite;}
 @keyframes glow{0%{opacity:.3;}50%{opacity:1;}100%{opacity:.3;}}
-
-.bgText{
-top:50%;left:50%;transform:translate(-50%,-50%);
-font-size:40px;color:white;opacity:0.15;
-}
+.bgText{top:50%;left:50%;transform:translate(-50%,-50%);font-size:40px;color:white;opacity:0.15;}
 
 .chatbox{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;position:relative;z-index:1;}
 .message{max-width:75%;padding:8px;margin:4px 0;border-radius:8px;}
 .myMessage{background:#005c4b;color:white;margin-left:auto;}
 .otherMessage{background:#202c33;color:white;}
-
 .time{font-size:10px;opacity:.6;display:block;text-align:right;}
-
-.deleteBtn{
-background:red;color:white;border:none;border-radius:50%;
-width:20px;height:20px;font-size:12px;margin-left:5px;cursor:pointer;
-}
+.deleteBtn{background:red;color:white;border:none;border-radius:50%;width:20px;height:20px;font-size:12px;margin-left:5px;cursor:pointer;}
 
 .inputArea{display:flex;gap:5px;padding:6px;background:#202c33;}
 input{flex:1;padding:10px;border-radius:20px;border:none;background:#2a3942;color:white;}
@@ -62,7 +37,6 @@ button{border:none;background:#00a884;color:white;border-radius:50%;width:38px;h
 #emojiPicker span{cursor:pointer;}
 
 .callArea{display:none;background:#202c33;padding:10px;text-align:center;}
-
 video{width:48%;border-radius:8px;margin-top:5px;}
 .message img,.message video{max-width:200px;max-height:200px;border-radius:10px;}
 </style>
@@ -70,7 +44,6 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 
 <body>
 
-<!-- LOGIN -->
 <div id="loginPage">
 <div class="loginBox">
 <h2>🔐 Secure Login</h2>
@@ -80,9 +53,7 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 </div>
 </div>
 
-<!-- MAIN -->
 <div id="mainApp">
-
 <div class="bgText">💖 LADUU PIYUU 💖</div>
 
 <div class="heart" style="left:10%">❤️</div>
@@ -126,6 +97,7 @@ video{width:48%;border-radius:8px;margin-top:5px;}
 
 <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
 
 <script>
@@ -143,16 +115,6 @@ errorText.innerText="❌ Wrong Password!";
 
 function startApp(){
 
-/* GLITTER */
-for(let i=0;i<25;i++){
-let g=document.createElement("div");
-g.className="glitter";
-g.style.left=Math.random()*100+"%";
-g.style.top=Math.random()*100+"%";
-document.body.appendChild(g);
-}
-
-/* FIREBASE */
 if(!firebase.apps.length){
 firebase.initializeApp({
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
@@ -162,12 +124,29 @@ projectId:"love--chat-872da"
 });
 }
 
+/* AUTH FIX */
+firebase.auth().signInAnonymously().then(()=>{
+firebase.auth().onAuthStateChanged(user=>{
+if(user){
+initChat(user.uid);
+}
+});
+});
+
+}
+
+function initChat(userId){
+
+for(let i=0;i<25;i++){
+let g=document.createElement("div");
+g.className="glitter";
+g.style.left=Math.random()*100+"%";
+g.style.top=Math.random()*100+"%";
+document.body.appendChild(g);
+}
+
 const db=firebase.database();
 
-let userId=localStorage.getItem("chatUserId")||("user_"+Math.random());
-localStorage.setItem("chatUserId",userId);
-
-/* 🔥 EMOJI CATEGORY SYSTEM */
 const emojiCategories={
 "😀":["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😍","😘"],
 "❤️":["❤️","💖","💗","💓","💕","💘","💝"],
@@ -181,18 +160,12 @@ emojiPicker.innerHTML="";
 for(let key in emojiCategories){
 let btn=document.createElement("span");
 btn.innerText=key;
-btn.style.fontSize="20px";
-btn.style.margin="5px";
 btn.onclick=()=>loadCategory(key);
 emojiPicker.appendChild(btn);
 }
-emojiPicker.appendChild(document.createElement("br"));
-
 emojiCategories[cat].forEach(e=>{
 let s=document.createElement("span");
 s.innerText=e;
-s.style.fontSize="22px";
-s.style.margin="5px";
 s.onclick=()=>message.value+=e;
 emojiPicker.appendChild(s);
 });
@@ -203,25 +176,33 @@ loadCategory("😀");
 emojiBtn.onclick=()=>emojiPicker.style.display=
 emojiPicker.style.display==="block"?"none":"block";
 
-/* SEND */
 sendBtn.onclick=()=>{
 if(!message.value.trim())return;
-db.ref("chat").push({text:message.value,sender:userId,time:Date.now()});
+
+db.ref("chat").push({
+text:message.value,
+sender:userId,
+time:Date.now()
+});
+
 message.value="";
 sendSound.play().catch(()=>{});
 };
 
-/* FILE */
 fileInput.onchange=function(){
 let file=this.files[0];
 let reader=new FileReader();
 reader.onload=()=>{
-db.ref("chat").push({file:reader.result,type:file.type,sender:userId,time:Date.now()});
+db.ref("chat").push({
+file:reader.result,
+type:file.type,
+sender:userId,
+time:Date.now()
+});
 };
 reader.readAsDataURL(file);
 };
 
-/* LOAD */
 db.ref("chat").on("child_added",snap=>{
 let d=snap.val();
 let key=snap.key;
@@ -243,7 +224,6 @@ chatbox.appendChild(div);
 chatbox.scrollTop=chatbox.scrollHeight;
 });
 
-/* DELETE */
 window.deleteMsg=function(id){
 db.ref("chat/"+id).remove();
 };
