@@ -113,9 +113,10 @@ errorText.innerText="❌ Wrong Password!";
 }
 }
 
+let started = false;
+
 function startApp(){
 
-/* ✅ FIREBASE INIT FIRST */
 if(!firebase.apps.length){
 firebase.initializeApp({
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
@@ -125,12 +126,22 @@ projectId:"love--chat-872da"
 });
 }
 
-/* ✅ AUTH */
 firebase.auth().onAuthStateChanged(user=>{
-if(user){
+if(user && !started){
+started = true;
 initChat(user.uid);
-}else{
+}
+});
+
+if(!firebase.auth().currentUser){
 firebase.auth().signInAnonymously().catch(err=>console.error(err));
+}
+
+}
+});
+
+firebase.auth().signInAnonymously().catch(err=>console.error(err));
+
 }
 });
 
