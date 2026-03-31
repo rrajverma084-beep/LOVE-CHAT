@@ -115,6 +115,7 @@ errorText.innerText="❌ Wrong Password!";
 
 function startApp(){
 
+/* ✅ FIREBASE INIT FIRST */
 if(!firebase.apps.length){
 firebase.initializeApp({
 apiKey:"AIzaSyAKuUFmJshnvjHZ-bAhHN_bdlvwKkbyDbo",
@@ -124,18 +125,36 @@ projectId:"love--chat-872da"
 });
 }
 
-/* AUTH FIX */
-firebase.auth().signInAnonymously().then(()=>{
+/* ✅ AUTH */
 firebase.auth().onAuthStateChanged(user=>{
 if(user){
 initChat(user.uid);
+}else{
+firebase.auth().signInAnonymously().catch(err=>console.error(err));
 }
-});
 });
 
 }
 
+/* 🔥 MAIN CHAT */
 function initChat(userId){
+
+/* DOM FIX (IMPORTANT) */
+const chatbox = document.getElementById("chatbox");
+const emojiPicker = document.getElementById("emojiPicker");
+const emojiBtn = document.getElementById("emojiBtn");
+const message = document.getElementById("message");
+const sendBtn = document.getElementById("sendBtn");
+const fileInput = document.getElementById("fileInput");
+const callToggle = document.getElementById("callToggle");
+const callArea = document.getElementById("callArea");
+const myId = document.getElementById("myId");
+const callId = document.getElementById("callId");
+const audioBtn = document.getElementById("audioBtn");
+const videoBtn = document.getElementById("videoBtn");
+const endBtn = document.getElementById("endBtn");
+const localVideo = document.getElementById("localVideo");
+const remoteVideo = document.getElementById("remoteVideo");
 
 for(let i=0;i<25;i++){
 let g=document.createElement("div");
@@ -147,6 +166,7 @@ document.body.appendChild(g);
 
 const db=firebase.database();
 
+/* EMOJI */
 const emojiCategories={
 "😀":["😀","😁","😂","🤣","😃","😄","😅","😆","😉","😊","😍","😘"],
 "❤️":["❤️","💖","💗","💓","💕","💘","💝"],
@@ -163,6 +183,8 @@ btn.innerText=key;
 btn.onclick=()=>loadCategory(key);
 emojiPicker.appendChild(btn);
 }
+emojiPicker.appendChild(document.createElement("br"));
+
 emojiCategories[cat].forEach(e=>{
 let s=document.createElement("span");
 s.innerText=e;
@@ -176,6 +198,7 @@ loadCategory("😀");
 emojiBtn.onclick=()=>emojiPicker.style.display=
 emojiPicker.style.display==="block"?"none":"block";
 
+/* SEND */
 sendBtn.onclick=()=>{
 if(!message.value.trim())return;
 
@@ -186,9 +209,9 @@ time:Date.now()
 });
 
 message.value="";
-sendSound.play().catch(()=>{});
 };
 
+/* FILE */
 fileInput.onchange=function(){
 let file=this.files[0];
 let reader=new FileReader();
@@ -203,6 +226,7 @@ time:Date.now()
 reader.readAsDataURL(file);
 };
 
+/* LOAD */
 db.ref("chat").on("child_added",snap=>{
 let d=snap.val();
 let key=snap.key;
@@ -224,6 +248,7 @@ chatbox.appendChild(div);
 chatbox.scrollTop=chatbox.scrollHeight;
 });
 
+/* DELETE */
 window.deleteMsg=function(id){
 db.ref("chat/"+id).remove();
 };
@@ -235,7 +260,7 @@ if(e.getAttribute("data-id")===key) e.remove();
 });
 });
 
-/* CALL SAME */
+/* CALL */
 let peer=new Peer();
 let currentCall=null;
 
@@ -260,14 +285,12 @@ currentCall.on("stream",r=>remoteVideo.srcObject=r);
 };
 
 peer.on("call",call=>{
-ringtone.play();
 if(!confirm("Accept Call?")){call.close();return;}
 navigator.mediaDevices.getUserMedia({video:true,audio:true}).then(stream=>{
 localVideo.srcObject=stream;
 call.answer(stream);
 call.on("stream",r=>remoteVideo.srcObject=r);
 currentCall=call;
-ringtone.pause();
 });
 });
 
@@ -279,5 +302,5 @@ remoteVideo.srcObject=null;
 
 }
 </script>
-</body>
+</body> 
 </html>
